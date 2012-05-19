@@ -14,9 +14,6 @@
 
 #include "config.h"
 
-const char* const LogicPasteApp::pasteBinLoginUrl_ = "http://pastebin.com/api/api_login.php";
-const char* const LogicPasteApp::pasteBinDevKey_ = PASTEBIN_API_KEY;
-
 LogicPasteApp::LogicPasteApp() {
     QCoreApplication::setOrganizationName("LogicProbe");
     QCoreApplication::setApplicationName("LogicPaste");
@@ -55,18 +52,24 @@ void LogicPasteApp::onRequestLogin() {
 
 void LogicPasteApp::onProcessLogin(QString username, QString password) {
     qDebug() << "onProcessLogin" << username << "," << password;
+    connect(&pastebin_, SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    connect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
+    pastebin_.login(username, password);
+}
 
-    QNetworkRequest request(QUrl(LogicPasteApp::pasteBinLoginUrl_));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1), username);
+void LogicPasteApp::onLoginComplete() {
+    disconnect(&pastebin_, SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    disconnect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 
-    QUrl params;
-    params.addQueryItem("api_dev_key", LogicPasteApp::pasteBinDevKey_);
-    params.addQueryItem("api_user_name", username.toUtf8());
-    params.addQueryItem("api_user_password", password.toUtf8());
+    emit settingsUpdated();
+    navigationPane_->popAndDelete();
+}
 
-    QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
-    connect(reply, SIGNAL(finished()), this, SLOT(onPasteBinApiLogin()));
+void LogicPasteApp::onLoginFailed(QString message) {
+    disconnect(&pastebin_, SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    disconnect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
+
+    emit loginFailed(message);
 }
 
 void LogicPasteApp::onCreateAccount() {
@@ -78,36 +81,9 @@ void LogicPasteApp::onCreateAccount() {
 void LogicPasteApp::onRequestLogout() {
     qDebug() << "onRequestLogout()";
 
-    QSettings settings;
-    settings.remove("api_user_name");
-    settings.remove("api_user_key");
+    pastebin_.logout();
+
     emit settingsUpdated();
-}
-
-void LogicPasteApp::onPasteBinApiLogin() {
-    QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
-    QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-    qDebug() << "Login complete" << statusCode.toInt();
-
-    if(networkReply->error() == QNetworkReply::NoError) {
-        QString response = networkReply->readAll();
-
-        qDebug() << "Response:" << response;
-
-        if(response.startsWith("Bad API request")) {
-            emit loginFailed(response);
-        }
-        else {
-            QNetworkRequest networkRequest = networkReply->request();
-            QString username = networkRequest.attribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1)).toString();
-
-            QSettings settings;
-            settings.setValue("api_user_name", username);
-            settings.setValue("api_user_key", response);
-            emit settingsUpdated();
-            navigationPane_->popAndDelete();
-        }
-    }
 }
 
 QString LogicPasteApp::getSettingValue(const QString &keyName) {
