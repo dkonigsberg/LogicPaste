@@ -1,0 +1,13 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+/**
+ * This file contains application configuration that cannot be included
+ * as part of the main source tree.  Prior to compiling, please populate
+ * this file and copy it to "src/config.h".
+ */
+
+// API key for Pastebin.com
+#define PASTEBIN_API_KEY "@{PASTEBIN_API_KEY}"
+
+#endif // CONFIG_H

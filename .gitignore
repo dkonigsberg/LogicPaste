@@ -1,0 +1,25 @@
+# Compiled source
+*.o
+*.so
+*.so.*
+*.a
+*.qm
+arm/*
+x86/*
+*.moc
+moc_*.cpp
+
+# IDE-related files
+*.pro.user
+
+# OS generated files
+.DS_Store*
+Thumbs.db
+
+# Other
+src/config.h
+*~
+.*
+*.swp
+core
+*.log
