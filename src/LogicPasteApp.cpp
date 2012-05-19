@@ -3,7 +3,7 @@
 #include <bb/cascades/NavigationPane>
 #include <bb/cascades/Page>
 #include <bb/cascades/TextField>
-#include <bb/cascades/Button>
+#include <bb/cascades/ActionItem>
 
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkReply>
@@ -27,6 +27,10 @@ LogicPasteApp::LogicPasteApp() {
             pastePage_ = navigationPane_->findChild<Page*>("pastePage");
 
             historyPage_ = navigationPane_->findChild<Page*>("historyPage");
+            historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(!pastebin_.apiKey().isEmpty());
+
+            trendingPage_ = navigationPane_->findChild<Page*>("trendingPage");
+            trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
 
             settingsPage_ = navigationPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));

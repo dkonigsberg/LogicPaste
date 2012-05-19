@@ -42,6 +42,7 @@ private:
     NavigationPane *navigationPane_;
     Page *pastePage_;
     Page *historyPage_;
+    Page *trendingPage_;
     Page *settingsPage_;
 
     Pastebin pastebin_;

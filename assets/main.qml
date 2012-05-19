@@ -14,12 +14,21 @@ NavigationPane {
             }
         }
         
-        HistoryPage {
+        PasteListPage {
             id: historyPage
             objectName: "historyPage"
             paneProperties: TabbedPaneProperties {
-                title: "History"
+                title: "My Pastes"
                 imageSource: "asset:///images/icon-history-tab.png"
+            }
+        }
+        
+        PasteListPage {
+            id: trendingPage
+            objectName: "trendingPage"
+            paneProperties: TabbedPaneProperties {
+                title: "Trending"
+                imageSource: "asset:///images/icon-trending-tab.png"
             }
         }
         

@@ -79,6 +79,16 @@ Page {
             title: "Default exposure"
         }
     }
+    actions: [
+        ActionItem {
+            id: refreshAction
+            title: "Refresh"
+            imageSource: "asset:///images/icon-refresh-action.png"
+            enabled: false
+            onTriggered: {
+            }
+        }
+    ]
     
     onCreationCompleted: {
         cs.settingsUpdated.connect(onSettingsUpdated);

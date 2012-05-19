@@ -31,6 +31,13 @@ Page {
             id: pasteTextField
             preferredHeight: 400
             hintText: "Text to paste"
+            onTextChanging: {
+	            if(text.length > 0) {
+	                submitAction.enabled = true;
+	            } else {
+	                submitAction.enabled = false;
+	            }
+            }
         }
         Divider {
         }
@@ -50,11 +57,15 @@ Page {
             id: exposureDropDown
             enabled: true
         }
-        Button {
-            text: "Submit"
-            layoutProperties: StackLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Fill
+    }
+    actions: [
+        ActionItem {
+            id: submitAction
+            title: "Submit"
+            imageSource: "asset:///images/icon-submit-action.png"
+            enabled: false
+            onTriggered: {
             }
         }
-    }
+    ]
 }

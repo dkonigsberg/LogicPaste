@@ -101,7 +101,7 @@ Page {
                 id: errorText
                 visible: false
                 backgroundVisible: false
-                textStyle.color: Color.create("#0000FF")
+                textStyle.color: Color.Red
                 textStyle.alignment: TextAlignment.Center
             }
         }
