@@ -70,6 +70,19 @@ void Pastebin::logout() {
     settings.remove("api_user_key");
 }
 
+void Pastebin::requestUserDetails() {
+    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
+
+    QUrl params;
+    params.addQueryItem("api_dev_key", PASTEBIN_DEV_KEY);
+    params.addQueryItem("api_user_key", apiKey());
+    params.addQueryItem("api_option", "userdetails");
+
+    QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
+    connect(reply, SIGNAL(finished()), this, SLOT(onUserDetailsFinished()));
+}
+
 void Pastebin::requestHistory() {
     QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
@@ -93,6 +106,100 @@ void Pastebin::requestTrending() {
 
     QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
     connect(reply, SIGNAL(finished()), this, SLOT(onTrendingFinished()));
+}
+
+void Pastebin::onUserDetailsFinished() {
+    QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
+    QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    qDebug() << "User details request complete:" << statusCode.toInt();
+
+    if(networkReply->error() == QNetworkReply::NoError) {
+        QXmlStreamReader reader;
+        reader.addData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n");
+        reader.addData("<response>");
+        reader.addData(networkReply->readAll());
+        reader.addData("</response>");
+
+        PasteUser pasteUser;
+        bool success = false;
+
+        while(!reader.atEnd()) {
+            QXmlStreamReader::TokenType token = reader.readNext();
+            if(token == QXmlStreamReader::StartDocument) {
+                qDebug() << "StartDocument";
+                continue;
+            }
+            else if(token == QXmlStreamReader::StartElement) {
+                if(reader.name() == "user") {
+                    parseUserDetails(reader, pasteUser);
+                    success = true;
+                }
+            }
+            else if(token == QXmlStreamReader::EndDocument) {
+                qDebug() << "EndDocument";
+                continue;
+            }
+        }
+
+        qDebug() << "Parsed user details";
+
+        if(!success || reader.hasError()) {
+            qDebug() << "Parse error:" << reader.errorString();
+        } else {
+            emit userDetailsAvailable(pasteUser);
+        }
+    }
+    else {
+        qDebug() << "Error in user details response";
+    }
+}
+
+void Pastebin::parseUserDetails(QXmlStreamReader& reader, PasteUser& pasteUser) {
+    qDebug() << "parseUserDetails()";
+    while(reader.readNext() != QXmlStreamReader::EndElement) {
+        if(reader.name() == "user_name") {
+            pasteUser.setUsername(reader.readElementText());
+        }
+        else if(reader.name() == "user_format_short") {
+            pasteUser.setPasteFormatShort(reader.readElementText());
+        }
+        else if(reader.name() == "user_expiration") {
+            pasteUser.setPasteExpiration(reader.readElementText());
+        }
+        else if(reader.name() == "user_avatar_url") {
+            pasteUser.setAvatarUrl(reader.readElementText());
+        }
+        else if(reader.name() == "user_private") {
+            int value = reader.readElementText().toInt();
+            if(value == 0) {
+                pasteUser.setPasteVisibility(PasteListing::Public);
+            }
+            else if(value == 1) {
+                pasteUser.setPasteVisibility(PasteListing::Unlisted);
+            }
+            else if(value == 2) {
+                pasteUser.setPasteVisibility(PasteListing::Private);
+            }
+        }
+        else if(reader.name() == "user_website") {
+            pasteUser.setWebsite(reader.readElementText());
+        }
+        else if(reader.name() == "user_email") {
+            pasteUser.setEmail(reader.readElementText());
+        }
+        else if(reader.name() == "user_location") {
+            pasteUser.setLocation(reader.readElementText());
+        }
+        else if(reader.name() == "user_account_type") {
+            int value = reader.readElementText().toInt();
+            if(value == 0) {
+                pasteUser.setAccountType(PasteUser::Normal);
+            }
+            else if(value == 1) {
+                pasteUser.setAccountType(PasteUser::Pro);
+            }
+        }
+    }
 }
 
 void Pastebin::onHistoryFinished() {
@@ -127,7 +234,7 @@ bool Pastebin::processPasteListResponse(QNetworkReply *networkReply, QList<Paste
         result = parsePasteList(reader, pasteList);
     }
     else {
-        qDebug() << "Error";
+        qDebug() << "Error in paste list response";
         result = false;
     }
     return result;

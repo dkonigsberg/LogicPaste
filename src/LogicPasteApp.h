@@ -27,6 +27,7 @@ public:
 public slots:
     void onRequestLogin();
     void onRequestLogout();
+    void onRefreshUserDetails();
     void onCreateAccount();
 
     void onProcessLogin(QString username, QString password);
@@ -36,6 +37,7 @@ public slots:
 private slots:
     void onLoginComplete();
     void onLoginFailed(QString message);
+    void onUserDetailsAvailable(PasteUser pasteUser);
     void onHistoryAvailable(QList<PasteListing> *pasteList);
     void onTrendingAvailable(QList<PasteListing> *pasteList);
 

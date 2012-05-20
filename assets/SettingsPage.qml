@@ -5,6 +5,7 @@ Page {
     
     signal requestLogin()
     signal requestLogout()
+    signal refreshUserDetails()
     
     content: Container {
         scrollMode: ScrollMode.Vertical
@@ -47,12 +48,34 @@ Page {
         }
         Label {
             id: userLabel
+            objectName: "userLabel"
             visible: false
         }
         Label {
             id: keyLabel
+            objectName: "keyLabel"
             visible: false
             textStyle.base: SystemDefaults.TextStyles.SmallText
+        }
+        Label {
+            id: websiteLabel
+            objectName: "websiteLabel"
+            visible: false
+        }
+        Label {
+            id: emailLabel
+            objectName: "emailLabel"
+            visible: false
+        }
+        Label {
+            id: locationLabel
+            objectName: "locationLabel"
+            visible: false
+        }
+        Label {
+            id: accountTypeLabel
+            objectName: "accountTypeLabel"
+            visible: false
         }
         Divider {}
         
@@ -86,6 +109,7 @@ Page {
             imageSource: "asset:///images/icon-refresh-action.png"
             enabled: false
             onTriggered: {
+                settings.refreshUserDetails();
             }
         }
     ]
@@ -106,14 +130,24 @@ Page {
 	        keyLabel.text = apiKey;
 	        userLabel.visible = true;
 	        keyLabel.visible = true;
+	        refreshAction.enabled = true;
         }
         else {
 	        loginButton.enabled = true;
 	        logoutButton.enabled = false;
 	        userLabel.text = "";
 	        keyLabel.text = "";
+	        websiteLabel.text = "";
+	        emailLabel.text = "";
+	        locationLabel.text = "";
+	        accountTypeLabel.text = "";
 	        userLabel.visible = false;
 	        keyLabel.visible = false;
+	        websiteLabel.visible = false;
+	        emailLabel.visible = false;
+	        locationLabel.visible = false;
+	        accountTypeLabel.visible = false;
+	        refreshAction.enabled = false;
         }
     }
 }

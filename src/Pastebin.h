@@ -4,6 +4,8 @@
 #include <QtCore/QObject>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtCore/QList>
+
+#include "PasteUser.h"
 #include "PasteListing.h"
 
 class QXmlStreamReader;
@@ -17,6 +19,7 @@ public:
     void login(const QString& username, const QString& password);
     void logout();
 
+    void requestUserDetails();
     void requestHistory();
     void requestTrending();
 
@@ -26,15 +29,18 @@ public:
 signals:
     void loginComplete();
     void loginFailed(QString message);
+    void userDetailsAvailable(PasteUser pasteUser);
     void historyAvailable(QList<PasteListing> *pasteList);
     void trendingAvailable(QList<PasteListing> *pasteList);
 
 private slots:
     void onLoginFinished();
+    void onUserDetailsFinished();
     void onHistoryFinished();
     void onTrendingFinished();
 
 private:
+    void parseUserDetails(QXmlStreamReader& reader, PasteUser& pasteUser);
     bool processPasteListResponse(QNetworkReply *networkReply, QList<PasteListing> *pasteList);
     bool parsePasteList(QXmlStreamReader& reader, QList<PasteListing> *pasteList);
     void parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *pasteList);

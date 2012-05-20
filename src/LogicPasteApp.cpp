@@ -2,6 +2,7 @@
 #include <bb/cascades/QmlDocument>
 #include <bb/cascades/NavigationPane>
 #include <bb/cascades/Page>
+#include <bb/cascades/Label>
 #include <bb/cascades/TextField>
 #include <bb/cascades/ActionItem>
 #include <bb/cascades/ListView>
@@ -38,6 +39,7 @@ LogicPasteApp::LogicPasteApp() {
             settingsPage_ = navigationPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
+            connect(settingsPage_, SIGNAL(refreshUserDetails()), this, SLOT(onRefreshUserDetails()));
 
             Application::setScene(navigationPane_);
         }
@@ -77,6 +79,39 @@ void LogicPasteApp::onLoginFailed(QString message) {
     disconnect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 
     emit loginFailed(message);
+}
+
+void LogicPasteApp::onRefreshUserDetails() {
+    qDebug() << "onRefreshUserDetails()";
+    connect(&pastebin_, SIGNAL(userDetailsAvailable(PasteUser)), this, SLOT(onUserDetailsAvailable(PasteUser)));
+
+    pastebin_.requestUserDetails();
+}
+
+void LogicPasteApp::onUserDetailsAvailable(PasteUser pasteUser) {
+    qDebug() << "onHistoryAvailable()";
+    disconnect(&pastebin_, SIGNAL(userDetailsAvailable(PasteUser)), this, SLOT(onUserDetailsAvailable(PasteUser)));
+
+    Label *label;
+
+    label = settingsPage_->findChild<Label*>("websiteLabel");
+    if(!pasteUser.website().isEmpty()) {
+        label->setText(pasteUser.website());
+        label->setVisible(true);
+    }
+
+    label = settingsPage_->findChild<Label*>("emailLabel");
+    if(!pasteUser.email().isEmpty()) {
+        label->setText(pasteUser.email());
+        label->setVisible(true);
+    }
+
+    label = settingsPage_->findChild<Label*>("locationLabel");
+    if(!pasteUser.location().isEmpty()) {
+        label->setText(pasteUser.location());
+        label->setVisible(true);
+    }
+
 }
 
 void LogicPasteApp::onCreateAccount() {
