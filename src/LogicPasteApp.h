@@ -35,7 +35,7 @@ public slots:
 private slots:
     void onLoginComplete();
     void onLoginFailed(QString message);
-    void onTrendingAvailable(QList<PasteListing*> *pasteList);
+    void onTrendingAvailable(QList<PasteListing> *pasteList);
 
 signals:
     void loginFailed(QString message);

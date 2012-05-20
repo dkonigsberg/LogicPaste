@@ -1,52 +1,101 @@
+#include <QtCore/QSharedData>
 #include <QtCore/QDateTime>
 
 #include "PasteListing.h"
 
-PasteListing::PasteListing(QObject *parent)
-    : QObject(parent) {
+class PasteListingData: public QSharedData {
+public:
+    PasteListingData() {}
+    QString key;
+    QDateTime pasteDate;
+    QString title;
+    int pasteSize;
+    QDateTime expireDate;
+    PasteListing::Visibility visibility;
+    QString formatLong;
+    QString formatShort;
+    QString url;
+    int hits;
+};
 
+PasteListing::PasteListing() {
+    d = new PasteListingData();
 }
 
 PasteListing::~PasteListing() {
+}
+
+PasteListing::PasteListing(const PasteListing &other)
+    : d(other.d) {
 
 }
 
 QString PasteListing::key() const {
-    return key_;
+    return d->key;
+}
+void PasteListing::setKey(const QString& key) {
+    d->key = key;
 }
 
 QDateTime PasteListing::pasteDate() const {
-    return pasteDate_;
+    return d->pasteDate;
+}
+void PasteListing::setPasteDate(const QDateTime& pasteDate) {
+    d->pasteDate = pasteDate;
 }
 
 QString PasteListing::title() const {
-    return title_;
+    return d->title;
+}
+void PasteListing::setTitle(const QString& title) {
+    d->title = title;
 }
 
-int PasteListing::size() const {
-    return size_;
+int PasteListing::pasteSize() const {
+    return d->pasteSize;
+}
+void PasteListing::setPasteSize(const int pasteSize) {
+    d->pasteSize = pasteSize;
 }
 
 QDateTime PasteListing::expireDate() const {
-    return expireDate_;
+    return d->expireDate;
+}
+void PasteListing::setExpireDate(const QDateTime& expireDate) {
+    d->expireDate = expireDate;
 }
 
 PasteListing::Visibility PasteListing::visibility() const {
-    return visibility_;
+    return d->visibility;
+}
+void PasteListing::setVisibility(const Visibility visibility) {
+    d->visibility = visibility;
 }
 
 QString PasteListing::formatLong() const {
-    return formatLong_;
+    return d->formatLong;
+}
+void PasteListing::setFormatLong(const QString& formatLong) {
+    d->formatLong = formatLong;
 }
 
 QString PasteListing::formatShort() const {
-    return formatShort_;
+    return d->formatShort;
+}
+void PasteListing::setFormatShort(const QString& formatShort) {
+    d->formatShort = formatShort;
 }
 
 QString PasteListing::url() const {
-    return url_;
+    return d->url;
+}
+void PasteListing::setUrl(const QString& url) {
+    d->url = url;
 }
 
 int PasteListing::hits() const {
-    return hits_;
+    return d->hits;
+}
+void PasteListing::setHits(const int hits) {
+    d->hits = hits;
 }

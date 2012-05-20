@@ -89,10 +89,13 @@ void Pastebin::onTrendingFinished() {
 
     if(networkReply->error() == QNetworkReply::NoError) {
 
-        QList<PasteListing*> *pasteList = new QList<PasteListing*>();;
+        QList<PasteListing> *pasteList = new QList<PasteListing>();;
 
         QXmlStreamReader reader;
-        reader.addData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+        // Wrap the server response in the necessary bits to make it more
+        // closely resemble a valid XML document.  This is necessary because
+        // the Pastebin API simply returns an unenclosed list of XML fragments.
+        reader.addData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n");
         reader.addData("<response>");
         reader.addData(networkReply->readAll());
         reader.addData("</response>");
@@ -108,9 +111,13 @@ void Pastebin::onTrendingFinished() {
                     parsePasteElement(reader, pasteList);
                 }
             }
+            else if(token == QXmlStreamReader::EndDocument) {
+                qDebug() << "EndDocument";
+                continue;
+            }
         }
 
-        qDebug() << "Parsed" << pasteList->size() << "pastes";
+        qDebug() << "Parsed" << pasteList->size() << "paste elements";
 
         emit trendingAvailable(pasteList);
 
@@ -123,48 +130,48 @@ void Pastebin::onTrendingFinished() {
     }
 }
 
-void Pastebin::parsePasteElement(QXmlStreamReader& reader, QList<PasteListing*> *pasteList) {
-    qDebug() << "parsePaste()";
-    PasteListing *paste = new PasteListing();
+void Pastebin::parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *pasteList) {
+    qDebug() << "parsePasteElement()";
+    PasteListing paste;
     while(reader.readNext() != QXmlStreamReader::EndElement) {
         if(reader.name() == "paste_key") {
-            paste->key_ = reader.readElementText();
+            paste.setKey(reader.readElementText());
         }
         else if(reader.name() == "paste_date") {
-            paste->pasteDate_ = QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong());
+            paste.setPasteDate(QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong()));
         }
         else if(reader.name() == "paste_title") {
-            paste->title_ = reader.readElementText();
+            paste.setTitle(reader.readElementText());
         }
         else if(reader.name() == "paste_size") {
-            paste->size_ = reader.readElementText().toInt();
+            paste.setPasteSize(reader.readElementText().toInt());
         }
         else if(reader.name() == "paste_expire_date") {
-            paste->expireDate_ = QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong());
+            paste.setExpireDate(QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong()));
         }
         else if(reader.name() == "paste_private") {
             int value = reader.readElementText().toInt();
             if(value == 0) {
-                paste->visibility_ = PasteListing::Public;
+                paste.setVisibility(PasteListing::Public);
             }
             else if(value == 1) {
-                paste->visibility_ = PasteListing::Unlisted;
+                paste.setVisibility(PasteListing::Unlisted);
             }
             else if(value == 2) {
-                paste->visibility_ = PasteListing::Private;
+                paste.setVisibility(PasteListing::Private);
             }
         }
         else if(reader.name() == "paste_format_long") {
-            paste->formatLong_ = reader.readElementText();
+            paste.setFormatLong(reader.readElementText());
         }
         else if(reader.name() == "paste_format_short") {
-            paste->formatShort_ = reader.readElementText();
+            paste.setFormatShort(reader.readElementText());
         }
         else if(reader.name() == "paste_url") {
-            paste->url_ = reader.readElementText();
+            paste.setUrl(reader.readElementText());
         }
         else if(reader.name() == "paste_hits") {
-            paste->hits_ = reader.readElementText().toInt();
+            paste.setHits(reader.readElementText().toInt());
         }
     }
     pasteList->append(paste);

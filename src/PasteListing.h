@@ -3,25 +3,11 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QDateTime>
+#include <QtCore/QSharedDataPointer>
 
-class Pastebin;
+class PasteListingData;
 
-class PasteListing : public QObject {
-    Q_OBJECT
-
-    Q_ENUMS(Visibility)
-    Q_PROPERTY(QString key READ key FINAL)
-    Q_PROPERTY(QDateTime pasteDate READ pasteDate FINAL)
-    Q_PROPERTY(QString title READ title FINAL)
-    Q_PROPERTY(int size READ size FINAL)
-    Q_PROPERTY(QDateTime expireDate READ expireDate FINAL)
-    Q_PROPERTY(Visibility visibility READ visibility FINAL)
-    Q_PROPERTY(QString formatLong READ formatLong FINAL)
-    Q_PROPERTY(QString formatShort READ formatShort FINAL)
-    Q_PROPERTY(QString url READ url FINAL)
-    Q_PROPERTY(int hits READ hits FINAL)
-
-    friend class Pastebin;
+class PasteListing {
 
 public:
     enum Visibility {
@@ -30,31 +16,33 @@ public:
         Private
     };
 
-    PasteListing(QObject *parent = 0);
-    virtual ~PasteListing();
+    PasteListing();
+    PasteListing(const PasteListing &other);
+    ~PasteListing();
 
     QString key() const;
+    void setKey(const QString& key);
     QDateTime pasteDate() const;
+    void setPasteDate(const QDateTime& pasteDate);
     QString title() const;
-    int size() const;
+    void setTitle(const QString& title);
+    int pasteSize() const;
+    void setPasteSize(const int pasteSize);
     QDateTime expireDate() const;
+    void setExpireDate(const QDateTime& expireDate);
     Visibility visibility() const;
+    void setVisibility(const Visibility visibility);
     QString formatLong() const;
+    void setFormatLong(const QString& formatLong);
     QString formatShort() const;
+    void setFormatShort(const QString& formatShort);
     QString url() const;
+    void setUrl(const QString& url);
     int hits() const;
+    void setHits(const int hits);
 
 private:
-    QString key_;
-    QDateTime pasteDate_;
-    QString title_;
-    int size_;
-    QDateTime expireDate_;
-    Visibility visibility_;
-    QString formatLong_;
-    QString formatShort_;
-    QString url_;
-    int hits_;
+    QSharedDataPointer<PasteListingData> d;
 };
 
 #endif // PASTELISTING_H

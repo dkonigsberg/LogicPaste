@@ -25,14 +25,14 @@ public:
 signals:
     void loginComplete();
     void loginFailed(QString message);
-    void trendingAvailable(QList<PasteListing*> *pasteList);
+    void trendingAvailable(QList<PasteListing> *pasteList);
 
 private slots:
     void onLoginFinished();
     void onTrendingFinished();
 
 private:
-    void parsePasteElement(QXmlStreamReader& reader, QList<PasteListing*> *pasteList);
+    void parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *pasteList);
 
     QNetworkAccessManager accessManager_;
 };

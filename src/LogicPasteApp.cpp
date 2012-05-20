@@ -94,23 +94,22 @@ void LogicPasteApp::onRequestLogout() {
 
 void LogicPasteApp::onRefreshTrending() {
     qDebug() << "onRefreshTrending()";
-    connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing*> *)), this, SLOT(onTrendingAvailable(QList<PasteListing*> *)));
+    connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
 
     pastebin_.requestTrending();
 }
 
-void LogicPasteApp::onTrendingAvailable(QList<PasteListing*> *pasteList) {
+void LogicPasteApp::onTrendingAvailable(QList<PasteListing> *pasteList) {
     qDebug() << "onTrendingAvailable()";
-    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing*> *)), this, SLOT(onTrendingAvailable(QList<PasteListing*> *)));
+    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
 
     trendingModel_.clear();
     QVariantMap map;
-    foreach(PasteListing *paste, *pasteList) {
-        map["title"] = paste->title();
-        map["pasteDate"] = paste->pasteDate().toString(Qt::LocaleDate);
-        map["format"] = paste->formatLong();
+    foreach(PasteListing paste, *pasteList) {
+        map["title"] = paste.title();
+        map["pasteDate"] = paste.pasteDate().toString(Qt::LocaleDate);
+        map["format"] = paste.formatLong();
         trendingModel_.append(map);
-        paste->deleteLater();
     }
     delete pasteList;
 
