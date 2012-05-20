@@ -9,9 +9,10 @@ DropDown {
     }
     Option {
         text: "More"
+        
         onSelectedChanged : {
             if (selected == true) {
-                console.log ("-->Show more options");
+                nav.deprecatedPushQmlByString("FormatsListPage.qml");
            }
         }
     }
