@@ -4,6 +4,7 @@
 #include <bb/cascades/Page>
 #include <bb/cascades/TextField>
 #include <bb/cascades/ActionItem>
+#include <bb/cascades/ListView>
 
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkReply>
@@ -31,6 +32,7 @@ LogicPasteApp::LogicPasteApp() {
 
             trendingPage_ = navigationPane_->findChild<Page*>("trendingPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
+            connect(trendingPage_, SIGNAL(refreshPage()), this, SLOT(onRefreshTrending()));
 
             settingsPage_ = navigationPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
@@ -88,6 +90,34 @@ void LogicPasteApp::onRequestLogout() {
     pastebin_.logout();
 
     emit settingsUpdated();
+}
+
+void LogicPasteApp::onRefreshTrending() {
+    qDebug() << "onRefreshTrending()";
+    connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing*> *)), this, SLOT(onTrendingAvailable(QList<PasteListing*> *)));
+
+    pastebin_.requestTrending();
+}
+
+void LogicPasteApp::onTrendingAvailable(QList<PasteListing*> *pasteList) {
+    qDebug() << "onTrendingAvailable()";
+    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing*> *)), this, SLOT(onTrendingAvailable(QList<PasteListing*> *)));
+
+    trendingModel_.clear();
+    QVariantMap map;
+    foreach(PasteListing *paste, *pasteList) {
+        map["title"] = paste->title();
+        map["pasteDate"] = paste->pasteDate().toString(Qt::LocaleDate);
+        map["format"] = paste->formatLong();
+        trendingModel_.append(map);
+        paste->deleteLater();
+    }
+    delete pasteList;
+
+    ListView *listView = trendingPage_->findChild<ListView*>("pasteList");
+    listView->setDataModel(&trendingModel_);
+
+    QMetaObject::invokeMethod(trendingPage_, "refreshComplete");
 }
 
 QString LogicPasteApp::getSettingValue(const QString &keyName) {

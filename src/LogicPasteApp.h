@@ -2,6 +2,7 @@
 #define LOGICPASTEAPP_H
 
 #include <bb/cascades/Application>
+#include <bb/cascades/QListDataModel>
 #include <QtNetwork/QNetworkAccessManager>
 
 #include "Pastebin.h"
@@ -29,10 +30,12 @@ public slots:
     void onCreateAccount();
 
     void onProcessLogin(QString username, QString password);
+    void onRefreshTrending();
 
 private slots:
     void onLoginComplete();
     void onLoginFailed(QString message);
+    void onTrendingAvailable(QList<PasteListing*> *pasteList);
 
 signals:
     void loginFailed(QString message);
@@ -44,6 +47,8 @@ private:
     Page *historyPage_;
     Page *trendingPage_;
     Page *settingsPage_;
+
+    QMapListDataModel trendingModel_;
 
     Pastebin pastebin_;
 };
