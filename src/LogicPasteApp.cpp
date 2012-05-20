@@ -29,6 +29,7 @@ LogicPasteApp::LogicPasteApp() {
 
             historyPage_ = navigationPane_->findChild<Page*>("historyPage");
             historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(!pastebin_.apiKey().isEmpty());
+            connect(historyPage_, SIGNAL(refreshPage()), this, SLOT(onRefreshHistory()));
 
             trendingPage_ = navigationPane_->findChild<Page*>("trendingPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
@@ -92,6 +93,20 @@ void LogicPasteApp::onRequestLogout() {
     emit settingsUpdated();
 }
 
+void LogicPasteApp::onRefreshHistory() {
+    qDebug() << "onRefreshHistory()";
+    connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
+
+    pastebin_.requestHistory();
+}
+
+void LogicPasteApp::onHistoryAvailable(QList<PasteListing> *pasteList) {
+    qDebug() << "onHistoryAvailable()";
+    disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
+    refreshPasteListing(historyPage_, &historyModel_, pasteList);
+    delete pasteList;
+}
+
 void LogicPasteApp::onRefreshTrending() {
     qDebug() << "onRefreshTrending()";
     connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
@@ -102,21 +117,24 @@ void LogicPasteApp::onRefreshTrending() {
 void LogicPasteApp::onTrendingAvailable(QList<PasteListing> *pasteList) {
     qDebug() << "onTrendingAvailable()";
     disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
+    refreshPasteListing(trendingPage_, &trendingModel_, pasteList);
+    delete pasteList;
+}
 
-    trendingModel_.clear();
+void LogicPasteApp::refreshPasteListing(Page *page, QMapListDataModel *dataModel, QList<PasteListing> *pasteList) {
+    dataModel->clear();
     QVariantMap map;
     foreach(PasteListing paste, *pasteList) {
         map["title"] = paste.title();
         map["pasteDate"] = paste.pasteDate().toString(Qt::LocaleDate);
         map["format"] = paste.formatLong();
-        trendingModel_.append(map);
+        dataModel->append(map);
     }
-    delete pasteList;
 
-    ListView *listView = trendingPage_->findChild<ListView*>("pasteList");
-    listView->setDataModel(&trendingModel_);
+    ListView *listView = page->findChild<ListView*>("pasteList");
+    listView->setDataModel(dataModel);
 
-    QMetaObject::invokeMethod(trendingPage_, "refreshComplete");
+    QMetaObject::invokeMethod(page, "refreshComplete");
 }
 
 QString LogicPasteApp::getSettingValue(const QString &keyName) {

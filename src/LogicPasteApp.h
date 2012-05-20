@@ -30,11 +30,13 @@ public slots:
     void onCreateAccount();
 
     void onProcessLogin(QString username, QString password);
+    void onRefreshHistory();
     void onRefreshTrending();
 
 private slots:
     void onLoginComplete();
     void onLoginFailed(QString message);
+    void onHistoryAvailable(QList<PasteListing> *pasteList);
     void onTrendingAvailable(QList<PasteListing> *pasteList);
 
 signals:
@@ -42,12 +44,15 @@ signals:
     void settingsUpdated();
 
 private:
+    void refreshPasteListing(Page *page, QMapListDataModel *dataModel, QList<PasteListing> *pasteList);
+
     NavigationPane *navigationPane_;
     Page *pastePage_;
     Page *historyPage_;
     Page *trendingPage_;
     Page *settingsPage_;
 
+    QMapListDataModel historyModel_;
     QMapListDataModel trendingModel_;
 
     Pastebin pastebin_;

@@ -17,6 +17,7 @@ public:
     void login(const QString& username, const QString& password);
     void logout();
 
+    void requestHistory();
     void requestTrending();
 
     QString username() const;
@@ -25,13 +26,17 @@ public:
 signals:
     void loginComplete();
     void loginFailed(QString message);
+    void historyAvailable(QList<PasteListing> *pasteList);
     void trendingAvailable(QList<PasteListing> *pasteList);
 
 private slots:
     void onLoginFinished();
+    void onHistoryFinished();
     void onTrendingFinished();
 
 private:
+    bool processPasteListResponse(QNetworkReply *networkReply, QList<PasteListing> *pasteList);
+    bool parsePasteList(QXmlStreamReader& reader, QList<PasteListing> *pasteList);
     void parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *pasteList);
 
     QNetworkAccessManager accessManager_;

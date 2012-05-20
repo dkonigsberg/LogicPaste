@@ -70,6 +70,19 @@ void Pastebin::logout() {
     settings.remove("api_user_key");
 }
 
+void Pastebin::requestHistory() {
+    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
+
+    QUrl params;
+    params.addQueryItem("api_dev_key", PASTEBIN_DEV_KEY);
+    params.addQueryItem("api_user_key", apiKey());
+    params.addQueryItem("api_option", "list");
+
+    QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
+    connect(reply, SIGNAL(finished()), this, SLOT(onHistoryFinished()));
+}
+
 void Pastebin::requestTrending() {
     QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
@@ -82,15 +95,26 @@ void Pastebin::requestTrending() {
     connect(reply, SIGNAL(finished()), this, SLOT(onTrendingFinished()));
 }
 
+void Pastebin::onHistoryFinished() {
+    QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
+    QList<PasteListing> *pasteList = new QList<PasteListing>();
+    processPasteListResponse(networkReply, pasteList);
+    emit historyAvailable(pasteList);
+}
+
 void Pastebin::onTrendingFinished() {
     QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
+    QList<PasteListing> *pasteList = new QList<PasteListing>();
+    processPasteListResponse(networkReply, pasteList);
+    emit trendingAvailable(pasteList);
+}
+
+bool Pastebin::processPasteListResponse(QNetworkReply *networkReply, QList<PasteListing> *pasteList) {
+    bool result;
     QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-    qDebug() << "Trending request complete:" << statusCode.toInt();
+    qDebug() << "Paste list request complete:" << statusCode.toInt();
 
     if(networkReply->error() == QNetworkReply::NoError) {
-
-        QList<PasteListing> *pasteList = new QList<PasteListing>();;
-
         QXmlStreamReader reader;
         // Wrap the server response in the necessary bits to make it more
         // closely resemble a valid XML document.  This is necessary because
@@ -100,33 +124,41 @@ void Pastebin::onTrendingFinished() {
         reader.addData(networkReply->readAll());
         reader.addData("</response>");
 
-        while(!reader.atEnd()) {
-            QXmlStreamReader::TokenType token = reader.readNext();
-            if(token == QXmlStreamReader::StartDocument) {
-                qDebug() << "StartDocument";
-                continue;
-            }
-            else if(token == QXmlStreamReader::StartElement) {
-                if(reader.name() == "paste") {
-                    parsePasteElement(reader, pasteList);
-                }
-            }
-            else if(token == QXmlStreamReader::EndDocument) {
-                qDebug() << "EndDocument";
-                continue;
-            }
-        }
-
-        qDebug() << "Parsed" << pasteList->size() << "paste elements";
-
-        emit trendingAvailable(pasteList);
-
-        if(reader.hasError()) {
-            qDebug() << "Parse error:" << reader.errorString();
-        }
+        result = parsePasteList(reader, pasteList);
     }
     else {
         qDebug() << "Error";
+        result = false;
+    }
+    return result;
+}
+
+bool Pastebin::parsePasteList(QXmlStreamReader& reader, QList<PasteListing> *pasteList) {
+    while(!reader.atEnd()) {
+        QXmlStreamReader::TokenType token = reader.readNext();
+        if(token == QXmlStreamReader::StartDocument) {
+            qDebug() << "StartDocument";
+            continue;
+        }
+        else if(token == QXmlStreamReader::StartElement) {
+            if(reader.name() == "paste") {
+                parsePasteElement(reader, pasteList);
+            }
+        }
+        else if(token == QXmlStreamReader::EndDocument) {
+            qDebug() << "EndDocument";
+            continue;
+        }
+    }
+
+    qDebug() << "Parsed" << pasteList->size() << "paste elements";
+
+    if(reader.hasError()) {
+        qDebug() << "Parse error:" << reader.errorString();
+        return false;
+    }
+    else {
+        return true;
     }
 }
 
