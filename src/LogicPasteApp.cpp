@@ -128,6 +128,15 @@ void LogicPasteApp::refreshPasteListing(Page *page, QMapListDataModel *dataModel
         map["title"] = paste.title();
         map["pasteDate"] = paste.pasteDate().toString(Qt::LocaleDate);
         map["format"] = paste.formatLong();
+
+        if(paste.visibility() == PasteListing::Public) {
+            map["imageSource"] = "asset:///images/item-paste-public.png";
+        } else if(paste.visibility() == PasteListing::Unlisted) {
+            map["imageSource"] = "asset:///images/item-paste-unlisted.png";
+        } else if(paste.visibility() == PasteListing::Private) {
+            map["imageSource"] = "asset:///images/item-paste-private.png";
+        }
+
         dataModel->append(map);
     }
 

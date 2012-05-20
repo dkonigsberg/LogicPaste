@@ -37,6 +37,7 @@ Page {
 	                        titleText: ListItemData.title
 	                        descriptionText: ListItemData.pasteDate
 	                        statusText: ListItemData.format
+	                        imageSource: ListItemData.imageSource
 	                    }
 	                }
 	            ]
