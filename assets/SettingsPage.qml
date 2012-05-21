@@ -162,8 +162,6 @@ Page {
         emailLabel.text = "";
         locationLabel.text = "";
         accountTypeLabel.text = "";
-        userLabel.visible = false;
-        keyLabel.visible = false;
         websiteLabel.visible = false;
         emailLabel.visible = false;
         locationLabel.visible = false;
