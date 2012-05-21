@@ -1,6 +1,8 @@
 import bb.cascades 1.0
 
 DropDown {
+    id: expirationDropDown
+    objectName: "expirationDropDown"
     title: "Paste expiration"
     Option {
         selected: true

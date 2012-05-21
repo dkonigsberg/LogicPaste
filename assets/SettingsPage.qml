@@ -2,7 +2,6 @@ import bb.cascades 1.0
 
 Page {
     id: settings
-    
     signal requestLogin()
     signal requestLogout()
     signal refreshUserDetails()
@@ -77,6 +76,16 @@ Page {
             objectName: "accountTypeLabel"
             visible: false
         }
+        ActivityIndicator {
+            id: activityIndicator
+            preferredWidth: 400
+            preferredHeight: 200
+            visible: false
+            layoutProperties: StackLayoutProperties {
+                horizontalAlignment: HorizontalAlignment.Center
+            }
+        }
+        
         Divider {}
         
         Label {
@@ -85,19 +94,16 @@ Page {
         }
         
         FormatDropDown {
-            id: formatDropDown
             enabled: true
             title: "Default format"
         }
         
         ExpirationDropDown {
-            id: expirationDropDown
             enabled: true
             title: "Default expiration"
         }
         
         ExposureDropDown {
-            id: exposureDropDown
             enabled: true
             title: "Default exposure"
         }
@@ -109,7 +115,7 @@ Page {
             imageSource: "asset:///images/icon-refresh-action.png"
             enabled: false
             onTriggered: {
-                settings.refreshUserDetails();
+                startRefreshUserDetails();
             }
         }
     ]
@@ -127,7 +133,7 @@ Page {
 	        loginButton.enabled = false;
 	        logoutButton.enabled = true;
 	        userLabel.text = "Username: " + username;
-	        keyLabel.text = apiKey;
+	        keyLabel.text = "API user key: " + apiKey;
 	        userLabel.visible = true;
 	        keyLabel.visible = true;
 	        refreshAction.enabled = true;
@@ -150,4 +156,27 @@ Page {
 	        refreshAction.enabled = false;
         }
     }
+    
+    function startRefreshUserDetails() {
+        websiteLabel.text = "";
+        emailLabel.text = "";
+        locationLabel.text = "";
+        accountTypeLabel.text = "";
+        userLabel.visible = false;
+        keyLabel.visible = false;
+        websiteLabel.visible = false;
+        emailLabel.visible = false;
+        locationLabel.visible = false;
+        accountTypeLabel.visible = false;
+        refreshAction.enabled = false;
+        activityIndicator.visible = true;
+        activityIndicator.start();
+        settings.refreshUserDetails();
+    }
+    
+    function userDetailsRefreshed() {
+        activityIndicator.stop();
+        activityIndicator.visible = false;
+        refreshAction.enabled = true;
+    }        
 }

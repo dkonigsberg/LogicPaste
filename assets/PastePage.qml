@@ -46,15 +46,12 @@ Page {
             textStyle.color: Color.White
         }
         FormatDropDown {
-            id: formatDropDown
             enabled: true
         }
         ExpirationDropDown {
-            id: expirationDropDown
             enabled: true
         }
         ExposureDropDown {
-            id: exposureDropDown
             enabled: true
         }
     }

@@ -1,6 +1,8 @@
 import bb.cascades 1.0
 
 DropDown {
+    id: exposureDropDown
+    objectName: "exposureDropDown"
     title: "Paste exposure"
     Option {
         selected: true

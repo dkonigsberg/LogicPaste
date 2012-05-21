@@ -6,6 +6,7 @@
 #include <bb/cascades/TextField>
 #include <bb/cascades/ActionItem>
 #include <bb/cascades/ListView>
+#include <bb/cascades/DropDown>
 
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkReply>
@@ -94,24 +95,54 @@ void LogicPasteApp::onUserDetailsAvailable(PasteUser pasteUser) {
 
     Label *label;
 
-    label = settingsPage_->findChild<Label*>("websiteLabel");
     if(!pasteUser.website().isEmpty()) {
-        label->setText(pasteUser.website());
+        label = settingsPage_->findChild<Label*>("websiteLabel");
+        label->setText(QString("Website: %1").arg(pasteUser.website()));
         label->setVisible(true);
     }
 
-    label = settingsPage_->findChild<Label*>("emailLabel");
     if(!pasteUser.email().isEmpty()) {
-        label->setText(pasteUser.email());
+        label = settingsPage_->findChild<Label*>("emailLabel");
+        label->setText(QString("Email: %1").arg(pasteUser.email()));
         label->setVisible(true);
     }
 
-    label = settingsPage_->findChild<Label*>("locationLabel");
     if(!pasteUser.location().isEmpty()) {
-        label->setText(pasteUser.location());
+        label = settingsPage_->findChild<Label*>("locationLabel");
+        label->setText(QString("Location: %1").arg(pasteUser.location()));
         label->setVisible(true);
     }
 
+    DropDown *dropDown;
+
+    QSettings settings;
+    if(!pasteUser.pasteFormatShort().isEmpty()) {
+        settings.setValue("user_format_short", pasteUser.pasteFormatShort());
+        dropDown = settingsPage_->findChild<DropDown*>("formatDropDown");
+        for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
+            if(dropDown->at(i)->value() == pasteUser.pasteExpiration()) {
+                dropDown->setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+    if(!pasteUser.pasteExpiration().isEmpty()) {
+        settings.setValue("user_expiration", pasteUser.pasteExpiration());
+        dropDown = settingsPage_->findChild<DropDown*>("expirationDropDown");
+        for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
+            if(dropDown->at(i)->value() == pasteUser.pasteExpiration()) {
+                dropDown->setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    int visibilityValue = static_cast<int>(pasteUser.pasteVisibility());
+    settings.setValue("user_private", visibilityValue);
+    dropDown = settingsPage_->findChild<DropDown*>("exposureDropDown");
+    dropDown->setSelectedIndex(visibilityValue);
+
+    QMetaObject::invokeMethod(settingsPage_, "userDetailsRefreshed");
 }
 
 void LogicPasteApp::onCreateAccount() {
