@@ -33,6 +33,7 @@ public slots:
     void onProcessLogin(QString username, QString password);
     void onRefreshHistory();
     void onRefreshTrending();
+    void onOpenPaste(QString pasteUrl);
 
 private slots:
     void onLoginComplete();

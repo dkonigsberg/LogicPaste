@@ -41,4 +41,15 @@ NavigationPane {
             }
         }
     }
+    
+    onTopChanged: {
+        if (pane == historyPage || pane == trendingPage) {
+            pane.resetListFocus();
+        }
+        else if(pane == mainTab) {
+            if(mainTab.activeTabPane == historyPage || mainTab.activeTabPane == trendingPage) {
+                mainTab.activeTabPane.resetListFocus();
+            }
+        }
+    }
 }

@@ -7,6 +7,7 @@
 #include <bb/cascades/ActionItem>
 #include <bb/cascades/ListView>
 #include <bb/cascades/DropDown>
+#include <bb/cascades/WebView>
 
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkReply>
@@ -32,10 +33,12 @@ LogicPasteApp::LogicPasteApp() {
             historyPage_ = navigationPane_->findChild<Page*>("historyPage");
             historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(!pastebin_.apiKey().isEmpty());
             connect(historyPage_, SIGNAL(refreshPage()), this, SLOT(onRefreshHistory()));
+            connect(historyPage_, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
 
             trendingPage_ = navigationPane_->findChild<Page*>("trendingPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
             connect(trendingPage_, SIGNAL(refreshPage()), this, SLOT(onRefreshTrending()));
+            connect(trendingPage_, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
 
             settingsPage_ = navigationPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
@@ -203,6 +206,8 @@ void LogicPasteApp::refreshPasteListing(Page *page, QMapListDataModel *dataModel
             map["imageSource"] = "asset:///images/item-paste-private.png";
         }
 
+        map["pasteUrl"] = paste.url();
+
         dataModel->append(map);
     }
 
@@ -210,6 +215,21 @@ void LogicPasteApp::refreshPasteListing(Page *page, QMapListDataModel *dataModel
     listView->setDataModel(dataModel);
 
     QMetaObject::invokeMethod(page, "refreshComplete");
+}
+
+void LogicPasteApp::onOpenPaste(QString pasteUrl) {
+    qDebug() << "onOpenPaste():" << pasteUrl;
+
+    QmlDocument *qml = QmlDocument::create(this, "ViewPastePage.qml");
+    if(!qml->hasErrors()) {
+        Page *page = qml->createRootNode<Page>();
+        qml->setContextProperty("cs", this);
+
+        WebView *webView = page->findChild<WebView*>("webView");
+        webView->setUrl(pasteUrl);
+
+        navigationPane_->push(page);
+    }
 }
 
 QString LogicPasteApp::getSettingValue(const QString &keyName) {

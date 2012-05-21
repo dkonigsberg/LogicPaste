@@ -4,6 +4,7 @@ Page {
     id: pasteListPage
     
     signal refreshPage()
+    signal openPaste(string pasteUrl)
     
     content: Container {
         background: Color.create ("#272727")
@@ -41,6 +42,13 @@ Page {
 	                    }
 	                }
 	            ]
+	            
+                onSelectionChanged: {
+                    if(selected) {
+                        var chosenItem = dataModel.data(indexPath);
+                        pasteListPage.openPaste(chosenItem.pasteUrl)
+                    }
+                }
 	        }
 	    }
     }
@@ -57,6 +65,10 @@ Page {
             }
         }
     ]
+    
+    function resetListFocus() {
+        pasteList.clearSelection();
+    }
     
     function startRefresh() {
         refreshAction.enabled = false;
