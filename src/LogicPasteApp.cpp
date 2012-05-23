@@ -4,6 +4,7 @@
 #include <bb/cascades/Page>
 #include <bb/cascades/Label>
 #include <bb/cascades/TextField>
+#include <bb/cascades/TextArea>
 #include <bb/cascades/ActionItem>
 #include <bb/cascades/ListView>
 #include <bb/cascades/DropDown>
@@ -32,6 +33,7 @@ LogicPasteApp::LogicPasteApp() {
         navigationPane_ = qml->createRootNode<NavigationPane>();
         if(navigationPane_) {
             pastePage_ = navigationPane_->findChild<Page*>("pastePage");
+            connect(pastePage_, SIGNAL(submitPaste()), this, SLOT(onSubmitPaste()));
 
             historyPage_ = navigationPane_->findChild<Page*>("historyPage");
             historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
@@ -186,6 +188,53 @@ void LogicPasteApp::onRequestLogout() {
 
     emit settingsUpdated();
     historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
+}
+
+void LogicPasteApp::onSubmitPaste() {
+    qDebug() << "onSubmitPaste()";
+
+    QString pasteContent = pastePage_->findChild<TextArea*>("pasteTextField")->text();
+    QString pasteTitle = pastePage_->findChild<TextField*>("pasteTitleField")->text();
+
+    DropDown *expirationDropDown = pastePage_->findChild<DropDown*>("expirationDropDown");
+    QString expiration = expirationDropDown->at(expirationDropDown->selectedIndex())->value().toString();
+
+    DropDown *formatDropDown = pastePage_->findChild<DropDown*>("formatDropDown");
+    QString format = formatDropDown->at(formatDropDown->selectedIndex())->value().toString();
+
+    DropDown *exposureDropDown = pastePage_->findChild<DropDown*>("exposureDropDown");
+    int value = exposureDropDown->at(exposureDropDown->selectedIndex())->value().toInt();
+    PasteListing::Visibility visibility;
+    if(value == 0) {
+        visibility = PasteListing::Public;
+    } else if(value == 1) {
+        visibility = PasteListing::Unlisted;
+    } else {
+        visibility = PasteListing::Private;
+    }
+
+    connect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
+    connect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
+
+    pasteModel_->pastebin()->submitPaste(pasteContent, pasteTitle, format, expiration, visibility);
+}
+
+void LogicPasteApp::onPasteComplete(QString pasteUrl) {
+    Q_UNUSED(pasteUrl)
+    qDebug() << "onPasteComplete()";
+    disconnect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
+    disconnect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
+
+    QMetaObject::invokeMethod(pastePage_, "pasteSuccess");
+}
+
+void LogicPasteApp::onPasteFailed(QString message) {
+    Q_UNUSED(message)
+    qDebug() << "onPasteFailed()";
+    disconnect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
+    disconnect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
+
+    QMetaObject::invokeMethod(pastePage_, "pasteFailed");
 }
 
 void LogicPasteApp::onOpenPaste(QString pasteUrl) {

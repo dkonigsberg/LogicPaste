@@ -70,12 +70,14 @@ void PasteModel::onUserDetailsAvailable(PasteUser pasteUser) {
 void PasteModel::onHistoryAvailable(QList<PasteListing> *pasteList) {
     qDebug() << "PasteModel::onHistoryAvailable()";
     refreshPasteListing(historyModel_, pasteList);
+    delete pasteList;
     emit historyUpdated();
 }
 
 void PasteModel::onTrendingAvailable(QList<PasteListing> *pasteList) {
     qDebug() << "PasteModel::onTrendingAvailable()";
     refreshPasteListing(trendingModel_, pasteList);
+    delete pasteList;
     emit trendingUpdated();
 }
 

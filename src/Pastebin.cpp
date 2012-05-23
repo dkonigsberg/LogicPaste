@@ -70,6 +70,32 @@ void Pastebin::logout() {
     settings.remove("api_user_key");
 }
 
+void Pastebin::submitPaste(const QString& pasteContent, const QString& pasteTitle, const QString& format, const QString& expiration, const PasteListing::Visibility visibility) {
+    qDebug() << "submitPaste()";
+
+    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
+
+    QUrl params;
+    params.addQueryItem("api_dev_key", PASTEBIN_DEV_KEY);
+    params.addQueryItem("api_user_key", apiKey());
+    params.addQueryItem("api_option", "paste");
+    params.addQueryItem("api_paste_code", pasteContent);
+    params.addQueryItem("api_paste_private", QString("%1").arg(static_cast<int>(visibility)));
+    if(!pasteTitle.isEmpty()) {
+        params.addQueryItem("api_paste_name", pasteTitle);
+    }
+    if(!expiration.isEmpty()) {
+        params.addQueryItem("api_paste_expire_date", expiration);
+    }
+    if(!format.isEmpty()) {
+        params.addQueryItem("api_paste_format", format);
+    }
+
+    QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
+    connect(reply, SIGNAL(finished()), this, SLOT(onSubmitPasteFinished()));
+}
+
 void Pastebin::requestUserDetails() {
     QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
@@ -106,6 +132,31 @@ void Pastebin::requestTrending() {
 
     QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
     connect(reply, SIGNAL(finished()), this, SLOT(onTrendingFinished()));
+}
+
+void Pastebin::onSubmitPasteFinished() {
+    QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
+    QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    qDebug() << "Paste complete:" << statusCode.toInt();
+
+    if(networkReply->error() == QNetworkReply::NoError) {
+        QString response = networkReply->readAll();
+
+        qDebug() << "Response:" << response;
+
+        if(response.startsWith("Bad API request")) {
+            qDebug() << "Error with paste";
+            emit pasteFailed(response);
+        }
+        else {
+            qDebug() << "Paste successful";
+            emit pasteComplete(response);
+        }
+    }
+    else {
+        qDebug() << "Error with paste";
+        emit pasteFailed("Error");
+    }
 }
 
 void Pastebin::onUserDetailsFinished() {
@@ -277,7 +328,8 @@ void Pastebin::parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *
             paste.setKey(reader.readElementText());
         }
         else if(reader.name() == "paste_date") {
-            paste.setPasteDate(QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong()));
+            QString dateText = reader.readElementText();
+            paste.setPasteDate(QDateTime::fromTime_t(dateText.toLongLong()));
         }
         else if(reader.name() == "paste_title") {
             paste.setTitle(reader.readElementText());

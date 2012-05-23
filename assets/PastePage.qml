@@ -3,6 +3,8 @@ import bb.cascades 1.0
 Page {
     id: paste
     
+    signal submitPaste()
+    
     content: Container {
         scrollMode: ScrollMode.Vertical
         
@@ -20,6 +22,7 @@ Page {
         }
         TextField {
             id: pasteTitleField
+            objectName: "pasteTitleField"
             hintText: "Paste title (optional)"
         }
         
@@ -29,6 +32,7 @@ Page {
         }
         TextArea {
             id: pasteTextField
+            objectName: "pasteTextField"
             preferredHeight: 400
             hintText: "Text to paste"
             onTextChanging: {
@@ -46,12 +50,15 @@ Page {
             textStyle.color: Color.White
         }
         FormatDropDown {
+            id: formatDropDown
             enabled: true
         }
         ExpirationDropDown {
+            id: expirationDropDown
             enabled: true
         }
         ExposureDropDown {
+            id: exposureDropDown
             enabled: true
         }
     }
@@ -62,7 +69,37 @@ Page {
             imageSource: "asset:///images/icon-submit-action.png"
             enabled: false
             onTriggered: {
+                doSubmitPaste();
             }
         }
     ]
+    
+    function doSubmitPaste() {
+        pasteTitleField.enabled = false;
+        pasteTextField.enabled = false;
+        formatDropDown.enabled = false;
+        expirationDropDown.enabled = false;
+        exposureDropDown.enabled = false;
+        submitAction.enabled = false;
+        paste.submitPaste();
+    }
+    
+    function pasteSuccess() {
+        pasteTitleField.text = "";
+        pasteTextField.text = "";
+        pasteComplete();
+    }
+    
+    function pasteFailed() {
+        pasteComplete();
+    }
+    
+    function pasteComplete() {
+        pasteTitleField.enabled = true;
+        pasteTextField.enabled = true;
+        formatDropDown.enabled = true;
+        expirationDropDown.enabled = true;
+        exposureDropDown.enabled = true;
+        submitAction.enabled = true;
+    }
 }

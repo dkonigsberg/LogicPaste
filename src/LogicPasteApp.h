@@ -28,11 +28,14 @@ public slots:
     void onCreateAccount();
 
     void onProcessLogin(QString username, QString password);
+    void onSubmitPaste();
     void onOpenPaste(QString pasteUrl);
 
 private slots:
     void onLoginComplete();
     void onLoginFailed(QString message);
+    void onPasteComplete(QString pasteUrl);
+    void onPasteFailed(QString message);
     void onUserDetailsUpdated(PasteUser pasteUser);
 
 signals:
