@@ -4,9 +4,16 @@
 #include "PasteListing.h"
 #include "PasteUser.h"
 
-class PasteUserData: public QSharedData {
+class PasteUserData : public QSharedData {
 public:
     PasteUserData() {}
+    PasteUserData(const PasteUserData& other)
+        : QSharedData(other), username(other.username), avatarUrl(other.avatarUrl),
+         website(other.website), email(other.email), location(other.location),
+         accountType(other.accountType), pasteFormatShort(other.pasteFormatShort),
+         pasteExpiration(other.pasteExpiration), pasteVisibility(other.pasteVisibility) {
+    }
+    ~PasteUserData() { }
     QString username;
     QString avatarUrl;
     QString website;
@@ -27,6 +34,11 @@ PasteUser::~PasteUser() {
 
 PasteUser::PasteUser(const PasteUser &other)
     : d(other.d) {
+}
+
+PasteUser& PasteUser::operator=(const PasteUser &other) {
+    d = other.d;
+    return *this;
 }
 
 QString PasteUser::username() const {

@@ -61,7 +61,7 @@ Page {
             imageSource: "asset:///images/icon-refresh-action.png"
             enabled: false
             onTriggered: {
-                startRefresh();
+                pasteListPage.refreshPage();
             }
         }
     ]
@@ -70,14 +70,15 @@ Page {
         pasteList.clearSelection();
     }
     
-    function startRefresh() {
+    function onRefreshStarted() {
         refreshAction.enabled = false;
+        pasteList.enabled = false;
         activityIndicator.start();
-        pasteListPage.refreshPage();
     }
     
-    function refreshComplete() {
+    function onRefreshComplete() {
         activityIndicator.stop();
+        pasteList.enabled = true;
         refreshAction.enabled = true;
     }
 }

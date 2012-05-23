@@ -9,12 +9,6 @@ class PasteUserData;
 
 class PasteUser {
 public:
-    enum Visibility {
-        Public = 0,
-        Unlisted,
-        Private
-    };
-
     enum AccountType {
         Normal = 0,
         Pro = 1
@@ -23,6 +17,8 @@ public:
     PasteUser();
     PasteUser(const PasteUser &other);
     ~PasteUser();
+
+    PasteUser& operator=(const PasteUser &other);
 
     QString username() const;
     void setUsername(const QString& username);

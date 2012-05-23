@@ -120,22 +120,10 @@ Page {
         }
     ]
     
-    onCreationCompleted: {
-        cs.settingsUpdated.connect(onSettingsUpdated);
-        onSettingsUpdated();
-    }
-    
     function onSettingsUpdated() {
-        var username = cs.getSettingValue("api_user_name");
-        var apiKey = cs.getSettingValue("api_user_key");
-        
-        if(apiKey.length > 0) {
+        if(model.isAuthenticated()) {
 	        loginButton.enabled = false;
 	        logoutButton.enabled = true;
-	        userLabel.text = "Username: " + username;
-	        keyLabel.text = "API user key: " + apiKey;
-	        userLabel.visible = true;
-	        keyLabel.visible = true;
 	        refreshAction.enabled = true;
         }
         else {

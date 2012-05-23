@@ -52,4 +52,13 @@ NavigationPane {
             }
         }
     }
+    
+    onCreationCompleted: {
+        cs.settingsUpdated.connect(onSettingsUpdated);
+        onSettingsUpdated();
+    }
+    
+    function onSettingsUpdated() {
+        settingsPage.onSettingsUpdated();
+    }
 }

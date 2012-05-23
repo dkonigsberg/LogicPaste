@@ -22,8 +22,11 @@ LogicPasteApp::LogicPasteApp() {
     QCoreApplication::setOrganizationName("LogicProbe");
     QCoreApplication::setApplicationName("LogicPaste");
 
+    pasteModel_ = new PasteModel(this);
+
     QmlDocument *qml = QmlDocument::create(this, "main.qml");
     qml->setContextProperty("cs", this);
+    qml->setContextProperty("model", pasteModel_);
 
     if(!qml->hasErrors()) {
         navigationPane_ = qml->createRootNode<NavigationPane>();
@@ -31,19 +34,26 @@ LogicPasteApp::LogicPasteApp() {
             pastePage_ = navigationPane_->findChild<Page*>("pastePage");
 
             historyPage_ = navigationPane_->findChild<Page*>("historyPage");
-            historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(!pastebin_.apiKey().isEmpty());
-            connect(historyPage_, SIGNAL(refreshPage()), this, SLOT(onRefreshHistory()));
+            historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
+            connect(historyPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshHistory()));
             connect(historyPage_, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
+            historyPage_->findChild<ListView*>("pasteList")->setDataModel(pasteModel_->historyModel());
+            connect(pasteModel_, SIGNAL(historyUpdating()), historyPage_, SLOT(onRefreshStarted()));
+            connect(pasteModel_, SIGNAL(historyUpdated()), historyPage_, SLOT(onRefreshComplete()));
 
             trendingPage_ = navigationPane_->findChild<Page*>("trendingPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
-            connect(trendingPage_, SIGNAL(refreshPage()), this, SLOT(onRefreshTrending()));
+            connect(trendingPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshTrending()));
             connect(trendingPage_, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
+            trendingPage_->findChild<ListView*>("pasteList")->setDataModel(pasteModel_->trendingModel());
+            connect(pasteModel_, SIGNAL(trendingUpdating()), trendingPage_, SLOT(onRefreshStarted()));
+            connect(pasteModel_, SIGNAL(trendingUpdated()), trendingPage_, SLOT(onRefreshComplete()));
 
             settingsPage_ = navigationPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
-            connect(settingsPage_, SIGNAL(refreshUserDetails()), this, SLOT(onRefreshUserDetails()));
+            connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
+            connect(pasteModel_, SIGNAL(userDetailsUpdated(PasteUser)), this, SLOT(onUserDetailsUpdated(PasteUser)));
 
             Application::setScene(navigationPane_);
         }
@@ -65,38 +75,53 @@ void LogicPasteApp::onRequestLogin() {
 
 void LogicPasteApp::onProcessLogin(QString username, QString password) {
     qDebug() << "onProcessLogin" << username << "," << password;
-    connect(&pastebin_, SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
-    connect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
-    pastebin_.login(username, password);
+    connect(pasteModel_->pastebin(), SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    connect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
+    pasteModel_->pastebin()->login(username, password);
 }
 
 void LogicPasteApp::onLoginComplete() {
-    disconnect(&pastebin_, SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
-    disconnect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
+    disconnect(pasteModel_->pastebin(), SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    disconnect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
+
+    Label *label;
+    label = settingsPage_->findChild<Label*>("userLabel");
+    label->setText(QString("Username: %1").arg(pasteModel_->username()));
+    label->setVisible(true);
+
+    label = settingsPage_->findChild<Label*>("keyLabel");
+    label->setText(QString("API Key: %1").arg(pasteModel_->apiKey()));
+    label->setVisible(true);
 
     emit settingsUpdated();
+    historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
+    pasteModel_->refreshUserDetails();
     navigationPane_->popAndDelete();
 }
 
 void LogicPasteApp::onLoginFailed(QString message) {
-    disconnect(&pastebin_, SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
-    disconnect(&pastebin_, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
+    disconnect(pasteModel_->pastebin(), SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    disconnect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 
     emit loginFailed(message);
 }
 
-void LogicPasteApp::onRefreshUserDetails() {
-    qDebug() << "onRefreshUserDetails()";
-    connect(&pastebin_, SIGNAL(userDetailsAvailable(PasteUser)), this, SLOT(onUserDetailsAvailable(PasteUser)));
-
-    pastebin_.requestUserDetails();
-}
-
-void LogicPasteApp::onUserDetailsAvailable(PasteUser pasteUser) {
-    qDebug() << "onHistoryAvailable()";
-    disconnect(&pastebin_, SIGNAL(userDetailsAvailable(PasteUser)), this, SLOT(onUserDetailsAvailable(PasteUser)));
+void LogicPasteApp::onUserDetailsUpdated(PasteUser pasteUser) {
+    qDebug() << "onUserDetailsUpdated()";
 
     Label *label;
+
+    if(!pasteUser.username().isEmpty()) {
+        label = settingsPage_->findChild<Label*>("userLabel");
+        label->setText(QString("Username: %1").arg(pasteUser.username()));
+        label->setVisible(true);
+    }
+
+    if(pasteModel_->isAuthenticated()) {
+        label = settingsPage_->findChild<Label*>("keyLabel");
+        label->setText(QString("API Key: %1").arg(pasteModel_->apiKey()));
+        label->setVisible(true);
+    }
 
     if(!pasteUser.website().isEmpty()) {
         label = settingsPage_->findChild<Label*>("websiteLabel");
@@ -157,64 +182,10 @@ void LogicPasteApp::onCreateAccount() {
 void LogicPasteApp::onRequestLogout() {
     qDebug() << "onRequestLogout()";
 
-    pastebin_.logout();
+    pasteModel_->pastebin()->logout();
 
     emit settingsUpdated();
-}
-
-void LogicPasteApp::onRefreshHistory() {
-    qDebug() << "onRefreshHistory()";
-    connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
-
-    pastebin_.requestHistory();
-}
-
-void LogicPasteApp::onHistoryAvailable(QList<PasteListing> *pasteList) {
-    qDebug() << "onHistoryAvailable()";
-    disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
-    refreshPasteListing(historyPage_, &historyModel_, pasteList);
-    delete pasteList;
-}
-
-void LogicPasteApp::onRefreshTrending() {
-    qDebug() << "onRefreshTrending()";
-    connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
-
-    pastebin_.requestTrending();
-}
-
-void LogicPasteApp::onTrendingAvailable(QList<PasteListing> *pasteList) {
-    qDebug() << "onTrendingAvailable()";
-    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
-    refreshPasteListing(trendingPage_, &trendingModel_, pasteList);
-    delete pasteList;
-}
-
-void LogicPasteApp::refreshPasteListing(Page *page, QMapListDataModel *dataModel, QList<PasteListing> *pasteList) {
-    dataModel->clear();
-    QVariantMap map;
-    foreach(PasteListing paste, *pasteList) {
-        map["title"] = paste.title();
-        map["pasteDate"] = paste.pasteDate().toString(Qt::LocaleDate);
-        map["format"] = paste.formatLong();
-
-        if(paste.visibility() == PasteListing::Public) {
-            map["imageSource"] = "asset:///images/item-paste-public.png";
-        } else if(paste.visibility() == PasteListing::Unlisted) {
-            map["imageSource"] = "asset:///images/item-paste-unlisted.png";
-        } else if(paste.visibility() == PasteListing::Private) {
-            map["imageSource"] = "asset:///images/item-paste-private.png";
-        }
-
-        map["pasteUrl"] = paste.url();
-
-        dataModel->append(map);
-    }
-
-    ListView *listView = page->findChild<ListView*>("pasteList");
-    listView->setDataModel(dataModel);
-
-    QMetaObject::invokeMethod(page, "refreshComplete");
+    historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
 }
 
 void LogicPasteApp::onOpenPaste(QString pasteUrl) {
@@ -229,14 +200,5 @@ void LogicPasteApp::onOpenPaste(QString pasteUrl) {
         webView->setUrl(pasteUrl);
 
         navigationPane_->push(page);
-    }
-}
-
-QString LogicPasteApp::getSettingValue(const QString &keyName) {
-    QSettings settings;
-    if(settings.value(keyName).isNull()) {
-        return "";
-    } else {
-        return settings.value(keyName).toString();
     }
 }
