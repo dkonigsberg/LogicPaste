@@ -2,6 +2,7 @@
 #define PASTEMODEL_H
 
 #include <QtCore/QObject>
+#include <QtSql/QtSql>
 #include <bb/cascades/QListDataModel>
 #include "Pastebin.h"
 
@@ -42,9 +43,13 @@ private slots:
 private:
     void saveUserDetails();
     void loadUserDetails();
+    void loadPasteDatabase();
     void refreshPasteListing(QMapListDataModel *dataModel, QList<PasteListing> *pasteList);
+    void updatePasteTable(QString tableName, QList<PasteListing> *pasteList);
+    void loadPasteTable(QString tableName, QMapListDataModel *dataModel);
 
     Pastebin pastebin_;
+    QSqlDatabase pasteDb_;
     PasteUser pasteUser_;
     QMapListDataModel *historyModel_;
     QMapListDataModel *trendingModel_;
