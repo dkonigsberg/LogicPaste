@@ -32,7 +32,7 @@ public slots:
     void onOpenPaste(QString pasteUrl);
 
 private slots:
-    void onLoginComplete();
+    void onLoginComplete(QString apiKey);
     void onLoginFailed(QString message);
     void onPasteComplete(QString pasteUrl);
     void onPasteFailed(QString message);

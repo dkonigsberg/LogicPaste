@@ -58,6 +58,10 @@ LogicPasteApp::LogicPasteApp() {
             connect(pasteModel_, SIGNAL(userDetailsUpdated(PasteUser)), this, SLOT(onUserDetailsUpdated(PasteUser)));
 
             Application::setScene(navigationPane_);
+
+            if(pasteModel_->isAuthenticated()) {
+                onUserDetailsUpdated(pasteModel_->pasteUserDetails());
+            }
         }
     }
 }
@@ -77,27 +81,21 @@ void LogicPasteApp::onRequestLogin() {
 
 void LogicPasteApp::onProcessLogin(QString username, QString password) {
     qDebug() << "onProcessLogin" << username << "," << password;
-    connect(pasteModel_->pastebin(), SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    connect(pasteModel_->pastebin(), SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     connect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
     pasteModel_->pastebin()->login(username, password);
 }
 
-void LogicPasteApp::onLoginComplete() {
+void LogicPasteApp::onLoginComplete(QString apiKey) {
     disconnect(pasteModel_->pastebin(), SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
     disconnect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 
-    Label *label;
-    label = settingsPage_->findChild<Label*>("userLabel");
-    label->setText(QString("Username: %1").arg(pasteModel_->username()));
-    label->setVisible(true);
-
-    label = settingsPage_->findChild<Label*>("keyLabel");
-    label->setText(QString("API Key: %1").arg(pasteModel_->apiKey()));
+    Label *label = settingsPage_->findChild<Label*>("keyLabel");
+    label->setText(QString("API Key: %1").arg(apiKey));
     label->setVisible(true);
 
     emit settingsUpdated();
     historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
-    pasteModel_->refreshUserDetails();
     navigationPane_->popAndDelete();
 }
 
@@ -121,7 +119,7 @@ void LogicPasteApp::onUserDetailsUpdated(PasteUser pasteUser) {
 
     if(pasteModel_->isAuthenticated()) {
         label = settingsPage_->findChild<Label*>("keyLabel");
-        label->setText(QString("API Key: %1").arg(pasteModel_->apiKey()));
+        label->setText(QString("API Key: %1").arg(pasteUser.apiKey()));
         label->setVisible(true);
     }
 

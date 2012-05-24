@@ -24,7 +24,6 @@ Pastebin::~Pastebin() {
 void Pastebin::login(const QString& username, const QString& password) {
     QNetworkRequest request(QUrl("http://pastebin.com/api/api_login.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
-    request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1), username);
 
     QUrl params;
     params.addQueryItem("api_dev_key", PASTEBIN_DEV_KEY);
@@ -50,13 +49,8 @@ void Pastebin::onLoginFinished() {
         }
         else {
             QNetworkRequest networkRequest = networkReply->request();
-            QString username = networkRequest.attribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1)).toString();
 
-            QSettings settings;
-            settings.setValue("api_user_name", username);
-            settings.setValue("api_user_key", response);
-
-            emit loginComplete();
+            emit loginComplete(response);
         }
     }
     else {
@@ -197,6 +191,7 @@ void Pastebin::onUserDetailsFinished() {
         if(!success || reader.hasError()) {
             qDebug() << "Parse error:" << reader.errorString();
         } else {
+            pasteUser.setApiKey(apiKey());
             emit userDetailsAvailable(pasteUser);
         }
     }
@@ -368,12 +363,10 @@ void Pastebin::parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *
     pasteList->append(paste);
 }
 
-QString Pastebin::username() const {
-    QSettings settings;
-    return settings.value("api_user_name", "").toString();
+void Pastebin::setApiKey(const QString& apiKey) {
+    apiKey_ = apiKey;
 }
 
 QString Pastebin::apiKey() const {
-    QSettings settings;
-    return settings.value("api_user_key", "").toString();
+    return apiKey_;
 }

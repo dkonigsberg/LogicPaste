@@ -16,8 +16,6 @@ public:
     Q_INVOKABLE bool isAuthenticated();
 
     Pastebin* pastebin();
-    QString username() const;
-    QString apiKey() const;
 
     PasteUser pasteUserDetails() const;
     DataModel* historyModel() const;
@@ -36,11 +34,14 @@ signals:
     void trendingUpdated();
 
 private slots:
+    void onLoginComplete(QString apiKey);
     void onUserDetailsAvailable(PasteUser pasteUser);
     void onHistoryAvailable(QList<PasteListing> *pasteList);
     void onTrendingAvailable(QList<PasteListing> *pasteList);
 
 private:
+    void saveUserDetails();
+    void loadUserDetails();
     void refreshPasteListing(QMapListDataModel *dataModel, QList<PasteListing> *pasteList);
 
     Pastebin pastebin_;

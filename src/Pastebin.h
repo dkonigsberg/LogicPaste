@@ -25,11 +25,11 @@ public:
     void requestHistory();
     void requestTrending();
 
-    QString username() const;
+    void setApiKey(const QString& apiKey);
     QString apiKey() const;
 
 signals:
-    void loginComplete();
+    void loginComplete(QString apiKey);
     void loginFailed(QString message);
     void pasteComplete(QString pasteUrl);
     void pasteFailed(QString message);
@@ -51,6 +51,7 @@ private:
     void parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *pasteList);
 
     QNetworkAccessManager accessManager_;
+    QString apiKey_;
 };
 
 #endif // PASTEBIN_H

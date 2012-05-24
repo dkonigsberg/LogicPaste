@@ -7,14 +7,9 @@
 class PasteUserData : public QSharedData {
 public:
     PasteUserData() {}
-    PasteUserData(const PasteUserData& other)
-        : QSharedData(other), username(other.username), avatarUrl(other.avatarUrl),
-         website(other.website), email(other.email), location(other.location),
-         accountType(other.accountType), pasteFormatShort(other.pasteFormatShort),
-         pasteExpiration(other.pasteExpiration), pasteVisibility(other.pasteVisibility) {
-    }
     ~PasteUserData() { }
     QString username;
+    QString apiKey;
     QString avatarUrl;
     QString website;
     QString email;
@@ -46,6 +41,13 @@ QString PasteUser::username() const {
 }
 void PasteUser::setUsername(const QString& username) {
     d->username = username;
+}
+
+QString PasteUser::apiKey() const {
+    return d->apiKey;
+}
+void PasteUser::setApiKey(const QString& apiKey) {
+    d->apiKey = apiKey;
 }
 
 QString PasteUser::avatarUrl() const {

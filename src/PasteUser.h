@@ -22,6 +22,8 @@ public:
 
     QString username() const;
     void setUsername(const QString& username);
+    QString apiKey() const;
+    void setApiKey(const QString& apiKey);
     QString avatarUrl() const;
     void setAvatarUrl(const QString& avatarUrl);
     QString website() const;
