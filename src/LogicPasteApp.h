@@ -30,6 +30,8 @@ public slots:
     void onProcessLogin(QString username, QString password);
     void onSubmitPaste();
     void onOpenPaste(QString pasteUrl);
+    void onOpenPasteInBrowser(QString pasteUrl);
+    void onCopyText(QString text);
 
 private slots:
     void onLoginComplete(QString apiKey);

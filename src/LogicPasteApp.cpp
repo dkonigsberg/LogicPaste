@@ -15,6 +15,8 @@
 
 #include <bps/navigator.h>
 
+#include <clipboard/clipboard.h>
+
 #include "LogicPasteApp.h"
 
 #include "config.h"
@@ -32,25 +34,39 @@ LogicPasteApp::LogicPasteApp() {
     if(!qml->hasErrors()) {
         navigationPane_ = qml->createRootNode<NavigationPane>();
         if(navigationPane_) {
+            // Paste page
             pastePage_ = navigationPane_->findChild<Page*>("pastePage");
             connect(pastePage_, SIGNAL(submitPaste()), this, SLOT(onSubmitPaste()));
 
+            // History page
             historyPage_ = navigationPane_->findChild<Page*>("historyPage");
             historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
             connect(historyPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshHistory()));
-            connect(historyPage_, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
-            historyPage_->findChild<ListView*>("pasteList")->setDataModel(pasteModel_->historyModel());
+
+            ListView *historyList = historyPage_->findChild<ListView*>("pasteList");
+            historyList->setDataModel(pasteModel_->historyModel());
+            connect(historyList, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
+            connect(historyList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenPasteInBrowser(QString)));
+            connect(historyList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
+
             connect(pasteModel_, SIGNAL(historyUpdating()), historyPage_, SLOT(onRefreshStarted()));
             connect(pasteModel_, SIGNAL(historyUpdated()), historyPage_, SLOT(onRefreshComplete()));
 
+            // Trending page
             trendingPage_ = navigationPane_->findChild<Page*>("trendingPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
             connect(trendingPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshTrending()));
-            connect(trendingPage_, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
-            trendingPage_->findChild<ListView*>("pasteList")->setDataModel(pasteModel_->trendingModel());
+
+            ListView *trendingList = trendingPage_->findChild<ListView*>("pasteList");
+            trendingList->setDataModel(pasteModel_->trendingModel());
+            connect(trendingList, SIGNAL(openPaste(QString)), this, SLOT(onOpenPaste(QString)));
+            connect(trendingList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenPasteInBrowser(QString)));
+            connect(trendingList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
+
             connect(pasteModel_, SIGNAL(trendingUpdating()), trendingPage_, SLOT(onRefreshStarted()));
             connect(pasteModel_, SIGNAL(trendingUpdated()), trendingPage_, SLOT(onRefreshComplete()));
 
+            // Settings page
             settingsPage_ = navigationPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
@@ -247,5 +263,20 @@ void LogicPasteApp::onOpenPaste(QString pasteUrl) {
         webView->setUrl(pasteUrl);
 
         navigationPane_->push(page);
+    }
+}
+
+void LogicPasteApp::onOpenPasteInBrowser(QString pasteUrl) {
+    qDebug() << "onOpenPasteInBrowser():" << pasteUrl;
+
+    navigator_invoke(pasteUrl.toLatin1(), 0);
+}
+
+void LogicPasteApp::onCopyText(QString text) {
+    qDebug() << "onCopyText()";
+
+    if(empty_clipboard() == 0) {
+        QByteArray data = text.toUtf8();
+        set_clipboard_data("text/plain", data.size(), data);
     }
 }

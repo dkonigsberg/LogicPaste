@@ -181,6 +181,7 @@ void PasteModel::refreshPasteListing(QMapListDataModel *dataModel, QList<PasteLi
         }
 
         map["pasteUrl"] = paste.url();
+        map["pasteKey"] = paste.key();
 
         dataModel->append(map);
     }

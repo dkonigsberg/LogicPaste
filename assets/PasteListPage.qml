@@ -4,7 +4,6 @@ Page {
     id: pasteListPage
     
     signal refreshPage()
-    signal openPaste(string pasteUrl)
     
     content: Container {
         background: Color.create ("#272727")
@@ -31,6 +30,11 @@ Page {
 	            id: pasteList
 	            objectName: "pasteList"
 	            
+			    signal openPaste(string pasteUrl)
+			    signal openPasteInBrowser(string pasteUrl)
+			    signal copyUrl(string pasteUrl)
+			    signal deletePaste(string pasteKey)
+	            
 	            listItemComponents: [
 	                ListItemComponent {
 	                    StandardListItem {
@@ -39,6 +43,36 @@ Page {
 	                        descriptionText: ListItemData.pasteDate
 	                        statusText: ListItemData.format
 	                        imageSource: ListItemData.imageSource
+	                        contextActions: [
+	                            ActionSet {
+	                                title: "Paste actions"
+	                                ActionItem {
+	                                    title: "Open"
+	                                    onTriggered: {
+	                                        pasteItem.ListItem.view.openPaste(ListItemData.pasteUrl);
+	                                    }
+	                                }
+	                                ActionItem {
+	                                    title: "Open in browser"
+	                                    onTriggered: {
+	                                        pasteItem.ListItem.view.openPasteInBrowser(ListItemData.pasteUrl);
+	                                    }
+	                                }
+	                                ActionItem {
+	                                    title: "Copy URL"
+	                                    onTriggered: {
+	                                        pasteItem.ListItem.view.copyUrl(ListItemData.pasteUrl);
+	                                    }
+	                                }
+	                                ActionItem {
+	                                    title: "Delete"
+	                                    enabled: false
+	                                    onTriggered: {
+	                                        pasteItem.ListItem.view.deletePaste(ListItemData.pasteKey);
+	                                    }
+	                                }
+	                            }
+	                        ]
 	                    }
 	                }
 	            ]
@@ -46,7 +80,7 @@ Page {
                 onSelectionChanged: {
                     if(selected) {
                         var chosenItem = dataModel.data(indexPath);
-                        pasteListPage.openPaste(chosenItem.pasteUrl)
+                        pasteList.openPaste(chosenItem.pasteUrl)
                     }
                 }
 	        }
