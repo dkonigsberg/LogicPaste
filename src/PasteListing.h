@@ -19,6 +19,7 @@ public:
     PasteListing();
     PasteListing(const PasteListing &other);
     ~PasteListing();
+    PasteListing& operator=(const PasteListing& other);
 
     QString key() const;
     void setKey(const QString& key);

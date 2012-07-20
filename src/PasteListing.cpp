@@ -5,7 +5,7 @@
 
 class PasteListingData: public QSharedData {
 public:
-    PasteListingData() {}
+    PasteListingData() : pasteSize(0), visibility(PasteListing::Public), hits(0) {}
     QString key;
     QDateTime pasteDate;
     QString title;
@@ -27,7 +27,12 @@ PasteListing::~PasteListing() {
 
 PasteListing::PasteListing(const PasteListing &other)
     : d(other.d) {
+}
 
+PasteListing& PasteListing::operator=(const PasteListing& other)
+{
+    d = other.d;
+    return *this;
 }
 
 QString PasteListing::key() const {
