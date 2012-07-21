@@ -17,7 +17,6 @@ public:
     virtual ~Pastebin();
 
     void login(const QString& username, const QString& password);
-    void logout();
 
     void submitPaste(const QString& pasteContent, const QString& pasteTitle, const QString& format, const QString& expiration, const PasteListing::Visibility visibility);
 

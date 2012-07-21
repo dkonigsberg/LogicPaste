@@ -2,18 +2,20 @@ import bb.cascades 1.0
 
 Page {
     id: viewPastePage
-
-    content: Container {
-        background: Color.create ("#272727")
-        layout: StackLayout {
-            layoutDirection: LayoutDirection.TopToBottom
+    content: ScrollView {
+        scrollViewProperties {
+            scrollMode: ScrollMode.Vertical
         }
-        scrollMode: ScrollMode.Both
-        WebView {
-            id: webView
-            objectName: "webView"
-            onNavigationRequested: {
-                console.debug ("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
+        Container {
+            layout: StackLayout {
+                layoutDirection: LayoutDirection.TopToBottom
+            }
+            WebView {
+                id: webView
+                objectName: "webView"
+                onNavigationRequested: {
+                    console.debug("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
+                }
             }
         }
     }

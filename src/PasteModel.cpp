@@ -129,6 +129,24 @@ void PasteModel::loadUserDetails() {
     pastebin_.setApiKey(pasteUser_.apiKey());
 }
 
+void PasteModel::logout() {
+    QSettings settings;
+    settings.remove("api_user_name");
+    settings.remove("api_user_key");
+    settings.remove("user_avatar_url");
+    settings.remove("user_website");
+    settings.remove("user_email");
+    settings.remove("user_location");
+    settings.remove("user_account_type");
+    settings.remove("user_format_short");
+    settings.remove("user_expiration");
+    settings.remove("user_private");
+
+    pasteUser_ = PasteUser();
+
+    pastebin_.setApiKey(NULL);
+}
+
 void PasteModel::loadPasteDatabase() {
     pasteDb_ = QSqlDatabase::addDatabase("QSQLITE");
     pasteDb_.setDatabaseName("data/pasteData.db");

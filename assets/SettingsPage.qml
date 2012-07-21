@@ -5,107 +5,101 @@ Page {
     signal requestLogin()
     signal requestLogout()
     signal refreshUserDetails()
-    
-    content: Container {
-        scrollMode: ScrollMode.Vertical
-        
-        background: Color.create ("#272727")
-        layout: StackLayout {
-            layoutDirection: LayoutDirection.TopToBottom
-            leftPadding: 16
-            rightPadding: 16
-            topPadding: 16
-            bottomPadding: 16
+    content: ScrollView {
+        scrollViewProperties {
+            scrollMode: ScrollMode.Vertical
         }
-        
-        Label {
-            text: "Pastebin Account"
-            textStyle.color: Color.White
-        }
-        
-        Button {
-            id: loginButton
-            text: "Log in to Pastebin"
-            enabled: true
-            layoutProperties: StackLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Fill
+        Container {
+            layout: StackLayout {
+                layoutDirection: LayoutDirection.TopToBottom
+                leftPadding: 16
+                rightPadding: 16
+                topPadding: 16
+                bottomPadding: 16
             }
-            onClicked: {
-                settings.requestLogin();
+            Label {
+                text: "Pastebin Account"
             }
-        }
-        Button {
-            id: logoutButton
-            text: "Log out of Pastebin"
-            enabled: false
-            layoutProperties: StackLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Fill
+            Button {
+                id: loginButton
+                text: "Log in to Pastebin"
+                enabled: true
+                layoutProperties: StackLayoutProperties {
+                    horizontalAlignment: HorizontalAlignment.Fill
+                }
+                onClicked: {
+                    settings.requestLogin();
+                }
             }
-            onClicked: {
-                settings.requestLogout();
+            Button {
+                id: logoutButton
+                text: "Log out of Pastebin"
+                enabled: false
+                layoutProperties: StackLayoutProperties {
+                    horizontalAlignment: HorizontalAlignment.Fill
+                }
+                onClicked: {
+                    settings.requestLogout();
+                }
             }
-        }
-        Label {
-            id: userLabel
-            objectName: "userLabel"
-            visible: false
-        }
-        Label {
-            id: keyLabel
-            objectName: "keyLabel"
-            visible: false
-            textStyle.base: SystemDefaults.TextStyles.SmallText
-        }
-        Label {
-            id: websiteLabel
-            objectName: "websiteLabel"
-            visible: false
-        }
-        Label {
-            id: emailLabel
-            objectName: "emailLabel"
-            visible: false
-        }
-        Label {
-            id: locationLabel
-            objectName: "locationLabel"
-            visible: false
-        }
-        Label {
-            id: accountTypeLabel
-            objectName: "accountTypeLabel"
-            visible: false
-        }
-        ActivityIndicator {
-            id: activityIndicator
-            preferredWidth: 400
-            preferredHeight: 200
-            visible: false
-            layoutProperties: StackLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Center
+            Label {
+                id: userLabel
+                objectName: "userLabel"
+                visible: false
             }
-        }
-        
-        Divider {}
-        
-        Label {
-            text: "Defaults"
-            textStyle.color: Color.White
-        }
-        
-        FormatDropDown {
-            enabled: true
-            title: "Default format"
-        }
-        
-        ExpirationDropDown {
-            enabled: true
-            title: "Default expiration"
-        }
-        
-        ExposureDropDown {
-            enabled: true
-            title: "Default exposure"
+            Label {
+                id: keyLabel
+                objectName: "keyLabel"
+                visible: false
+                textStyle.base: SystemDefaults.TextStyles.SmallText
+            }
+            Label {
+                id: websiteLabel
+                objectName: "websiteLabel"
+                visible: false
+            }
+            Label {
+                id: emailLabel
+                objectName: "emailLabel"
+                visible: false
+            }
+            Label {
+                id: locationLabel
+                objectName: "locationLabel"
+                visible: false
+            }
+            Label {
+                id: accountTypeLabel
+                objectName: "accountTypeLabel"
+                visible: false
+            }
+            ActivityIndicator {
+                id: activityIndicator
+                preferredWidth: 400
+                preferredHeight: 200
+                visible: false
+                layoutProperties: StackLayoutProperties {
+                    horizontalAlignment: HorizontalAlignment.Center
+                }
+            }
+            Divider {
+            }
+            Label {
+                text: "Defaults"
+                textStyle.color: Color.White
+            }
+            FormatDropDown {
+                enabled: true
+                title: "Default format"
+            }
+            ExpirationDropDown {
+                enabled: true
+                title: "Default expiration"
+            }
+            ExposureDropDown {
+                enabled: true
+                title: "Default exposure"
+            }
         }
     }
     actions: [
@@ -114,37 +108,35 @@ Page {
             title: "Refresh"
             imageSource: "asset:///images/icon-refresh-action.png"
             enabled: false
+            ActionBar.placement: ActionBarPlacement.OnBar
             onTriggered: {
                 startRefreshUserDetails();
             }
         }
     ]
-    
     function onSettingsUpdated() {
-        if(model.isAuthenticated()) {
-	        loginButton.enabled = false;
-	        logoutButton.enabled = true;
-	        refreshAction.enabled = true;
-        }
-        else {
-	        loginButton.enabled = true;
-	        logoutButton.enabled = false;
-	        userLabel.text = "";
-	        keyLabel.text = "";
-	        websiteLabel.text = "";
-	        emailLabel.text = "";
-	        locationLabel.text = "";
-	        accountTypeLabel.text = "";
-	        userLabel.visible = false;
-	        keyLabel.visible = false;
-	        websiteLabel.visible = false;
-	        emailLabel.visible = false;
-	        locationLabel.visible = false;
-	        accountTypeLabel.visible = false;
-	        refreshAction.enabled = false;
+        if (model.isAuthenticated()) {
+            loginButton.enabled = false;
+            logoutButton.enabled = true;
+            refreshAction.enabled = true;
+        } else {
+            loginButton.enabled = true;
+            logoutButton.enabled = false;
+            userLabel.text = "";
+            keyLabel.text = "";
+            websiteLabel.text = "";
+            emailLabel.text = "";
+            locationLabel.text = "";
+            accountTypeLabel.text = "";
+            userLabel.visible = false;
+            keyLabel.visible = false;
+            websiteLabel.visible = false;
+            emailLabel.visible = false;
+            locationLabel.visible = false;
+            accountTypeLabel.visible = false;
+            refreshAction.enabled = false;
         }
     }
-    
     function startRefreshUserDetails() {
         websiteLabel.text = "";
         emailLabel.text = "";
@@ -159,10 +151,9 @@ Page {
         activityIndicator.start();
         settings.refreshUserDetails();
     }
-    
     function userDetailsRefreshed() {
         activityIndicator.stop();
         activityIndicator.visible = false;
         refreshAction.enabled = true;
-    }        
+    }
 }

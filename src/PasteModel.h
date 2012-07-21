@@ -15,6 +15,7 @@ public:
     virtual ~PasteModel();
 
     Q_INVOKABLE bool isAuthenticated();
+    void logout();
 
     Pastebin* pastebin();
 

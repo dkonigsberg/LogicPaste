@@ -58,12 +58,6 @@ void Pastebin::onLoginFinished() {
     }
 }
 
-void Pastebin::logout() {
-    QSettings settings;
-    settings.remove("api_user_name");
-    settings.remove("api_user_key");
-}
-
 void Pastebin::submitPaste(const QString& pasteContent, const QString& pasteTitle, const QString& format, const QString& expiration, const PasteListing::Visibility visibility) {
     qDebug() << "submitPaste()";
 

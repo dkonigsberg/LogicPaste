@@ -1,203 +1,203 @@
 <root>
-    <format description="4cs" description="4CS" />
-    <format description="6502acme" description="6502 ACME Cross Assembler" />
-    <format description="6502kickass" description="6502 Kick Assembler" />
-    <format description="6502tasm" description="6502 TASM/64TASS" />
-    <format description="abap" description="ABAP" />
-    <format description="actionscript" description="ActionScript" />
-    <format description="actionscript3" description="ActionScript 3" />
-    <format description="ada" description="Ada" />
-    <format description="algol68" description="ALGOL 68" />
-    <format description="apache" description="Apache Log" />
-    <format description="applescript" description="AppleScript" />
-    <format description="apt_sources" description="APT Sources" />
-    <format description="asm" description="ASM (NASM)" />
-    <format description="asp" description="ASP" />
-    <format description="autoconf" description="autoconf" />
-    <format description="autohotkey" description="Autohotkey" />
-    <format description="autoit" description="AutoIt" />
-    <format description="avisynth" description="Avisynth" />
-    <format description="awk" description="Awk" />
-    <format description="bascomavr" description="BASCOM AVR" />
-    <format description="bash" description="Bash" />
-    <format description="basic4gl" description="Basic4GL" />
-    <format description="bibtex" description="BibTeX" />
-    <format description="blitzbasic" description="Blitz Basic" />
-    <format description="bnf" description="BNF" />
-    <format description="boo" description="BOO" />
-    <format description="bf" description="BrainFuck" />
-    <format description="c" description="C" />
-    <format description="c_mac" description="C for Macs" />
-    <format description="cil" description="C Intermediate Language" />
-    <format description="csharp" description="C#" />
-    <format description="cpp" description="C++" />
-    <format description="cpp-qt" description="C++ (with QT extensions)" />
-    <format description="c_loadrunner" description="C: Loadrunner" />
-    <format description="caddcl" description="CAD DCL" />
-    <format description="cadlisp" description="CAD Lisp" />
-    <format description="cfdg" description="CFDG" />
-    <format description="chaiscript" description="ChaiScript" />
-    <format description="clojure" description="Clojure" />
-    <format description="klonec" description="Clone C" />
-    <format description="klonecpp" description="Clone C++" />
-    <format description="cmake" description="CMake" />
-    <format description="cobol" description="COBOL" />
-    <format description="coffeescript" description="CoffeeScript" />
-    <format description="cfm" description="ColdFusion" />
-    <format description="css" description="CSS" />
-    <format description="cuesheet" description="Cuesheet" />
-    <format description="d" description="D" />
-    <format description="dcs" description="DCS" />
-    <format description="delphi" description="Delphi" />
-    <format description="oxygene" description="Delphi Prism (Oxygene)" />
-    <format description="diff" description="Diff" />
-    <format description="div" description="DIV" />
-    <format description="dos" description="DOS" />
-    <format description="dot" description="DOT" />
-    <format description="e" description="E" />
-    <format description="ecmascript" description="ECMAScript" />
-    <format description="eiffel" description="Eiffel" />
-    <format description="email" description="Email" />
-    <format description="epc" description="EPC" />
-    <format description="erlang" description="Erlang" />
-    <format description="fsharp" description="F#" />
-    <format description="falcon" description="Falcon" />
-    <format description="fo" description="FO Language" />
-    <format description="f1" description="Formula One" />
-    <format description="fortran" description="Fortran" />
-    <format description="freebasic" description="FreeBasic" />
-    <format description="freeswitch" description="FreeSWITCH" />
-    <format description="gambas" description="GAMBAS" />
-    <format description="gml" description="Game Maker" />
-    <format description="gdb" description="GDB" />
-    <format description="genero" description="Genero" />
-    <format description="genie" description="Genie" />
-    <format description="gettext" description="GetText" />
-    <format description="go" description="Go" />
-    <format description="groovy" description="Groovy" />
-    <format description="gwbasic" description="GwBasic" />
-    <format description="haskell" description="Haskell" />
-    <format description="hicest" description="HicEst" />
-    <format description="hq9plus" description="HQ9 Plus" />
-    <format description="html4strict" description="HTML" />
-    <format description="html5" description="HTML 5" />
-    <format description="icon" description="Icon" />
-    <format description="idl" description="IDL" />
-    <format description="ini" description="INI file" />
-    <format description="inno" description="Inno Script" />
-    <format description="intercal" description="INTERCAL" />
-    <format description="io" description="IO" />
-    <format description="j" description="J" />
-    <format description="java" description="Java" />
-    <format description="java5" description="Java 5" />
-    <format description="javascript" description="JavaScript" />
-    <format description="jquery" description="jQuery" />
-    <format description="kixtart" description="KiXtart" />
-    <format description="latex" description="Latex" />
-    <format description="lb" description="Liberty BASIC" />
-    <format description="lsl2" description="Linden Scripting" />
-    <format description="lisp" description="Lisp" />
-    <format description="llvm" description="LLVM" />
-    <format description="locobasic" description="Loco Basic" />
-    <format description="logtalk" description="Logtalk" />
-    <format description="lolcode" description="LOL Code" />
-    <format description="lotusformulas" description="Lotus Formulas" />
-    <format description="lotusscript" description="Lotus Script" />
-    <format description="lscript" description="LScript" />
-    <format description="lua" description="Lua" />
-    <format description="m68k" description="M68000 Assembler" />
-    <format description="magiksf" description="MagikSF" />
-    <format description="make" description="Make" />
-    <format description="mapbasic" description="MapBasic" />
-    <format description="matlab" description="MatLab" />
-    <format description="mirc" description="mIRC" />
-    <format description="mmix" description="MIX Assembler" />
-    <format description="modula2" description="Modula 2" />
-    <format description="modula3" description="Modula 3" />
-    <format description="68000devpac" description="Motorola 68000 HiSoft Dev" />
-    <format description="mpasm" description="MPASM" />
-    <format description="mxml" description="MXML" />
-    <format description="mysql" description="MySQL" />
-    <format description="newlisp" description="newLISP" />
-    <format description="text" description="None" />
-    <format description="nsis" description="NullSoft Installer" />
-    <format description="oberon2" description="Oberon 2" />
-    <format description="objeck" description="Objeck Programming Langua" />
-    <format description="objc" description="Objective C" />
-    <format description="ocaml-brief" description="OCalm Brief" />
-    <format description="ocaml" description="OCaml" />
-    <format description="pf" description="OpenBSD PACKET FILTER" />
-    <format description="glsl" description="OpenGL Shading" />
-    <format description="oobas" description="Openoffice BASIC" />
-    <format description="oracle11" description="Oracle 11" />
-    <format description="oracle8" description="Oracle 8" />
-    <format description="oz" description="Oz" />
-    <format description="pascal" description="Pascal" />
-    <format description="pawn" description="PAWN" />
-    <format description="pcre" description="PCRE" />
-    <format description="per" description="Per" />
-    <format description="perl" description="Perl" />
-    <format description="perl6" description="Perl 6" />
-    <format description="php" description="PHP" />
-    <format description="php-brief" description="PHP Brief" />
-    <format description="pic16" description="Pic 16" />
-    <format description="pike" description="Pike" />
-    <format description="pixelbender" description="Pixel Bender" />
-    <format description="plsql" description="PL/SQL" />
-    <format description="postgresql" description="PostgreSQL" />
-    <format description="povray" description="POV-Ray" />
-    <format description="powershell" description="Power Shell" />
-    <format description="powerbuilder" description="PowerBuilder" />
-    <format description="proftpd" description="ProFTPd" />
-    <format description="progress" description="Progress" />
-    <format description="prolog" description="Prolog" />
-    <format description="properties" description="Properties" />
-    <format description="providex" description="ProvideX" />
-    <format description="purebasic" description="PureBasic" />
-    <format description="pycon" description="PyCon" />
-    <format description="python" description="Python" />
-    <format description="q" description="q/kdb+" />
-    <format description="qbasic" description="QBasic" />
-    <format description="rsplus" description="R" />
-    <format description="rails" description="Rails" />
-    <format description="rebol" description="REBOL" />
-    <format description="reg" description="REG" />
-    <format description="robots" description="Robots" />
-    <format description="rpmspec" description="RPM Spec" />
-    <format description="ruby" description="Ruby" />
-    <format description="gnuplot" description="Ruby Gnuplot" />
-    <format description="sas" description="SAS" />
-    <format description="scala" description="Scala" />
-    <format description="scheme" description="Scheme" />
-    <format description="scilab" description="Scilab" />
-    <format description="sdlbasic" description="SdlBasic" />
-    <format description="smalltalk" description="Smalltalk" />
-    <format description="smarty" description="Smarty" />
-    <format description="sql" description="SQL" />
-    <format description="systemverilog" description="SystemVerilog" />
-    <format description="tsql" description="T-SQL" />
-    <format description="tcl" description="TCL" />
-    <format description="teraterm" description="Tera Term" />
-    <format description="thinbasic" description="thinBasic" />
-    <format description="typoscript" description="TypoScript" />
-    <format description="unicon" description="Unicon" />
-    <format description="uscript" description="UnrealScript" />
-    <format description="vala" description="Vala" />
-    <format description="vbnet" description="VB.NET" />
-    <format description="verilog" description="VeriLog" />
-    <format description="vhdl" description="VHDL" />
-    <format description="vim" description="VIM" />
-    <format description="visualprolog" description="Visual Pro Log" />
-    <format description="vb" description="VisualBasic" />
-    <format description="visualfoxpro" description="VisualFoxPro" />
-    <format description="whitespace" description="WhiteSpace" />
-    <format description="whois" description="WHOIS" />
-    <format description="winbatch" description="Winbatch" />
-    <format description="xbasic" description="XBasic" />
-    <format description="xml" description="XML" />
-    <format description="xorg_conf" description="Xorg Config" />
-    <format description="xpp" description="XPP" />
-    <format description="yaml" description="YAML" />
-    <format description="z80" description="Z80 Assembler" />
-    <format description="zxbasic" description="ZXBasic" />
+    <format name="4cs" description="4CS" />
+    <format name="6502acme" description="6502 ACME Cross Assembler" />
+    <format name="6502kickass" description="6502 Kick Assembler" />
+    <format name="6502tasm" description="6502 TASM/64TASS" />
+    <format name="abap" description="ABAP" />
+    <format name="actionscript" description="ActionScript" />
+    <format name="actionscript3" description="ActionScript 3" />
+    <format name="ada" description="Ada" />
+    <format name="algol68" description="ALGOL 68" />
+    <format name="apache" description="Apache Log" />
+    <format name="applescript" description="AppleScript" />
+    <format name="apt_sources" description="APT Sources" />
+    <format name="asm" description="ASM (NASM)" />
+    <format name="asp" description="ASP" />
+    <format name="autoconf" description="autoconf" />
+    <format name="autohotkey" description="Autohotkey" />
+    <format name="autoit" description="AutoIt" />
+    <format name="avisynth" description="Avisynth" />
+    <format name="awk" description="Awk" />
+    <format name="bascomavr" description="BASCOM AVR" />
+    <format name="bash" description="Bash" />
+    <format name="basic4gl" description="Basic4GL" />
+    <format name="bibtex" description="BibTeX" />
+    <format name="blitzbasic" description="Blitz Basic" />
+    <format name="bnf" description="BNF" />
+    <format name="boo" description="BOO" />
+    <format name="bf" description="BrainFuck" />
+    <format name="c" description="C" />
+    <format name="c_mac" description="C for Macs" />
+    <format name="cil" description="C Intermediate Language" />
+    <format name="csharp" description="C#" />
+    <format name="cpp" description="C++" />
+    <format name="cpp-qt" description="C++ (with QT extensions)" />
+    <format name="c_loadrunner" description="C: Loadrunner" />
+    <format name="caddcl" description="CAD DCL" />
+    <format name="cadlisp" description="CAD Lisp" />
+    <format name="cfdg" description="CFDG" />
+    <format name="chaiscript" description="ChaiScript" />
+    <format name="clojure" description="Clojure" />
+    <format name="klonec" description="Clone C" />
+    <format name="klonecpp" description="Clone C++" />
+    <format name="cmake" description="CMake" />
+    <format name="cobol" description="COBOL" />
+    <format name="coffeescript" description="CoffeeScript" />
+    <format name="cfm" description="ColdFusion" />
+    <format name="css" description="CSS" />
+    <format name="cuesheet" description="Cuesheet" />
+    <format name="d" description="D" />
+    <format name="dcs" description="DCS" />
+    <format name="delphi" description="Delphi" />
+    <format name="oxygene" description="Delphi Prism (Oxygene)" />
+    <format name="diff" description="Diff" />
+    <format name="div" description="DIV" />
+    <format name="dos" description="DOS" />
+    <format name="dot" description="DOT" />
+    <format name="e" description="E" />
+    <format name="ecmascript" description="ECMAScript" />
+    <format name="eiffel" description="Eiffel" />
+    <format name="email" description="Email" />
+    <format name="epc" description="EPC" />
+    <format name="erlang" description="Erlang" />
+    <format name="fsharp" description="F#" />
+    <format name="falcon" description="Falcon" />
+    <format name="fo" description="FO Language" />
+    <format name="f1" description="Formula One" />
+    <format name="fortran" description="Fortran" />
+    <format name="freebasic" description="FreeBasic" />
+    <format name="freeswitch" description="FreeSWITCH" />
+    <format name="gambas" description="GAMBAS" />
+    <format name="gml" description="Game Maker" />
+    <format name="gdb" description="GDB" />
+    <format name="genero" description="Genero" />
+    <format name="genie" description="Genie" />
+    <format name="gettext" description="GetText" />
+    <format name="go" description="Go" />
+    <format name="groovy" description="Groovy" />
+    <format name="gwbasic" description="GwBasic" />
+    <format name="haskell" description="Haskell" />
+    <format name="hicest" description="HicEst" />
+    <format name="hq9plus" description="HQ9 Plus" />
+    <format name="html4strict" description="HTML" />
+    <format name="html5" description="HTML 5" />
+    <format name="icon" description="Icon" />
+    <format name="idl" description="IDL" />
+    <format name="ini" description="INI file" />
+    <format name="inno" description="Inno Script" />
+    <format name="intercal" description="INTERCAL" />
+    <format name="io" description="IO" />
+    <format name="j" description="J" />
+    <format name="java" description="Java" />
+    <format name="java5" description="Java 5" />
+    <format name="javascript" description="JavaScript" />
+    <format name="jquery" description="jQuery" />
+    <format name="kixtart" description="KiXtart" />
+    <format name="latex" description="Latex" />
+    <format name="lb" description="Liberty BASIC" />
+    <format name="lsl2" description="Linden Scripting" />
+    <format name="lisp" description="Lisp" />
+    <format name="llvm" description="LLVM" />
+    <format name="locobasic" description="Loco Basic" />
+    <format name="logtalk" description="Logtalk" />
+    <format name="lolcode" description="LOL Code" />
+    <format name="lotusformulas" description="Lotus Formulas" />
+    <format name="lotusscript" description="Lotus Script" />
+    <format name="lscript" description="LScript" />
+    <format name="lua" description="Lua" />
+    <format name="m68k" description="M68000 Assembler" />
+    <format name="magiksf" description="MagikSF" />
+    <format name="make" description="Make" />
+    <format name="mapbasic" description="MapBasic" />
+    <format name="matlab" description="MatLab" />
+    <format name="mirc" description="mIRC" />
+    <format name="mmix" description="MIX Assembler" />
+    <format name="modula2" description="Modula 2" />
+    <format name="modula3" description="Modula 3" />
+    <format name="68000devpac" description="Motorola 68000 HiSoft Dev" />
+    <format name="mpasm" description="MPASM" />
+    <format name="mxml" description="MXML" />
+    <format name="mysql" description="MySQL" />
+    <format name="newlisp" description="newLISP" />
+    <format name="text" description="None" />
+    <format name="nsis" description="NullSoft Installer" />
+    <format name="oberon2" description="Oberon 2" />
+    <format name="objeck" description="Objeck Programming Langua" />
+    <format name="objc" description="Objective C" />
+    <format name="ocaml-brief" description="OCalm Brief" />
+    <format name="ocaml" description="OCaml" />
+    <format name="pf" description="OpenBSD PACKET FILTER" />
+    <format name="glsl" description="OpenGL Shading" />
+    <format name="oobas" description="Openoffice BASIC" />
+    <format name="oracle11" description="Oracle 11" />
+    <format name="oracle8" description="Oracle 8" />
+    <format name="oz" description="Oz" />
+    <format name="pascal" description="Pascal" />
+    <format name="pawn" description="PAWN" />
+    <format name="pcre" description="PCRE" />
+    <format name="per" description="Per" />
+    <format name="perl" description="Perl" />
+    <format name="perl6" description="Perl 6" />
+    <format name="php" description="PHP" />
+    <format name="php-brief" description="PHP Brief" />
+    <format name="pic16" description="Pic 16" />
+    <format name="pike" description="Pike" />
+    <format name="pixelbender" description="Pixel Bender" />
+    <format name="plsql" description="PL/SQL" />
+    <format name="postgresql" description="PostgreSQL" />
+    <format name="povray" description="POV-Ray" />
+    <format name="powershell" description="Power Shell" />
+    <format name="powerbuilder" description="PowerBuilder" />
+    <format name="proftpd" description="ProFTPd" />
+    <format name="progress" description="Progress" />
+    <format name="prolog" description="Prolog" />
+    <format name="properties" description="Properties" />
+    <format name="providex" description="ProvideX" />
+    <format name="purebasic" description="PureBasic" />
+    <format name="pycon" description="PyCon" />
+    <format name="python" description="Python" />
+    <format name="q" description="q/kdb+" />
+    <format name="qbasic" description="QBasic" />
+    <format name="rsplus" description="R" />
+    <format name="rails" description="Rails" />
+    <format name="rebol" description="REBOL" />
+    <format name="reg" description="REG" />
+    <format name="robots" description="Robots" />
+    <format name="rpmspec" description="RPM Spec" />
+    <format name="ruby" description="Ruby" />
+    <format name="gnuplot" description="Ruby Gnuplot" />
+    <format name="sas" description="SAS" />
+    <format name="scala" description="Scala" />
+    <format name="scheme" description="Scheme" />
+    <format name="scilab" description="Scilab" />
+    <format name="sdlbasic" description="SdlBasic" />
+    <format name="smalltalk" description="Smalltalk" />
+    <format name="smarty" description="Smarty" />
+    <format name="sql" description="SQL" />
+    <format name="systemverilog" description="SystemVerilog" />
+    <format name="tsql" description="T-SQL" />
+    <format name="tcl" description="TCL" />
+    <format name="teraterm" description="Tera Term" />
+    <format name="thinbasic" description="thinBasic" />
+    <format name="typoscript" description="TypoScript" />
+    <format name="unicon" description="Unicon" />
+    <format name="uscript" description="UnrealScript" />
+    <format name="vala" description="Vala" />
+    <format name="vbnet" description="VB.NET" />
+    <format name="verilog" description="VeriLog" />
+    <format name="vhdl" description="VHDL" />
+    <format name="vim" description="VIM" />
+    <format name="visualprolog" description="Visual Pro Log" />
+    <format name="vb" description="VisualBasic" />
+    <format name="visualfoxpro" description="VisualFoxPro" />
+    <format name="whitespace" description="WhiteSpace" />
+    <format name="whois" description="WHOIS" />
+    <format name="winbatch" description="Winbatch" />
+    <format name="xbasic" description="XBasic" />
+    <format name="xml" description="XML" />
+    <format name="xorg_conf" description="Xorg Config" />
+    <format name="xpp" description="XPP" />
+    <format name="yaml" description="YAML" />
+    <format name="z80" description="Z80 Assembler" />
+    <format name="zxbasic" description="ZXBasic" />
 </root>

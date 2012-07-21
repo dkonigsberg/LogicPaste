@@ -13,6 +13,7 @@ using namespace bb::cascades;
 namespace bb { namespace cascades {
 class NavigationPane;
 class Page;
+class Sheet;
 } }
 
 
@@ -29,13 +30,15 @@ public slots:
 
     void onProcessLogin(QString username, QString password);
     void onSubmitPaste();
-    void onOpenPaste(QString pasteUrl);
+    void onOpenHistoryPaste(QString pasteUrl);
+    void onOpenTrendingPaste(QString pasteUrl);
     void onOpenPasteInBrowser(QString pasteUrl);
     void onCopyText(QString text);
 
 private slots:
     void onLoginComplete(QString apiKey);
     void onLoginFailed(QString message);
+    void onLoginCanceled();
     void onPasteComplete(QString pasteUrl);
     void onPasteFailed(QString message);
     void onUserDetailsUpdated(PasteUser pasteUser);
@@ -45,13 +48,17 @@ signals:
     void settingsUpdated();
 
 private:
-    NavigationPane *navigationPane_;
     Page *pastePage_;
+    NavigationPane *historyNav_;
     Page *historyPage_;
+    NavigationPane *trendingNav_;
     Page *trendingPage_;
     Page *settingsPage_;
+    Sheet *loginSheet_;
 
     PasteModel *pasteModel_;
+
+    void openPaste(NavigationPane *nav, QString pasteUrl);
 };
 
 #endif // LOGICPASTEAPP_H
