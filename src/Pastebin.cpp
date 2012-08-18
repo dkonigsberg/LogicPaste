@@ -6,11 +6,26 @@
 #include <QtNetwork/QNetworkReply>
 
 #include "Pastebin.h"
-#include "config.h"
 #include "PasteListing.h"
+#include "AppSettings.h"
+#include "config.h"
 
 const char* const PASTEBIN_DEV_KEY = PASTEBIN_API_KEY;
 const char* const URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded";
+
+class PasteUserData {
+public:
+    PasteUserData() : accountType(AppSettings::Normal), pasteVisibility(PasteListing::Public) { }
+    QString username;
+    QString avatarUrl;
+    QString website;
+    QString email;
+    QString location;
+    AppSettings::AccountType accountType;
+    QString pasteFormatShort;
+    QString pasteExpiration;
+    PasteListing::Visibility pasteVisibility;
+};
 
 Pastebin::Pastebin(QObject *parent)
     : QObject(parent) {
@@ -159,9 +174,9 @@ void Pastebin::onUserDetailsFinished() {
         reader.addData(networkReply->readAll());
         reader.addData("</response>");
 
-        PasteUser pasteUser;
         bool success = false;
 
+        PasteUserData pasteUser;
         while(!reader.atEnd()) {
             QXmlStreamReader::TokenType token = reader.readNext();
             if(token == QXmlStreamReader::StartDocument) {
@@ -170,7 +185,7 @@ void Pastebin::onUserDetailsFinished() {
             }
             else if(token == QXmlStreamReader::StartElement) {
                 if(reader.name() == "user") {
-                    parseUserDetails(reader, pasteUser);
+                    parseUserDetails(reader, &pasteUser);
                     success = true;
                 }
             }
@@ -185,8 +200,18 @@ void Pastebin::onUserDetailsFinished() {
         if(!success || reader.hasError()) {
             qDebug() << "Parse error:" << reader.errorString();
         } else {
-            pasteUser.setApiKey(apiKey());
-            emit userDetailsAvailable(pasteUser);
+            AppSettings *appSettings = AppSettings::instance();
+            appSettings->setUsername(pasteUser.username);
+            appSettings->setAvatarUrl(pasteUser.avatarUrl);
+            appSettings->setWebsite(pasteUser.website);
+            appSettings->setEmail(pasteUser.email);
+            appSettings->setLocation(pasteUser.location);
+            appSettings->setAccountType(pasteUser.accountType);
+            appSettings->setPasteFormatShort(pasteUser.pasteFormatShort);
+            appSettings->setPasteExpiration(pasteUser.pasteExpiration);
+            appSettings->setPasteVisibility(pasteUser.pasteVisibility);
+            appSettings->setApiKey(apiKey());
+            emit userDetailsUpdated();
         }
     }
     else {
@@ -194,49 +219,49 @@ void Pastebin::onUserDetailsFinished() {
     }
 }
 
-void Pastebin::parseUserDetails(QXmlStreamReader& reader, PasteUser& pasteUser) {
+void Pastebin::parseUserDetails(QXmlStreamReader& reader, PasteUserData *pasteUser) {
     qDebug() << "parseUserDetails()";
     while(reader.readNext() != QXmlStreamReader::EndElement) {
         if(reader.name() == "user_name") {
-            pasteUser.setUsername(reader.readElementText());
+            pasteUser->username = reader.readElementText();
         }
         else if(reader.name() == "user_format_short") {
-            pasteUser.setPasteFormatShort(reader.readElementText());
+            pasteUser->pasteFormatShort = reader.readElementText();
         }
         else if(reader.name() == "user_expiration") {
-            pasteUser.setPasteExpiration(reader.readElementText());
+            pasteUser->pasteExpiration = reader.readElementText();
         }
         else if(reader.name() == "user_avatar_url") {
-            pasteUser.setAvatarUrl(reader.readElementText());
+            pasteUser->avatarUrl = reader.readElementText();
         }
         else if(reader.name() == "user_private") {
             int value = reader.readElementText().toInt();
             if(value == 0) {
-                pasteUser.setPasteVisibility(PasteListing::Public);
+                pasteUser->pasteVisibility = PasteListing::Public;
             }
             else if(value == 1) {
-                pasteUser.setPasteVisibility(PasteListing::Unlisted);
+                pasteUser->pasteVisibility = PasteListing::Unlisted;
             }
             else if(value == 2) {
-                pasteUser.setPasteVisibility(PasteListing::Private);
+                pasteUser->pasteVisibility = PasteListing::Private;
             }
         }
         else if(reader.name() == "user_website") {
-            pasteUser.setWebsite(reader.readElementText());
+            pasteUser->website = reader.readElementText();
         }
         else if(reader.name() == "user_email") {
-            pasteUser.setEmail(reader.readElementText());
+            pasteUser->email = reader.readElementText();
         }
         else if(reader.name() == "user_location") {
-            pasteUser.setLocation(reader.readElementText());
+            pasteUser->location = reader.readElementText();
         }
         else if(reader.name() == "user_account_type") {
             int value = reader.readElementText().toInt();
             if(value == 0) {
-                pasteUser.setAccountType(PasteUser::Normal);
+                pasteUser->accountType = AppSettings::Normal;
             }
             else if(value == 1) {
-                pasteUser.setAccountType(PasteUser::Pro);
+                pasteUser->accountType = AppSettings::Pro;
             }
         }
     }

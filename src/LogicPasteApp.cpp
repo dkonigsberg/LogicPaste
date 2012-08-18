@@ -20,6 +20,7 @@
 #include <bps/navigator.h>
 
 #include "LogicPasteApp.h"
+#include "AppSettings.h"
 
 #include "config.h"
 
@@ -75,12 +76,12 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
             connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
-            connect(pasteModel_, SIGNAL(userDetailsUpdated(PasteUser)), this, SLOT(onUserDetailsUpdated(PasteUser)));
+            connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
 
             Application::setScene(tabbedPane);
 
             if(pasteModel_->isAuthenticated()) {
-                onUserDetailsUpdated(pasteModel_->pasteUserDetails());
+                onUserDetailsUpdated();
             }
         }
     }
@@ -152,67 +153,64 @@ void LogicPasteApp::onLoginCanceled() {
     }
 }
 
-void LogicPasteApp::onUserDetailsUpdated(PasteUser pasteUser) {
+void LogicPasteApp::onUserDetailsUpdated() {
     qDebug() << "onUserDetailsUpdated()";
 
+    AppSettings *appSettings = AppSettings::instance();
     Label *label;
 
-    if(!pasteUser.username().isEmpty()) {
+    if(!appSettings->username().isEmpty()) {
         label = settingsPage_->findChild<Label*>("userLabel");
-        label->setText(QString("Username: %1").arg(pasteUser.username()));
+        label->setText(QString("Username: %1").arg(appSettings->username()));
         label->setVisible(true);
     }
 
     if(pasteModel_->isAuthenticated()) {
         label = settingsPage_->findChild<Label*>("keyLabel");
-        label->setText(QString("API Key: %1").arg(pasteUser.apiKey()));
+        label->setText(QString("API Key: %1").arg(appSettings->apiKey()));
         label->setVisible(true);
     }
 
-    if(!pasteUser.website().isEmpty()) {
+    if(!appSettings->website().isEmpty()) {
         label = settingsPage_->findChild<Label*>("websiteLabel");
-        label->setText(QString("Website: %1").arg(pasteUser.website()));
+        label->setText(QString("Website: %1").arg(appSettings->website()));
         label->setVisible(true);
     }
 
-    if(!pasteUser.email().isEmpty()) {
+    if(!appSettings->email().isEmpty()) {
         label = settingsPage_->findChild<Label*>("emailLabel");
-        label->setText(QString("Email: %1").arg(pasteUser.email()));
+        label->setText(QString("Email: %1").arg(appSettings->email()));
         label->setVisible(true);
     }
 
-    if(!pasteUser.location().isEmpty()) {
+    if(!appSettings->location().isEmpty()) {
         label = settingsPage_->findChild<Label*>("locationLabel");
-        label->setText(QString("Location: %1").arg(pasteUser.location()));
+        label->setText(QString("Location: %1").arg(appSettings->location()));
         label->setVisible(true);
     }
 
     DropDown *dropDown;
 
-    QSettings settings;
-    if(!pasteUser.pasteFormatShort().isEmpty()) {
-        settings.setValue("user_format_short", pasteUser.pasteFormatShort());
+    if(!appSettings->pasteFormatShort().isEmpty()) {
         dropDown = settingsPage_->findChild<DropDown*>("formatDropDown");
         for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
-            if(dropDown->at(i)->value() == pasteUser.pasteExpiration()) {
+            if(dropDown->at(i)->value() == appSettings->pasteFormatShort()) {
                 dropDown->setSelectedIndex(i);
                 break;
             }
         }
     }
-    if(!pasteUser.pasteExpiration().isEmpty()) {
-        settings.setValue("user_expiration", pasteUser.pasteExpiration());
+    if(!appSettings->pasteExpiration().isEmpty()) {
         dropDown = settingsPage_->findChild<DropDown*>("expirationDropDown");
         for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
-            if(dropDown->at(i)->value() == pasteUser.pasteExpiration()) {
+            if(dropDown->at(i)->value() == appSettings->pasteExpiration()) {
                 dropDown->setSelectedIndex(i);
                 break;
             }
         }
     }
 
-    int visibilityValue = static_cast<int>(pasteUser.pasteVisibility());
-    settings.setValue("user_private", visibilityValue);
+    int visibilityValue = static_cast<int>(appSettings->pasteVisibility());
     dropDown = settingsPage_->findChild<DropDown*>("exposureDropDown");
     dropDown->setSelectedIndex(visibilityValue);
 

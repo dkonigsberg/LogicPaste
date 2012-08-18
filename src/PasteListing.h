@@ -4,11 +4,12 @@
 #include <QtCore/QObject>
 #include <QtCore/QDateTime>
 #include <QtCore/QSharedDataPointer>
+#include <QtCore/QMetaType>
 
 class PasteListingData;
 
 class PasteListing {
-
+    Q_ENUMS(Visibility)
 public:
     enum Visibility {
         Public = 0,
@@ -45,5 +46,7 @@ public:
 private:
     QSharedDataPointer<PasteListingData> d;
 };
+
+Q_DECLARE_METATYPE(PasteListing)
 
 #endif // PASTELISTING_H

@@ -1,24 +1,27 @@
-#ifndef PASTEUSER_H
-#define PASTEUSER_H
+#ifndef APPSETTINGS_H
+#define APPSETTINGS_H
 
-#include <QtCore/QSharedDataPointer>
+#include <QtCore/QtGlobal>
+#include <QtCore/QSettings>
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
+#include <QtCore/QByteArray>
 
 #include "PasteListing.h"
 
-class PasteUserData;
-
-class PasteUser {
+class AppSettings
+{
+    Q_ENUMS(AccountType)
 public:
     enum AccountType {
         Normal = 0,
         Pro = 1
     };
 
-    PasteUser();
-    PasteUser(const PasteUser &other);
-    ~PasteUser();
+    static AppSettings* instance();
 
-    PasteUser& operator=(const PasteUser &other);
+    void sync();
+    void removeUserData();
 
     QString username() const;
     void setUsername(const QString& username);
@@ -42,7 +45,10 @@ public:
     void setPasteVisibility(const PasteListing::Visibility pasteVisibility);
 
 private:
-    QSharedDataPointer<PasteUserData> d;
+    AppSettings();
+    Q_DISABLE_COPY(AppSettings);
+    static AppSettings *instance_;
+    QSettings settings_;
 };
 
-#endif // PASTEUSER_H
+#endif // APPSETTINGS_H

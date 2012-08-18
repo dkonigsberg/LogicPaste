@@ -1,19 +1,20 @@
 #include <bb/cascades/QListDataModel>
 #include "PasteModel.h"
+#include "AppSettings.h"
 
 PasteModel::PasteModel(QObject *parent)
     : QObject(parent) {
     historyModel_ = new QMapListDataModel();
     trendingModel_ = new QMapListDataModel();
 
-    loadUserDetails();
+    pastebin_.setApiKey(AppSettings::instance()->apiKey());
     loadPasteDatabase();
 
     loadPasteTable("user_pastes", historyModel_);
     loadPasteTable("trending_pastes", trendingModel_);
 
     connect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
-    connect(&pastebin_, SIGNAL(userDetailsAvailable(PasteUser)), this, SLOT(onUserDetailsAvailable(PasteUser)));
+    connect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
     connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
     connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
 }
@@ -26,7 +27,7 @@ PasteModel::~PasteModel() {
     }
 
     disconnect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
-    disconnect(&pastebin_, SIGNAL(userDetailsAvailable(PasteUser)), this, SLOT(onUserDetailsAvailable(PasteUser)));
+    disconnect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
     disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
     disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
 
@@ -56,10 +57,6 @@ Pastebin* PasteModel::pastebin() {
     return &pastebin_;
 }
 
-PasteUser PasteModel::pasteUserDetails() const {
-    return pasteUser_;
-}
-
 DataModel* PasteModel::historyModel() const {
     return historyModel_;
 }
@@ -70,17 +67,16 @@ DataModel* PasteModel::trendingModel() const {
 
 void PasteModel::onLoginComplete(QString apiKey) {
     qDebug() << "PasteModel::onLoginComplete()";
-    pasteUser_.setApiKey(apiKey);
-    saveUserDetails();
+    AppSettings::instance()->setApiKey(apiKey);
+    AppSettings::instance()->sync();
 
     pastebin_.setApiKey(apiKey);
     pastebin_.requestUserDetails();
 }
 
-void PasteModel::onUserDetailsAvailable(PasteUser pasteUser) {
-    pasteUser_ = pasteUser;
-    saveUserDetails();
-    emit userDetailsUpdated(pasteUser_);
+void PasteModel::onUserDetailsUpdated() {
+    AppSettings::instance()->sync();
+    emit userDetailsUpdated();
 }
 
 void PasteModel::onHistoryAvailable(QList<PasteListing> *pasteList) {
@@ -99,51 +95,8 @@ void PasteModel::onTrendingAvailable(QList<PasteListing> *pasteList) {
     emit trendingUpdated();
 }
 
-void PasteModel::saveUserDetails() {
-    QSettings settings;
-    settings.setValue("api_user_name", pasteUser_.username());
-    settings.setValue("api_user_key", pasteUser_.apiKey());
-    settings.setValue("user_avatar_url", pasteUser_.avatarUrl());
-    settings.setValue("user_website", pasteUser_.website());
-    settings.setValue("user_email", pasteUser_.email());
-    settings.setValue("user_location", pasteUser_.location());
-    settings.setValue("user_account_type", static_cast<int>(pasteUser_.accountType()));
-    settings.setValue("user_format_short", pasteUser_.pasteFormatShort());
-    settings.setValue("user_expiration", pasteUser_.pasteExpiration());
-    settings.setValue("user_private", static_cast<int>(pasteUser_.pasteVisibility()));
-}
-
-void PasteModel::loadUserDetails() {
-    QSettings settings;
-    pasteUser_.setUsername(settings.value("api_user_name", "").toString());
-    pasteUser_.setApiKey(settings.value("api_user_key", "").toString());
-    pasteUser_.setAvatarUrl(settings.value("user_avatar_url", "").toString());
-    pasteUser_.setWebsite(settings.value("user_website", "").toString());
-    pasteUser_.setEmail(settings.value("user_email", "").toString());
-    pasteUser_.setLocation(settings.value("user_location", "").toString());
-    pasteUser_.setAccountType(static_cast<PasteUser::AccountType>(settings.value("user_account_type", 0).toInt()));
-    pasteUser_.setPasteFormatShort(settings.value("user_format_short", "").toString());
-    pasteUser_.setPasteExpiration(settings.value("user_expiration", "").toString());
-    pasteUser_.setPasteVisibility(static_cast<PasteListing::Visibility>(settings.value("user_private", 0).toInt()));
-
-    pastebin_.setApiKey(pasteUser_.apiKey());
-}
-
 void PasteModel::logout() {
-    QSettings settings;
-    settings.remove("api_user_name");
-    settings.remove("api_user_key");
-    settings.remove("user_avatar_url");
-    settings.remove("user_website");
-    settings.remove("user_email");
-    settings.remove("user_location");
-    settings.remove("user_account_type");
-    settings.remove("user_format_short");
-    settings.remove("user_expiration");
-    settings.remove("user_private");
-
-    pasteUser_ = PasteUser();
-
+    AppSettings::instance()->removeUserData();
     pastebin_.setApiKey(NULL);
 }
 

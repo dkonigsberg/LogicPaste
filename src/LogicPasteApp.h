@@ -41,7 +41,7 @@ private slots:
     void onLoginCanceled();
     void onPasteComplete(QString pasteUrl);
     void onPasteFailed(QString message);
-    void onUserDetailsUpdated(PasteUser pasteUser);
+    void onUserDetailsUpdated();
 
 signals:
     void loginFailed(QString message);

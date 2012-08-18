@@ -19,7 +19,6 @@ public:
 
     Pastebin* pastebin();
 
-    PasteUser pasteUserDetails() const;
     DataModel* historyModel() const;
     DataModel* trendingModel() const;
 
@@ -29,7 +28,7 @@ public slots:
     void refreshTrending();
 
 signals:
-    void userDetailsUpdated(PasteUser pasteUser);
+    void userDetailsUpdated();
     void historyUpdating();
     void historyUpdated();
     void trendingUpdating();
@@ -37,13 +36,11 @@ signals:
 
 private slots:
     void onLoginComplete(QString apiKey);
-    void onUserDetailsAvailable(PasteUser pasteUser);
+    void onUserDetailsUpdated();
     void onHistoryAvailable(QList<PasteListing> *pasteList);
     void onTrendingAvailable(QList<PasteListing> *pasteList);
 
 private:
-    void saveUserDetails();
-    void loadUserDetails();
     void loadPasteDatabase();
     void refreshPasteListing(QMapListDataModel *dataModel, QList<PasteListing> *pasteList);
     void updatePasteTable(QString tableName, QList<PasteListing> *pasteList);
@@ -51,7 +48,6 @@ private:
 
     Pastebin pastebin_;
     QSqlDatabase pasteDb_;
-    PasteUser pasteUser_;
     QMapListDataModel *historyModel_;
     QMapListDataModel *trendingModel_;
 };
