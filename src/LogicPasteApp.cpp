@@ -169,7 +169,7 @@ void LogicPasteApp::onLoginComplete(QString apiKey) {
 
 void LogicPasteApp::onLoginFailed(QString message) {
     qDebug() << "onLoginFailed()";
-    disconnect(pasteModel_->pastebin(), SIGNAL(loginComplete()), this, SLOT(onLoginComplete()));
+    disconnect(pasteModel_->pastebin(), SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     disconnect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 
     emit loginFailed(message);

@@ -155,12 +155,14 @@ Page {
             emailLabel.text = "";
             locationLabel.text = "";
             accountTypeLabel.text = "";
+            avatarImage.image = null;
             userLabel.visible = false;
             keyLabel.visible = false;
             websiteLabel.visible = false;
             emailLabel.visible = false;
             locationLabel.visible = false;
             accountTypeLabel.visible = false;
+            avatarImage.visible = false;
             refreshAction.enabled = false;
         }
     }
