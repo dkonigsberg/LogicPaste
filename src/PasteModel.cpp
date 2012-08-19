@@ -15,6 +15,7 @@ PasteModel::PasteModel(QObject *parent)
 
     connect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     connect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
+    connect(&pastebin_, SIGNAL(userAvatarUpdated()), this, SIGNAL(userAvatarUpdated()));
     connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
     connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
 }

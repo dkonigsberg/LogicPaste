@@ -43,6 +43,7 @@ private slots:
     void onPasteComplete(QString pasteUrl);
     void onPasteFailed(QString message);
     void onUserDetailsUpdated();
+    void onUserAvatarUpdated();
     void onActivePaneChanged(bb::cascades::AbstractPane *activePane);
 
 signals:

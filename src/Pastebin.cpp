@@ -212,6 +212,8 @@ void Pastebin::onUserDetailsFinished() {
             appSettings->setPasteVisibility(pasteUser.pasteVisibility);
             appSettings->setApiKey(apiKey());
             emit userDetailsUpdated();
+
+            requestUserAvatar();
         }
     }
     else {
@@ -263,6 +265,33 @@ void Pastebin::parseUserDetails(QXmlStreamReader& reader, PasteUserData *pasteUs
             else if(value == 1) {
                 pasteUser->accountType = AppSettings::Pro;
             }
+        }
+    }
+}
+
+void Pastebin::requestUserAvatar()
+{
+    const QString avatarUrl = AppSettings::instance()->avatarUrl();
+    if(avatarUrl.isEmpty()) { return; }
+
+    const QUrl url(avatarUrl);
+    QNetworkRequest request(url);
+
+    QNetworkReply *reply = accessManager_.get(request);
+    connect(reply, SIGNAL(finished()), this, SLOT(onUserAvatarFinished()));
+}
+
+void Pastebin::onUserAvatarFinished()
+{
+    QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
+    QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    qDebug() << "User avatar request complete:" << statusCode.toInt();
+
+    if(networkReply->error() == QNetworkReply::NoError) {
+        const QByteArray data = networkReply->readAll();
+        if(!data.isEmpty()) {
+            AppSettings::instance()->setAvatarImage(data);
+            emit userAvatarUpdated();
         }
     }
 }

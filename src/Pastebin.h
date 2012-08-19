@@ -21,6 +21,7 @@ public:
     void submitPaste(const QString& pasteContent, const QString& pasteTitle, const QString& format, const QString& expiration, const PasteListing::Visibility visibility);
 
     void requestUserDetails();
+    void requestUserAvatar();
     void requestHistory();
     void requestTrending();
 
@@ -33,6 +34,7 @@ signals:
     void pasteComplete(QString pasteUrl);
     void pasteFailed(QString message);
     void userDetailsUpdated();
+    void userAvatarUpdated();
     void historyAvailable(QList<PasteListing> *pasteList);
     void trendingAvailable(QList<PasteListing> *pasteList);
 
@@ -40,6 +42,7 @@ private slots:
     void onLoginFinished();
     void onSubmitPasteFinished();
     void onUserDetailsFinished();
+    void onUserAvatarFinished();
     void onHistoryFinished();
     void onTrendingFinished();
 

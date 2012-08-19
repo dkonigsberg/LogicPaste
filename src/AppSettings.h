@@ -45,6 +45,9 @@ public:
     PasteListing::Visibility pasteVisibility() const;
     void setPasteVisibility(const PasteListing::Visibility pasteVisibility);
 
+    QByteArray avatarImage() const;
+    void setAvatarImage(const QByteArray& data);
+
     QStringList recentFormats() const;
     void setRecentFormats(const QStringList& recentFormats);
 

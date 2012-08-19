@@ -12,6 +12,9 @@
 #include <bb/cascades/DropDown>
 #include <bb/cascades/Container>
 #include <bb/cascades/WebView>
+#include <bb/cascades/ImageView>
+#include <bb/cascades/PixelBufferData>
+#include <bb/cascades/Image>
 #include <bb/system/SystemDialog>
 #include <bb/system/Clipboard>
 
@@ -80,6 +83,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
             connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
             connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
+            connect(pasteModel_, SIGNAL(userAvatarUpdated()), this, SLOT(onUserAvatarUpdated()));
             replaceDropDown(settingsPage_, "formatDropDown");
 
             // Tabbed pane
@@ -90,6 +94,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
 
             if(pasteModel_->isAuthenticated()) {
                 onUserDetailsUpdated();
+                onUserAvatarUpdated();
             }
         }
     }
@@ -243,6 +248,34 @@ void LogicPasteApp::onUserDetailsUpdated() {
     }
 
     QMetaObject::invokeMethod(settingsPage_, "userDetailsRefreshed");
+}
+
+void LogicPasteApp::onUserAvatarUpdated()
+{
+    qDebug() << "onUserAvatarUpdated()";
+    ImageView *imageView = settingsPage_->findChild<ImageView*>("avatarImage");
+    AppSettings *appSettings = AppSettings::instance();
+    const QByteArray data = appSettings->avatarImage();
+    if(!data.isEmpty()) {
+        QImage image = QImage::fromData(data);
+        QImage convertedImage = image.rgbSwapped();
+
+        bb::cascades::PixelBufferData pixelData(
+            bb::cascades::PixelBufferData::RGBA_PRE,
+            image.width(),
+            image.height(),
+            image.width(),
+            (void *)convertedImage.bits());
+        Image displayableImage(pixelData);
+
+        imageView->setImage(displayableImage);
+        imageView->setPreferredWidth(image.width() * 4);
+        imageView->setPreferredHeight(image.height() * 4);
+        imageView->setVisible(true);
+    }
+    else {
+        imageView->setVisible(false);
+    }
 }
 
 void LogicPasteApp::onCreateAccount() {

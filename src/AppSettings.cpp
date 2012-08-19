@@ -38,6 +38,7 @@ void AppSettings::removeUserData()
     settings_.remove("user_format_short");
     settings_.remove("user_expiration");
     settings_.remove("user_private");
+    settings_.remove("user_avatar_image");
 }
 
 QString AppSettings::username() const
@@ -128,6 +129,15 @@ PasteListing::Visibility AppSettings::pasteVisibility() const
 void AppSettings::setPasteVisibility(const PasteListing::Visibility pasteVisibility)
 {
     settings_.setValue("user_private", static_cast<int>(pasteVisibility));
+}
+
+QByteArray AppSettings::avatarImage() const
+{
+    return settings_.value("user_avatar_image").toByteArray();
+}
+void AppSettings::setAvatarImage(const QByteArray& data)
+{
+    settings_.setValue("user_avatar_image", data);
 }
 
 QStringList AppSettings::recentFormats() const

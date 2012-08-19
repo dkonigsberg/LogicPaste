@@ -29,6 +29,7 @@ public slots:
 
 signals:
     void userDetailsUpdated();
+    void userAvatarUpdated();
     void historyUpdating();
     void historyUpdated();
     void trendingUpdating();

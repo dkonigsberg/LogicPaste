@@ -42,36 +42,62 @@ Page {
                     settings.requestLogout();
                 }
             }
-            Label {
-                id: userLabel
-                objectName: "userLabel"
-                visible: false
-            }
-            Label {
-                id: keyLabel
-                objectName: "keyLabel"
-                visible: false
-                textStyle.base: SystemDefaults.TextStyles.SmallText
-            }
-            Label {
-                id: websiteLabel
-                objectName: "websiteLabel"
-                visible: false
-            }
-            Label {
-                id: emailLabel
-                objectName: "emailLabel"
-                visible: false
-            }
-            Label {
-                id: locationLabel
-                objectName: "locationLabel"
-                visible: false
-            }
-            Label {
-                id: accountTypeLabel
-                objectName: "accountTypeLabel"
-                visible: false
+            Container {
+                layout: StackLayout {
+                    layoutDirection: LayoutDirection.LeftToRight
+                    leftPadding: 10
+                    rightPadding: 10
+                }
+                ImageView {
+                    id: avatarImage
+                    objectName: "avatarImage"
+                    scalingMethod: ScalingMethod.AspectFit
+                    visible: false
+                    rightMargin: 10
+                    layoutProperties: StackLayoutProperties {
+                        verticalAlignment: VerticalAlignment.Center
+                    }
+                }
+                Container {
+                    layout: StackLayout {
+                        layoutDirection: LayoutDirection.TopToBottom
+                    }
+                    layoutProperties: StackLayoutProperties {
+                        verticalAlignment: VerticalAlignment.Center
+                        spaceQuota: 1
+                    }
+                    Label {
+                        id: userLabel
+                        objectName: "userLabel"
+                        visible: false
+                    }
+                    Label {
+                        id: keyLabel
+                        objectName: "keyLabel"
+                        visible: false
+                        textStyle.base: SystemDefaults.TextStyles.SmallText
+                    }
+                    Label {
+                        id: websiteLabel
+                        objectName: "websiteLabel"
+                        visible: false
+                    }
+                    Label {
+                        id: emailLabel
+                        objectName: "emailLabel"
+                        visible: false
+                    }
+                    Label {
+                        id: locationLabel
+                        objectName: "locationLabel"
+                        visible: false
+                    }
+                    Label {
+                        id: accountTypeLabel
+                        objectName: "accountTypeLabel"
+                        visible: false
+                    }
+                }
             }
             ActivityIndicator {
                 id: activityIndicator
