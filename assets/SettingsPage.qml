@@ -89,6 +89,7 @@ Page {
                 textStyle.color: Color.White
             }
             FormatDropDown {
+                objectName: "formatDropDown"
                 enabled: true
                 title: "Default format"
             }

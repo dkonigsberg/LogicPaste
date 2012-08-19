@@ -16,6 +16,7 @@ class Page;
 class Sheet;
 } }
 
+class FormatDropDown;
 
 class LogicPasteApp : public QObject {
     Q_OBJECT
@@ -42,6 +43,7 @@ private slots:
     void onPasteComplete(QString pasteUrl);
     void onPasteFailed(QString message);
     void onUserDetailsUpdated();
+    void onActivePaneChanged(bb::cascades::AbstractPane *activePane);
 
 signals:
     void loginFailed(QString message);
@@ -58,6 +60,7 @@ private:
 
     PasteModel *pasteModel_;
 
+    static FormatDropDown* replaceDropDown(Page *page, const QString& objectName);
     void openPaste(NavigationPane *nav, QString pasteUrl);
 };
 

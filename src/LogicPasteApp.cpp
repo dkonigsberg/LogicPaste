@@ -10,6 +10,7 @@
 #include <bb/cascades/ActionItem>
 #include <bb/cascades/ListView>
 #include <bb/cascades/DropDown>
+#include <bb/cascades/Container>
 #include <bb/cascades/WebView>
 #include <bb/system/SystemDialog>
 #include <bb/system/Clipboard>
@@ -19,6 +20,7 @@
 
 #include <bps/navigator.h>
 
+#include "FormatDropDown.h"
 #include "LogicPasteApp.h"
 #include "AppSettings.h"
 
@@ -40,6 +42,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             // Paste page
             pastePage_ = tabbedPane->findChild<Page*>("pastePage");
             connect(pastePage_, SIGNAL(submitPaste()), this, SLOT(onSubmitPaste()));
+            replaceDropDown(pastePage_, "formatDropDown");
 
             // History page
             historyNav_ = tabbedPane->findChild<NavigationPane*>("historyPage");
@@ -77,6 +80,11 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
             connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
             connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
+            replaceDropDown(settingsPage_, "formatDropDown");
+
+            // Tabbed pane
+            connect(tabbedPane, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
+                this, SLOT(onActivePaneChanged(bb::cascades::AbstractPane*)));
 
             Application::setScene(tabbedPane);
 
@@ -85,6 +93,24 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             }
         }
     }
+}
+
+FormatDropDown* LogicPasteApp::replaceDropDown(Page *page, const QString& objectName)
+{
+    DropDown *dropDown = page->findChild<DropDown*>(objectName);
+    if(!dropDown) { return NULL; }
+
+    Container *container = qobject_cast<Container*>(dropDown->parent());
+    if(!container) { return NULL; }
+
+    int index = container->indexOf(dropDown);
+
+    FormatDropDown *formatDropDown = new FormatDropDown();
+    formatDropDown->setObjectName(objectName);
+    formatDropDown->setTitle(dropDown->title());
+    container->replace(index, formatDropDown);
+
+    return formatDropDown;
 }
 
 void LogicPasteApp::onRequestLogin() {
@@ -189,30 +215,32 @@ void LogicPasteApp::onUserDetailsUpdated() {
         label->setVisible(true);
     }
 
-    DropDown *dropDown;
-
+    FormatDropDown *formatDropDown;
     if(!appSettings->pasteFormatShort().isEmpty()) {
-        dropDown = settingsPage_->findChild<DropDown*>("formatDropDown");
-        for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
-            if(dropDown->at(i)->value() == appSettings->pasteFormatShort()) {
-                dropDown->setSelectedIndex(i);
-                break;
-            }
+        formatDropDown = settingsPage_->findChild<FormatDropDown*>("formatDropDown");
+        if(formatDropDown) {
+            formatDropDown->selectFormat(appSettings->pasteFormatShort());
         }
     }
+
+    DropDown *dropDown;
     if(!appSettings->pasteExpiration().isEmpty()) {
         dropDown = settingsPage_->findChild<DropDown*>("expirationDropDown");
-        for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
-            if(dropDown->at(i)->value() == appSettings->pasteExpiration()) {
-                dropDown->setSelectedIndex(i);
-                break;
+        if(dropDown) {
+            for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
+                if(dropDown->at(i)->value() == appSettings->pasteExpiration()) {
+                    dropDown->setSelectedIndex(i);
+                    break;
+                }
             }
         }
     }
 
     int visibilityValue = static_cast<int>(appSettings->pasteVisibility());
     dropDown = settingsPage_->findChild<DropDown*>("exposureDropDown");
-    dropDown->setSelectedIndex(visibilityValue);
+    if(dropDown) {
+        dropDown->setSelectedIndex(visibilityValue);
+    }
 
     QMetaObject::invokeMethod(settingsPage_, "userDetailsRefreshed");
 }
@@ -241,8 +269,8 @@ void LogicPasteApp::onSubmitPaste() {
     DropDown *expirationDropDown = pastePage_->findChild<DropDown*>("expirationDropDown");
     QString expiration = expirationDropDown->at(expirationDropDown->selectedIndex())->value().toString();
 
-    DropDown *formatDropDown = pastePage_->findChild<DropDown*>("formatDropDown");
-    QString format = formatDropDown->at(formatDropDown->selectedIndex())->value().toString();
+    FormatDropDown *formatDropDown = pastePage_->findChild<FormatDropDown*>("formatDropDown");
+    QString format = formatDropDown->selectedFormat();
 
     DropDown *exposureDropDown = pastePage_->findChild<DropDown*>("exposureDropDown");
     int value = exposureDropDown->at(exposureDropDown->selectedIndex())->value().toInt();
@@ -322,5 +350,15 @@ void LogicPasteApp::onCopyText(QString text) {
     bb::system::Clipboard clipboard;
     if(clipboard.clear()) {
         clipboard.insert("text/plain", text.toUtf8());
+    }
+}
+
+void LogicPasteApp::onActivePaneChanged(bb::cascades::AbstractPane *activePane)
+{
+    if(activePane == pastePage_ || activePane == settingsPage_) {
+        FormatDropDown *dropDown = activePane->findChild<FormatDropDown*>("formatDropDown");
+        if(dropDown) {
+            dropDown->refreshRecentFormats();
+        }
     }
 }

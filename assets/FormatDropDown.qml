@@ -11,24 +11,5 @@ DropDown {
     }
     Option {
         text: "More"
-        onSelectedChanged: {
-            if (selected == true) {
-                formatListSheet.visible = true;
-            }
-        }
     }
-    attachedObjects: [
-        Sheet {
-            id: formatListSheet
-            FormatsListPage {
-                onCancel: {
-                    formatListSheet.visible = false;
-                }
-                onSelectFormat: {
-                    // Add format to list
-                    formatListSheet.visible = false;
-                }
-            }
-        }
-    ]
 }

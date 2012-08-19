@@ -4,6 +4,7 @@
 #include <QtCore/QtGlobal>
 #include <QtCore/QSettings>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QDateTime>
 #include <QtCore/QByteArray>
 
@@ -43,6 +44,9 @@ public:
     void setPasteExpiration(const QString& pasteExpiration);
     PasteListing::Visibility pasteVisibility() const;
     void setPasteVisibility(const PasteListing::Visibility pasteVisibility);
+
+    QStringList recentFormats() const;
+    void setRecentFormats(const QStringList& recentFormats);
 
 private:
     AppSettings();

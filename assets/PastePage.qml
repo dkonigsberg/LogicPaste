@@ -33,7 +33,7 @@ Page {
             TextArea {
                 id: pasteTextField
                 objectName: "pasteTextField"
-                preferredHeight: 400
+                preferredHeight: 300
                 hintText: "Text to paste"
                 onTextChanging: {
                     if (text.length > 0) {
@@ -50,6 +50,7 @@ Page {
             }
             FormatDropDown {
                 id: formatDropDown
+                objectName: "formatDropDown"
                 enabled: true
             }
             ExpirationDropDown {

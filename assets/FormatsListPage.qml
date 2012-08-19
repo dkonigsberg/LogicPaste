@@ -3,7 +3,7 @@ import bb.cascades 1.0
 Page {
     id: formatsListPage
     signal cancel()
-    signal selectFormat(string format)
+    signal selectFormat(string format, string description)
     titleBar: TitleBar {
         title: "Paste Formats"
         visibility: ChromeVisibility.Visible
@@ -35,7 +35,7 @@ Page {
             ]
             onTriggered: {
                 var chosenFormat = formatsModel.data(indexPath);
-                formatsListPage.selectFormat(chosenFormat.name);
+                formatsListPage.selectFormat(chosenFormat.name, chosenFormat.description);
             }
         }
     }
