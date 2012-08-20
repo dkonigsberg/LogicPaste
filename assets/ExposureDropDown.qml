@@ -3,18 +3,18 @@ import bb.cascades 1.0
 DropDown {
     id: exposureDropDown
     objectName: "exposureDropDown"
-    title: "Paste exposure"
+    title: qsTr("Paste exposure")
     Option {
         selected: true
-        text: "Public"
+        text: qsTr("Public")
         value: "0"
     }
     Option {
-        text: "Unlisted"
+        text: qsTr("Unlisted")
         value: "1"
     }
     Option {
-        text: "Private"
+        text: qsTr("Private")
         value: "2"
     }
 }

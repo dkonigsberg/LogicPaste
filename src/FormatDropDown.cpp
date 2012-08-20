@@ -14,16 +14,16 @@ FormatDropDown::FormatDropDown(Container *parent)
     : CustomControl(parent), formatSheet_(NULL)
 {
     dropDown_ = new DropDown();
-    dropDown_->setTitle("Paste format");
+    dropDown_->setTitle(tr("Paste format"));
 
     Option *textOption = new Option();
-    textOption->setText("None");
+    textOption->setText(tr("None"));
     textOption->setValue("text");
     textOption->setSelected(true);
     dropDown_->add(textOption);
 
     Option *moreOption = new Option();
-    moreOption->setText("Show more choices...");
+    moreOption->setText(tr("Show more choices..."));
     connect(moreOption, SIGNAL(selectedChanged(bool)), this, SLOT(onMoreSelectedChanged(bool)));
     dropDown_->add(moreOption);
 

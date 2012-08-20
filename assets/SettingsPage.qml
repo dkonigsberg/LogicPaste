@@ -18,11 +18,11 @@ Page {
                 bottomPadding: 16
             }
             Label {
-                text: "Pastebin Account"
+                text: qsTr("Pastebin Account")
             }
             Button {
                 id: loginButton
-                text: "Log in to Pastebin"
+                text: qsTr("Log in to Pastebin")
                 enabled: true
                 layoutProperties: StackLayoutProperties {
                     horizontalAlignment: HorizontalAlignment.Fill
@@ -33,7 +33,7 @@ Page {
             }
             Button {
                 id: logoutButton
-                text: "Log out of Pastebin"
+                text: qsTr("Log out of Pastebin")
                 enabled: false
                 layoutProperties: StackLayoutProperties {
                     horizontalAlignment: HorizontalAlignment.Fill
@@ -111,28 +111,28 @@ Page {
             Divider {
             }
             Label {
-                text: "Defaults"
+                text: qsTr("Defaults")
                 textStyle.color: Color.White
             }
             FormatDropDown {
                 objectName: "formatDropDown"
                 enabled: true
-                title: "Default format"
+                title: qsTr("Default format")
             }
             ExpirationDropDown {
                 enabled: true
-                title: "Default expiration"
+                title: qsTr("Default expiration")
             }
             ExposureDropDown {
                 enabled: true
-                title: "Default exposure"
+                title: qsTr("Default exposure")
             }
         }
     }
     actions: [
         ActionItem {
             id: refreshAction
-            title: "Refresh"
+            title: qsTr("Refresh")
             imageSource: "asset:///images/icon-refresh-action.png"
             enabled: false
             ActionBar.placement: ActionBarPlacement.OnBar

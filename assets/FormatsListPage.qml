@@ -5,10 +5,10 @@ Page {
     signal cancel()
     signal selectFormat(string format, string description)
     titleBar: TitleBar {
-        title: "Paste Formats"
+        title: qsTr("Paste Formats")
         visibility: ChromeVisibility.Visible
         dismissAction: ActionItem {
-            title: "Cancel"
+            title: qsTr("Cancel")
             onTriggered: {
                 formatsListPage.cancel();
             }

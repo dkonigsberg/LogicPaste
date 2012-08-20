@@ -192,31 +192,31 @@ void LogicPasteApp::onUserDetailsUpdated() {
 
     if(!appSettings->username().isEmpty()) {
         label = settingsPage_->findChild<Label*>("userLabel");
-        label->setText(QString("Username: %1").arg(appSettings->username()));
+        label->setText(QString(tr("Username: %1")).arg(appSettings->username()));
         label->setVisible(true);
     }
 
     if(pasteModel_->isAuthenticated()) {
         label = settingsPage_->findChild<Label*>("keyLabel");
-        label->setText(QString("API Key: %1").arg(appSettings->apiKey()));
+        label->setText(QString(tr("API Key: %1")).arg(appSettings->apiKey()));
         label->setVisible(true);
     }
 
     if(!appSettings->website().isEmpty()) {
         label = settingsPage_->findChild<Label*>("websiteLabel");
-        label->setText(QString("Website: %1").arg(appSettings->website()));
+        label->setText(QString(tr("Website: %1")).arg(appSettings->website()));
         label->setVisible(true);
     }
 
     if(!appSettings->email().isEmpty()) {
         label = settingsPage_->findChild<Label*>("emailLabel");
-        label->setText(QString("Email: %1").arg(appSettings->email()));
+        label->setText(QString(tr("Email: %1")).arg(appSettings->email()));
         label->setVisible(true);
     }
 
     if(!appSettings->location().isEmpty()) {
         label = settingsPage_->findChild<Label*>("locationLabel");
-        label->setText(QString("Location: %1").arg(appSettings->location()));
+        label->setText(QString(tr("Location: %1")).arg(appSettings->location()));
         label->setVisible(true);
     }
 
@@ -328,8 +328,8 @@ void LogicPasteApp::onPasteComplete(QString pasteUrl) {
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
 
-    bb::system::SystemDialog *dialog = new bb::system::SystemDialog("Okay");
-    dialog->setBody("Paste successful");
+    bb::system::SystemDialog *dialog = new bb::system::SystemDialog(tr("Okay"));
+    dialog->setBody(tr("Paste successful"));
     dialog->show();
 
     QMetaObject::invokeMethod(pastePage_, "pasteSuccess");
@@ -341,8 +341,8 @@ void LogicPasteApp::onPasteFailed(QString message) {
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
 
-    bb::system::SystemDialog *dialog = new bb::system::SystemDialog("Okay");
-    dialog->setBody("Paste failed");
+    bb::system::SystemDialog *dialog = new bb::system::SystemDialog(tr("Okay"));
+    dialog->setBody(tr("Paste failed"));
     dialog->show();
 
     QMetaObject::invokeMethod(pastePage_, "pasteFailed");

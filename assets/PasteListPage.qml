@@ -39,27 +39,27 @@ NavigationPane {
                                 imageSource: ListItemData.imageSource
                                 contextActions: [
                                     ActionSet {
-                                        title: "Paste actions"
+                                        title: qsTr("Paste actions")
                                         ActionItem {
-                                            title: "Open"
+                                            title: qsTr("Open")
                                             onTriggered: {
                                                 pasteItem.ListItem.view.openPaste(ListItemData.pasteUrl);
                                             }
                                         }
                                         ActionItem {
-                                            title: "Open in browser"
+                                            title: qsTr("Open in browser")
                                             onTriggered: {
                                                 pasteItem.ListItem.view.openPasteInBrowser(ListItemData.pasteUrl);
                                             }
                                         }
                                         ActionItem {
-                                            title: "Copy URL"
+                                            title: qsTr("Copy URL")
                                             onTriggered: {
                                                 pasteItem.ListItem.view.copyUrl(ListItemData.pasteUrl);
                                             }
                                         }
-                                        ActionItem {
-                                            title: "Delete"
+                                        DeleteActionItem {
+                                            title: qsTr("Delete")
                                             enabled: false
                                             onTriggered: {
                                                 pasteItem.ListItem.view.deletePaste(ListItemData.pasteKey);
@@ -83,7 +83,7 @@ NavigationPane {
             ActionItem {
                 id: refreshAction
                 objectName: "refreshAction"
-                title: "Refresh"
+                title: qsTr("Refresh")
                 imageSource: "asset:///images/icon-refresh-action.png"
                 enabled: false
                 ActionBar.placement: ActionBarPlacement.OnBar

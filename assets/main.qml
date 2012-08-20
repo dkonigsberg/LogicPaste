@@ -4,7 +4,7 @@ TabbedPane {
     id: mainTab
     showTabsOnActionBar: true
     Tab {
-        title: "Paste"
+        title: qsTr("Paste")
         imageSource: "asset:///images/icon-paste-tab.png"
         PastePage {
             id: pastePage
@@ -12,7 +12,7 @@ TabbedPane {
         }
     }
     Tab {
-        title: "My Pastes"
+        title: qsTr("My Pastes")
         imageSource: "asset:///images/icon-history-tab.png"
         PasteListPage {
             id: historyPage
@@ -20,7 +20,7 @@ TabbedPane {
         }
     }
     Tab {
-        title: "Trending"
+        title: qsTr("Trending")
         imageSource: "asset:///images/icon-trending-tab.png"
         PasteListPage {
             id: trendingPage
@@ -28,7 +28,7 @@ TabbedPane {
         }
     }
     Tab {
-        title: "Settings"
+        title: qsTr("Settings")
         imageSource: "asset:///images/icon-settings-tab.png"
         SettingsPage {
             id: settingsPage

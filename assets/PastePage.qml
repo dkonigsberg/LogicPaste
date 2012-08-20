@@ -4,7 +4,7 @@ Page {
     id: paste
     signal submitPaste()
     titleBar: TitleBar {
-        title: "New Paste"
+        title: qsTr("New Paste")
         visibility: ChromeVisibility.Visible
     }
     content: ScrollView {
@@ -20,21 +20,21 @@ Page {
                 bottomPadding: 16.0
             }
             Label {
-                text: "Paste title:"
+                text: qsTr("Paste title:")
             }
             TextField {
                 id: pasteTitleField
                 objectName: "pasteTitleField"
-                hintText: "Paste title (optional)"
+                hintText: qsTr("Paste title (optional)")
             }
             Label {
-                text: "New Paste"
+                text: qsTr("New Paste")
             }
             TextArea {
                 id: pasteTextField
                 objectName: "pasteTextField"
                 preferredHeight: 300
-                hintText: "Text to paste"
+                hintText: qsTr("Text to paste")
                 onTextChanging: {
                     if (text.length > 0) {
                         submitAction.enabled = true;
@@ -46,7 +46,7 @@ Page {
             Divider {
             }
             Label {
-                text: "Optional settings:"
+                text: qsTr("Optional settings:")
             }
             FormatDropDown {
                 id: formatDropDown
@@ -66,7 +66,7 @@ Page {
     actions: [
         ActionItem {
             id: submitAction
-            title: "Submit"
+            title: qsTr("Submit")
             imageSource: "asset:///images/icon-submit-action.png"
             enabled: false
             ActionBar.placement: ActionBarPlacement.OnBar

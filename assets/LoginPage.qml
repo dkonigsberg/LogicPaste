@@ -6,7 +6,7 @@ Page {
     signal createAccount()
     signal cancel()
     titleBar: TitleBar {
-        title: "Log in to Pastebin"
+        title: qsTr("Log in to Pastebin")
     }
     content: Container {
         layout: StackLayout {
@@ -22,24 +22,24 @@ Page {
                 bottomPadding: 16
             }
             Label {
-                text: "Username"
+                text: qsTr("Username")
             }
             TextField {
                 id: userField
                 clearButtonVisible: false
-                hintText: "Pastebin username"
+                hintText: qsTr("Pastebin username")
                 inputMode: TextFieldInputMode.Text
                 onTextChanging: {
                     updateButtons();
                 }
             }
             Label {
-                text: "Password"
+                text: qsTr("Password")
             }
             TextField {
                 id: passField
                 clearButtonVisible: false
-                hintText: "Pastebin password"
+                hintText: qsTr("Pastebin password")
                 inputMode: TextFieldInputMode.Password
                 onTextChanging: {
                     updateButtons();
@@ -47,7 +47,7 @@ Page {
             }
             Button {
                 id: acceptButton
-                text: "Log in"
+                text: qsTr("Log in")
                 enabled: false
                 layoutProperties: StackLayoutProperties {
                     horizontalAlignment: HorizontalAlignment.Center
@@ -58,7 +58,7 @@ Page {
             }
             Button {
                 id: createAccountButton
-                text: "Create account"
+                text: qsTr("Create account")
                 layoutProperties: StackLayoutProperties {
                     horizontalAlignment: HorizontalAlignment.Center
                 }
@@ -68,7 +68,7 @@ Page {
             }
             Button {
                 id: cancelButton
-                text: "Cancel"
+                text: qsTr("Cancel")
                 layoutProperties: StackLayoutProperties {
                     horizontalAlignment: HorizontalAlignment.Center
                 }
