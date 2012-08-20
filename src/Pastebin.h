@@ -3,10 +3,10 @@
 
 #include <QtCore/QObject>
 #include <QtNetwork/QNetworkAccessManager>
-#include <QtCore/QList>
 
 #include "PasteListing.h"
 
+class QNetworkReply;
 class QXmlStreamReader;
 class PasteUserData;
 
@@ -47,6 +47,7 @@ private slots:
     void onTrendingFinished();
 
 private:
+    void loadRootCert(const QString& fileName);
     void parseUserDetails(QXmlStreamReader& reader, PasteUserData *pasteUser);
     bool processPasteListResponse(QNetworkReply *networkReply, QList<PasteListing> *pasteList);
     bool parsePasteList(QXmlStreamReader& reader, QList<PasteListing> *pasteList);

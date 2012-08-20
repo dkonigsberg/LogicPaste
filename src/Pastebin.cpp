@@ -1,9 +1,13 @@
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
+#include <QtCore/QFile>
 #include <QtCore/QUrl>
 #include <QtCore/QList>
 #include <QtCore/QXmlStreamReader>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QSsl>
+#include <QtNetwork/QSslCertificate>
+#include <QtNetwork/QSslSocket>
 
 #include "Pastebin.h"
 #include "PasteListing.h"
@@ -30,14 +34,32 @@ public:
 Pastebin::Pastebin(QObject *parent)
     : QObject(parent) {
 
+    loadRootCert("app/native/assets/models/PositiveSSL.ca-1");
+    loadRootCert("app/native/assets/models/PositiveSSL.ca-2");
 }
 
 Pastebin::~Pastebin() {
 
 }
 
+void Pastebin::loadRootCert(const QString& fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open PositiveSSL CA certificate";
+    }
+
+    QSslCertificate cert(&file, QSsl::Pem);
+    if(cert.isValid() && !cert.isNull()) {
+        QSslSocket::addDefaultCaCertificate(cert);
+    }
+    else {
+        qWarning() << "Could not load PositiveSSL CA certificate";
+    }
+}
+
 void Pastebin::login(const QString& username, const QString& password) {
-    QNetworkRequest request(QUrl("http://pastebin.com/api/api_login.php"));
+    QNetworkRequest request(QUrl("https://pastebin.com/api/api_login.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
