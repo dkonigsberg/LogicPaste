@@ -98,7 +98,7 @@ void Pastebin::onLoginFinished() {
 void Pastebin::submitPaste(const QString& pasteContent, const QString& pasteTitle, const QString& format, const QString& expiration, const PasteListing::Visibility visibility) {
     qDebug() << "submitPaste()";
 
-    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -122,7 +122,7 @@ void Pastebin::submitPaste(const QString& pasteContent, const QString& pasteTitl
 }
 
 void Pastebin::requestUserDetails() {
-    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -135,7 +135,7 @@ void Pastebin::requestUserDetails() {
 }
 
 void Pastebin::requestHistory() {
-    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -148,7 +148,7 @@ void Pastebin::requestHistory() {
 }
 
 void Pastebin::requestTrending() {
-    QNetworkRequest request(QUrl("http://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
