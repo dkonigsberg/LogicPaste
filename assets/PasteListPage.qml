@@ -25,7 +25,7 @@ NavigationPane {
                 ListView {
                     id: pasteList
                     objectName: "pasteList"
-                    signal openPaste(string pasteUrl)
+                    signal openPaste(string pasteUrl, string format)
                     signal openPasteInBrowser(string pasteUrl)
                     signal copyUrl(string pasteUrl)
                     signal deletePaste(string pasteKey)
@@ -35,15 +35,16 @@ NavigationPane {
                                 id: pasteItem
                                 title: ListItemData.title
                                 description: ListItemData.pasteDate
-                                status: ListItemData.format
+                                status: ListItemData.formatDescription
                                 imageSource: ListItemData.imageSource
                                 contextActions: [
                                     ActionSet {
                                         title: qsTr("Paste actions")
                                         ActionItem {
                                             title: qsTr("Open")
+                                            enabled: ! ListItemData.isPrivate
                                             onTriggered: {
-                                                pasteItem.ListItem.view.openPaste(ListItemData.pasteUrl);
+                                                pasteItem.ListItem.view.openPaste(ListItemData.pasteUrl, ListItemData.format);
                                             }
                                         }
                                         ActionItem {
@@ -73,7 +74,11 @@ NavigationPane {
                     onSelectionChanged: {
                         if (selected) {
                             var chosenItem = dataModel.data(indexPath);
-                            pasteList.openPaste(chosenItem.pasteUrl)
+                            if (chosenItem.isPrivate) {
+                                pasteList.clearSelection();
+                            } else {
+                                pasteList.openPaste(chosenItem.pasteUrl, chosenItem.format)
+                            }
                         }
                     }
                 }
@@ -106,7 +111,6 @@ NavigationPane {
             refreshAction.enabled = true;
         }
     }
-    
     onTopChanged: {
         if (page != mainTab) {
             page.resetListFocus();

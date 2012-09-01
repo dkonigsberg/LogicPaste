@@ -142,7 +142,8 @@ void PasteModel::refreshPasteListing(QMapListDataModel *dataModel, QList<PasteLi
     foreach(PasteListing paste, *pasteList) {
         map["title"] = paste.title();
         map["pasteDate"] = paste.pasteDate().toString(Qt::LocaleDate);
-        map["format"] = paste.formatLong();
+        map["format"] = paste.formatShort();
+        map["formatDescription"] = paste.formatLong();
 
         if(paste.visibility() == PasteListing::Public) {
             map["imageSource"] = "asset:///images/item-paste-public.png";
@@ -152,6 +153,7 @@ void PasteModel::refreshPasteListing(QMapListDataModel *dataModel, QList<PasteLi
             map["imageSource"] = "asset:///images/item-paste-private.png";
         }
 
+        map["isPrivate"] = (paste.visibility() == PasteListing::Private);
         map["pasteUrl"] = paste.url();
         map["pasteKey"] = paste.key();
 

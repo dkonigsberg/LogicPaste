@@ -2,6 +2,7 @@
 #define PASTEBIN_H
 
 #include <QtCore/QObject>
+#include <QtCore/QProcess>
 #include <QtNetwork/QNetworkAccessManager>
 
 #include "PasteListing.h"
@@ -24,6 +25,7 @@ public:
     void requestUserAvatar();
     void requestHistory();
     void requestTrending();
+    void requestFormattedPaste(const QString& pasteUrl, const QString& format);
 
     void setApiKey(const QString& apiKey);
     QString apiKey() const;
@@ -37,6 +39,7 @@ signals:
     void userAvatarUpdated();
     void historyAvailable(QList<PasteListing> *pasteList);
     void trendingAvailable(QList<PasteListing> *pasteList);
+    void formattedPasteAvailable(QString pasteUrl, QString html);
 
 private slots:
     void onLoginFinished();
@@ -45,6 +48,8 @@ private slots:
     void onUserAvatarFinished();
     void onHistoryFinished();
     void onTrendingFinished();
+    void onRequestPasteFinished();
+    void onPasteFormatted(const QString& pasteKey, const QString& html);
 
 private:
     void loadRootCert(const QString& fileName);

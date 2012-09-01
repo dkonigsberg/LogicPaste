@@ -96,11 +96,13 @@
     <asset path="translations" dest="qm">
         <include name="*.qm"/>
     </asset>
+    <asset path="lib">lib</asset>
     
     <!-- Request permission to execute native code.  Required for native applications. -->
     <action system="true">run_native</action>
     <action>access_internet</action>
     <env var="LD_LIBRARY_PATH" value="app/native/lib:/usr/lib/qt4/lib"/>
+    <env var="PYTHONIOENCODING" value="utf_8"/>
 
     <!--  The permissions requested by your application. -->
     <!--  <action>access_shared</action> -->
