@@ -42,6 +42,7 @@ NavigationPane {
                                         title: qsTr("Paste actions")
                                         ActionItem {
                                             title: qsTr("Open")
+                                            imageSource: "asset:///images/action-open.png"
                                             enabled: ! ListItemData.isPrivate
                                             onTriggered: {
                                                 pasteItem.ListItem.view.openPaste(ListItemData.pasteUrl, ListItemData.format);
@@ -49,18 +50,21 @@ NavigationPane {
                                         }
                                         ActionItem {
                                             title: qsTr("Open in browser")
+                                            imageSource: "asset:///images/action-open-browser.png"
                                             onTriggered: {
                                                 pasteItem.ListItem.view.openPasteInBrowser(ListItemData.pasteUrl);
                                             }
                                         }
                                         ActionItem {
                                             title: qsTr("Copy URL")
+                                            imageSource: "asset:///images/action-copy-url.png"
                                             onTriggered: {
                                                 pasteItem.ListItem.view.copyUrl(ListItemData.pasteUrl);
                                             }
                                         }
                                         DeleteActionItem {
                                             title: qsTr("Delete")
+                                            imageSource: "asset:///images/action-delete.png"
                                             enabled: false
                                             onTriggered: {
                                                 pasteItem.ListItem.view.deletePaste(ListItemData.pasteKey);

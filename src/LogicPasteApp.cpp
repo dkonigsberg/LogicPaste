@@ -370,16 +370,12 @@ void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteUrl, QString for
 
         pasteModel_->pastebin()->requestFormattedPaste(pasteUrl, format);
 
-        //WebView *webView = page->findChild<WebView*>("webView");
-        //webView->setUrl(pasteUrl);
-
         nav->push(page);
     }
 }
 
 void LogicPasteApp::onFormattedPasteAvailable(QString pasteUrl, QString html) {
     qDebug().nospace() << "onFormattedPasteAvailable(" << pasteUrl << ")";
-    //FIXME: Clean up hard-coded hack
     Page *page = historyNav_->top();
     WebView *webView = page->findChild<WebView*>("webView");
     webView->settings()->setMinimumFontSize(36);

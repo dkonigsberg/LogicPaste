@@ -233,6 +233,13 @@
     </message>
 </context>
 <context>
+    <name>ViewPastePage</name>
+    <message>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>main</name>
     <message>
         <source>Paste</source>

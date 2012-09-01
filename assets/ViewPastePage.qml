@@ -2,6 +2,10 @@ import bb.cascades 1.0
 
 Page {
     id: viewPastePage
+    property string pasteTitle: qsTr("Paste")
+    titleBar: TitleBar {
+        title: viewPastePage.pasteTitle
+    }
     content: Container {
         layout: DockLayout {
         }
@@ -17,7 +21,7 @@ Page {
         }
         ScrollView {
             scrollViewProperties {
-                scrollMode: ScrollMode.Vertical
+                scrollMode: ScrollMode.Both
             }
             layoutProperties: DockLayoutProperties {
                 horizontalAlignment: HorizontalAlignment.Fill
