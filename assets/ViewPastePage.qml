@@ -47,4 +47,50 @@ Page {
     onCreationCompleted: {
         activityIndicator.start();
     }
+    actions: [
+        ActionItem {
+            title: qsTr("Save")
+            imageSource: "asset:///images/action-save.png"
+            onTriggered: {
+            }
+            enabled: false
+            ActionBar.placement: ActionBarPlacement.OnBar
+        },
+        ActionItem {
+            title: qsTr("Share")
+            imageSource: "asset:///images/action-share.png"
+            onTriggered: {
+            }
+            enabled: false
+            ActionBar.placement: ActionBarPlacement.OnBar
+        },
+        ActionItem {
+            title: qsTr("Edit Paste")
+            imageSource: "asset:///images/action-edit-paste.png"
+            onTriggered: {
+            }
+            enabled: false
+        },
+        ActionItem {
+            title: qsTr("Open in browser")
+            imageSource: "asset:///images/action-open-browser.png"
+            onTriggered: {
+            }
+            enabled: false
+        },
+        ActionItem {
+            title: qsTr("Copy")
+            imageSource: "asset:///images/action-copy.png"
+            onTriggered: {
+            }
+            enabled: false
+        },
+        ActionItem {
+            title: qsTr("Copy URL")
+            imageSource: "asset:///images/action-copy-url.png"
+            onTriggered: {
+            }
+            enabled: false
+        }
+    ]
 }
