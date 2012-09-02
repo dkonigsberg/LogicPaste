@@ -12,16 +12,8 @@
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslSocket>
 
-#include <sys/procmgr.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <spawn.h>
-#include <errno.h>
-#include <ioctl.h>
-
 #include "Pastebin.h"
 #include "PasteListing.h"
-#include "PasteFormatter.h"
 #include "AppSettings.h"
 #include "config.h"
 
@@ -444,46 +436,36 @@ void Pastebin::parsePasteElement(QXmlStreamReader& reader, QList<PasteListing> *
     pasteList->append(paste);
 }
 
-void Pastebin::requestFormattedPaste(const QString& pasteUrl, const QString& format) {
-    int p = pasteUrl.lastIndexOf('/');
-    const QString pasteKey = pasteUrl.mid(p + 1);
-    qDebug() << "Paste key:" << pasteKey;
-
+void Pastebin::requestRawPaste(const QString& pasteKey) {
+    qDebug().nospace() << "requestRawPaste(" << pasteKey << ")";
     QUrl url("http://pastebin.com/raw.php");
     url.addQueryItem("i", pasteKey);
 
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1), pasteKey);
-    request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 2), format);
     QNetworkReply *reply = accessManager_.get(request);
-    connect(reply, SIGNAL(finished()), this, SLOT(onRequestPasteFinished()));
+    connect(reply, SIGNAL(finished()), this, SLOT(onRequestRawPasteFinished()));
 }
 
-void Pastebin::onRequestPasteFinished() {
+void Pastebin::onRequestRawPasteFinished() {
     QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
     QNetworkRequest networkRequest = networkReply->request();
     QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    const QString pasteKey = networkRequest.attribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1)).toString();
     qDebug() << "Paste request complete:" << statusCode.toInt();
+    networkReply->deleteLater();
 
     if(networkReply->error() == QNetworkReply::NoError) {
         const QByteArray data = networkReply->readAll();
-        const QString pasteKey = networkRequest.attribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1)).toString();
-        const QString format = networkRequest.attribute(QNetworkRequest::Attribute(QNetworkRequest::User + 2)).toString();
 
         if(!data.isEmpty()) {
-            PasteFormatter *formatter = new PasteFormatter(this);
-            connect(formatter, SIGNAL(pasteFormatted(const QString&, const QString&)),
-                this, SLOT(onPasteFormatted(const QString&, const QString&)));
-            formatter->formatPaste(pasteKey, format, data);
+            emit rawPasteAvailable(pasteKey, data);
+        } else {
+            emit rawPasteError(pasteKey);
         }
+    } else {
+        emit rawPasteError(pasteKey);
     }
-}
-
-void Pastebin::onPasteFormatted(const QString& pasteKey, const QString& html) {
-    PasteFormatter *formatter = qobject_cast<PasteFormatter *>(sender());
-    formatter->deleteLater();
-
-    emit formattedPasteAvailable("http://pastebin.com/"+pasteKey, html);
 }
 
 void Pastebin::setApiKey(const QString& apiKey) {

@@ -31,8 +31,8 @@ public slots:
 
     void onProcessLogin(QString username, QString password);
     void onSubmitPaste();
-    void onOpenHistoryPaste(QString pasteUrl, QString format);
-    void onOpenTrendingPaste(QString pasteUrl, QString format);
+    void onOpenHistoryPaste(QString pasteKey);
+    void onOpenTrendingPaste(QString pasteKey);
     void onOpenPasteInBrowser(QString pasteUrl);
     void onCopyText(QString text);
 
@@ -45,7 +45,6 @@ private slots:
     void onUserDetailsUpdated();
     void onUserAvatarUpdated();
     void onActivePaneChanged(bb::cascades::AbstractPane *activePane);
-    void onFormattedPasteAvailable(QString pasteUrl, QString html);
 
 signals:
     void loginFailed(QString message);
@@ -63,7 +62,7 @@ private:
     PasteModel *pasteModel_;
 
     static FormatDropDown* replaceDropDown(Page *page, const QString& objectName);
-    void openPaste(NavigationPane *nav, QString pasteUrl, QString format);
+    void openPaste(NavigationPane *nav, QString pasteKey);
 };
 
 #endif // LOGICPASTEAPP_H

@@ -25,7 +25,7 @@ NavigationPane {
                 ListView {
                     id: pasteList
                     objectName: "pasteList"
-                    signal openPaste(string pasteUrl, string format)
+                    signal openPaste(string pasteKey)
                     signal openPasteInBrowser(string pasteUrl)
                     signal copyUrl(string pasteUrl)
                     signal deletePaste(string pasteKey)
@@ -45,7 +45,7 @@ NavigationPane {
                                             imageSource: "asset:///images/action-open.png"
                                             enabled: ! ListItemData.isPrivate
                                             onTriggered: {
-                                                pasteItem.ListItem.view.openPaste(ListItemData.pasteUrl, ListItemData.format);
+                                                pasteItem.ListItem.view.openPaste(ListItemData.pasteKey);
                                             }
                                         }
                                         ActionItem {
@@ -81,7 +81,7 @@ NavigationPane {
                             if (chosenItem.isPrivate) {
                                 pasteList.clearSelection();
                             } else {
-                                pasteList.openPaste(chosenItem.pasteUrl, chosenItem.format)
+                                pasteList.openPaste(chosenItem.pasteKey)
                             }
                         }
                     }

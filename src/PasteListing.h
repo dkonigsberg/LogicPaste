@@ -22,6 +22,8 @@ public:
     ~PasteListing();
     PasteListing& operator=(const PasteListing& other);
 
+    bool isNull() const;
+
     QString key() const;
     void setKey(const QString& key);
     QDateTime pasteDate() const;

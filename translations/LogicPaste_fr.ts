@@ -262,6 +262,14 @@
         <source>Copy URL</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error formatting paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error retrieving paste</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>main</name>

@@ -2,9 +2,8 @@ import bb.cascades 1.0
 
 Page {
     id: viewPastePage
-    property string pasteTitle: qsTr("Paste")
     titleBar: TitleBar {
-        title: viewPastePage.pasteTitle
+        title: qsTr("Paste")
     }
     content: Container {
         layout: DockLayout {

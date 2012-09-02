@@ -35,6 +35,10 @@ PasteListing& PasteListing::operator=(const PasteListing& other)
     return *this;
 }
 
+bool PasteListing::isNull() const {
+    return d->key.isNull();
+}
+
 QString PasteListing::key() const {
     return d->key;
 }

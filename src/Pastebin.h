@@ -25,7 +25,7 @@ public:
     void requestUserAvatar();
     void requestHistory();
     void requestTrending();
-    void requestFormattedPaste(const QString& pasteUrl, const QString& format);
+    void requestRawPaste(const QString& pasteKey);
 
     void setApiKey(const QString& apiKey);
     QString apiKey() const;
@@ -39,7 +39,8 @@ signals:
     void userAvatarUpdated();
     void historyAvailable(QList<PasteListing> *pasteList);
     void trendingAvailable(QList<PasteListing> *pasteList);
-    void formattedPasteAvailable(QString pasteUrl, QString html);
+    void rawPasteAvailable(QString pasteKey, QByteArray rawPaste);
+    void rawPasteError(QString pasteKey);
 
 private slots:
     void onLoginFinished();
@@ -48,8 +49,7 @@ private slots:
     void onUserAvatarFinished();
     void onHistoryFinished();
     void onTrendingFinished();
-    void onRequestPasteFinished();
-    void onPasteFormatted(const QString& pasteKey, const QString& html);
+    void onRequestRawPasteFinished();
 
 private:
     void loadRootCert(const QString& fileName);

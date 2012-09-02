@@ -18,6 +18,7 @@ PasteModel::PasteModel(QObject *parent)
     connect(&pastebin_, SIGNAL(userAvatarUpdated()), this, SIGNAL(userAvatarUpdated()));
     connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
     connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
+    connect(&pastebin_, SIGNAL(rawPasteAvailable(QString, QByteArray)), this, SLOT(onRawPasteAvailable(QString, QByteArray)));
 }
 
 PasteModel::~PasteModel() {
@@ -31,6 +32,7 @@ PasteModel::~PasteModel() {
     disconnect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
     disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
     disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
+    disconnect(&pastebin_, SIGNAL(rawPasteAvailable(QString, QByteArray)), this, SLOT(onRawPasteAvailable(QString, QByteArray)));
 
     delete historyModel_;
     delete trendingModel_;
@@ -64,6 +66,16 @@ DataModel* PasteModel::historyModel() const {
 
 DataModel* PasteModel::trendingModel() const {
     return trendingModel_;
+}
+
+PasteListing PasteModel::pasteListing(const QString& pasteKey) const {
+    const PasteListing pasteListing = pasteListingMap_[pasteKey];
+    if(pasteListing.isNull()) {
+        return createFakePasteListing(pasteKey);
+    }
+    else {
+        return pasteListing;
+    }
 }
 
 void PasteModel::onLoginComplete(QString apiKey) {
@@ -158,6 +170,7 @@ void PasteModel::refreshPasteListing(QMapListDataModel *dataModel, QList<PasteLi
         map["pasteKey"] = paste.key();
 
         dataModel->append(map);
+        pasteListingMap_[paste.key()] = paste;
     }
 }
 
@@ -222,4 +235,39 @@ void PasteModel::loadPasteTable(QString tableName, QMapListDataModel *dataModel)
     }
 
     refreshPasteListing(dataModel, &pasteList);
+}
+
+void PasteModel::requestPaste(const QString& pasteKey) {
+    pastebin_.requestRawPaste(pasteKey);
+}
+
+void PasteModel::onRawPasteAvailable(QString pasteKey, QByteArray rawPaste) {
+    const PasteListing pasteListing = pasteListingMap_[pasteKey];
+    if(pasteListing.isNull()) {
+        PasteListing fakeListing = createFakePasteListing(pasteKey);
+        emit pasteAvailable(fakeListing, rawPaste);
+    }
+    else {
+        emit pasteAvailable(pasteListing, rawPaste);
+    }
+}
+
+void PasteModel::onRawPasteError(QString pasteKey) {
+    const PasteListing pasteListing = pasteListingMap_[pasteKey];
+    if(pasteListing.isNull()) {
+        PasteListing fakeListing = createFakePasteListing(pasteKey);
+        emit pasteError(fakeListing);
+    }
+    else {
+        emit pasteError(pasteListing);
+    }
+}
+
+PasteListing PasteModel::createFakePasteListing(const QString& pasteKey) {
+    PasteListing pasteListing;
+    pasteListing.setKey(pasteKey);
+    pasteListing.setUrl("http://pastebin.com/" + pasteKey);
+    pasteListing.setFormatLong("None");
+    pasteListing.setFormatShort("text");
+    return pasteListing;
 }

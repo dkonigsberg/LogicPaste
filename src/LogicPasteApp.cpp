@@ -11,8 +11,6 @@
 #include <bb/cascades/ListView>
 #include <bb/cascades/DropDown>
 #include <bb/cascades/Container>
-#include <bb/cascades/WebView>
-#include <bb/cascades/WebSettings>
 #include <bb/cascades/ImageView>
 #include <bb/cascades/PixelBufferData>
 #include <bb/cascades/Image>
@@ -27,6 +25,7 @@
 #include "FormatDropDown.h"
 #include "LogicPasteApp.h"
 #include "AppSettings.h"
+#include "ViewPastePage.h"
 
 #include "config.h"
 
@@ -56,7 +55,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
 
             ListView *historyList = historyPage_->findChild<ListView*>("pasteList");
             historyList->setDataModel(pasteModel_->historyModel());
-            connect(historyList, SIGNAL(openPaste(QString, QString)), this, SLOT(onOpenHistoryPaste(QString, QString)));
+            connect(historyList, SIGNAL(openPaste(QString)), this, SLOT(onOpenHistoryPaste(QString)));
             connect(historyList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenPasteInBrowser(QString)));
             connect(historyList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
@@ -71,7 +70,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
 
             ListView *trendingList = trendingPage_->findChild<ListView*>("pasteList");
             trendingList->setDataModel(pasteModel_->trendingModel());
-            connect(trendingList, SIGNAL(openPaste(QString, QString)), this, SLOT(onOpenTrendingPaste(QString, QString)));
+            connect(trendingList, SIGNAL(openPaste(QString)), this, SLOT(onOpenTrendingPaste(QString)));
             connect(trendingList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenPasteInBrowser(QString)));
             connect(trendingList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
@@ -90,9 +89,6 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             // Tabbed pane
             connect(tabbedPane, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
                 this, SLOT(onActivePaneChanged(bb::cascades::AbstractPane*)));
-
-            connect(pasteModel_->pastebin(), SIGNAL(formattedPasteAvailable(QString, QString)),
-                this, SLOT(onFormattedPasteAvailable(QString, QString)));
 
             Application::setScene(tabbedPane);
 
@@ -352,34 +348,19 @@ void LogicPasteApp::onPasteFailed(QString message) {
     QMetaObject::invokeMethod(pastePage_, "pasteFailed");
 }
 
-void LogicPasteApp::onOpenHistoryPaste(QString pasteUrl, QString format) {
-    openPaste(historyNav_, pasteUrl, format);
+void LogicPasteApp::onOpenHistoryPaste(QString pasteKey) {
+    openPaste(historyNav_, pasteKey);
 }
 
-void LogicPasteApp::onOpenTrendingPaste(QString pasteUrl, QString format) {
-    openPaste(trendingNav_, pasteUrl, format);
+void LogicPasteApp::onOpenTrendingPaste(QString pasteKey) {
+    openPaste(trendingNav_, pasteKey);
 }
 
-void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteUrl, QString format) {
-    qDebug().nospace() << "onOpenPaste(" << pasteUrl << ", " << format << ")";
+void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteKey) {
+    qDebug().nospace() << "onOpenPaste(" << pasteKey << ")";
 
-    QmlDocument *qml = QmlDocument::create(this, "ViewPastePage.qml");
-    if(!qml->hasErrors()) {
-        Page *page = qml->createRootNode<Page>();
-        qml->setContextProperty("cs", this);
-
-        pasteModel_->pastebin()->requestFormattedPaste(pasteUrl, format);
-
-        nav->push(page);
-    }
-}
-
-void LogicPasteApp::onFormattedPasteAvailable(QString pasteUrl, QString html) {
-    qDebug().nospace() << "onFormattedPasteAvailable(" << pasteUrl << ")";
-    Page *page = historyNav_->top();
-    WebView *webView = page->findChild<WebView*>("webView");
-    webView->settings()->setMinimumFontSize(36);
-    webView->setHtml(html);
+    ViewPastePage *viewPastePage = new ViewPastePage(pasteModel_, pasteKey);
+    nav->push(viewPastePage->rootNode());
 }
 
 void LogicPasteApp::onOpenPasteInBrowser(QString pasteUrl) {
