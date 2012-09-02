@@ -238,10 +238,16 @@ void PasteModel::loadPasteTable(QString tableName, QMapListDataModel *dataModel)
 }
 
 void PasteModel::requestPaste(const QString& pasteKey) {
-    pastebin_.requestRawPaste(pasteKey);
+    if(rawPasteMap_.contains(pasteKey)) {
+        onRawPasteAvailable(pasteKey, rawPasteMap_[pasteKey]);
+    }
+    else {
+        pastebin_.requestRawPaste(pasteKey);
+    }
 }
 
 void PasteModel::onRawPasteAvailable(QString pasteKey, QByteArray rawPaste) {
+    rawPasteMap_[pasteKey] = rawPaste;
     const PasteListing pasteListing = pasteListingMap_[pasteKey];
     if(pasteListing.isNull()) {
         PasteListing fakeListing = createFakePasteListing(pasteKey);

@@ -63,6 +63,7 @@ private:
     QMapListDataModel *historyModel_;
     QMapListDataModel *trendingModel_;
     QHash<QString, PasteListing> pasteListingMap_;
+    QHash<QString, QByteArray> rawPasteMap_;
 };
 
 #endif // PASTEMODEL_H
