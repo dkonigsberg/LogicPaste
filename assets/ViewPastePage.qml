@@ -2,6 +2,12 @@ import bb.cascades 1.0
 
 Page {
     id: viewPastePage
+    property bool pasteLoaded: false
+    signal editPaste()
+    signal openInBrowser()
+    signal copyPaste()
+    signal copyUrl()
+    
     titleBar: TitleBar {
         title: qsTr("Paste")
     }
@@ -48,6 +54,7 @@ Page {
     }
     actions: [
         ActionItem {
+            objectName: "saveAction"
             title: qsTr("Save")
             imageSource: "asset:///images/action-save.png"
             onTriggered: {
@@ -56,6 +63,7 @@ Page {
             ActionBar.placement: ActionBarPlacement.OnBar
         },
         ActionItem {
+            objectName: "shareAction"
             title: qsTr("Share")
             imageSource: "asset:///images/action-share.png"
             onTriggered: {
@@ -64,32 +72,40 @@ Page {
             ActionBar.placement: ActionBarPlacement.OnBar
         },
         ActionItem {
+            objectName: "editAction"
             title: qsTr("Edit Paste")
             imageSource: "asset:///images/action-edit-paste.png"
             onTriggered: {
+                viewPastePage.editPaste();
             }
-            enabled: false
+            enabled: pasteLoaded
         },
         ActionItem {
+            objectName: "openInBrowserAction"
             title: qsTr("Open in browser")
             imageSource: "asset:///images/action-open-browser.png"
             onTriggered: {
+                viewPastePage.openInBrowser();
             }
-            enabled: false
+            enabled: pasteLoaded
         },
         ActionItem {
+            objectName: "copyAction"
             title: qsTr("Copy")
             imageSource: "asset:///images/action-copy.png"
             onTriggered: {
+                viewPastePage.copyPaste();
             }
-            enabled: false
+            enabled: pasteLoaded
         },
         ActionItem {
+            objectName: "copyUrlAction"
             title: qsTr("Copy URL")
             imageSource: "asset:///images/action-copy-url.png"
             onTriggered: {
+                viewPastePage.copyUrl();
             }
-            enabled: false
+            enabled: pasteLoaded
         }
     ]
 }

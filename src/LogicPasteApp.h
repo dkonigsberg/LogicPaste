@@ -11,6 +11,7 @@ using namespace bb::cascades;
 
 // Forward declarations
 namespace bb { namespace cascades {
+class TabbedPane;
 class NavigationPane;
 class Page;
 class Sheet;
@@ -45,12 +46,14 @@ private slots:
     void onUserDetailsUpdated();
     void onUserAvatarUpdated();
     void onActivePaneChanged(bb::cascades::AbstractPane *activePane);
+    void onEditPaste(PasteListing pasteListing, QByteArray rawPaste);
 
 signals:
     void loginFailed(QString message);
     void settingsUpdated();
 
 private:
+    TabbedPane *tabbedPane_;
     Page *pastePage_;
     NavigationPane *historyNav_;
     Page *historyPage_;

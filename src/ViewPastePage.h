@@ -25,11 +25,20 @@ public:
 
     Page* rootNode() const;
 
+signals:
+    void editPaste(PasteListing pasteListing, QByteArray rawPaste);
+
 private slots:
     void onPasteAvailable(PasteListing pasteListing, QByteArray rawPaste);
     void onPasteError(PasteListing pasteListing);
     void onPasteFormatted(const QString& pasteKey, const QString& html);
     void onFormatError();
+
+    // Paste page actions
+    void onEditPaste();
+    void onOpenInBrowser();
+    void onCopyPaste();
+    void onCopyUrl();
 
 private:
     Page *root_;

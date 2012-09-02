@@ -26,12 +26,15 @@
 #include "LogicPasteApp.h"
 #include "AppSettings.h"
 #include "ViewPastePage.h"
+#include "PasteListing.h"
 
 #include "config.h"
 
 LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
     QCoreApplication::setOrganizationName("LogicProbe");
     QCoreApplication::setApplicationName("LogicPaste");
+
+    qRegisterMetaType<PasteListing>("PasteListing");
 
     pasteModel_ = new PasteModel(this);
 
@@ -40,15 +43,15 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
     qml->setContextProperty("model", pasteModel_);
 
     if(!qml->hasErrors()) {
-        TabbedPane *tabbedPane = qml->createRootNode<TabbedPane>();
-        if(tabbedPane) {
+        tabbedPane_ = qml->createRootNode<TabbedPane>();
+        if(tabbedPane_) {
             // Paste page
-            pastePage_ = tabbedPane->findChild<Page*>("pastePage");
+            pastePage_ = tabbedPane_->findChild<Page*>("pastePage");
             connect(pastePage_, SIGNAL(submitPaste()), this, SLOT(onSubmitPaste()));
             replaceDropDown(pastePage_, "formatDropDown");
 
             // History page
-            historyNav_ = tabbedPane->findChild<NavigationPane*>("historyPage");
+            historyNav_ = tabbedPane_->findChild<NavigationPane*>("historyPage");
             historyPage_ = historyNav_->findChild<Page*>("pasteListPage");
             historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
             connect(historyPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshHistory()));
@@ -63,7 +66,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             connect(pasteModel_, SIGNAL(historyUpdated()), historyPage_, SLOT(onRefreshComplete()));
 
             // Trending page
-            trendingNav_ = tabbedPane->findChild<NavigationPane*>("trendingPage");
+            trendingNav_ = tabbedPane_->findChild<NavigationPane*>("trendingPage");
             trendingPage_ = trendingNav_->findChild<Page*>("pasteListPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
             connect(trendingPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshTrending()));
@@ -78,7 +81,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             connect(pasteModel_, SIGNAL(trendingUpdated()), trendingPage_, SLOT(onRefreshComplete()));
 
             // Settings page
-            settingsPage_ = tabbedPane->findChild<Page*>("settingsPage");
+            settingsPage_ = tabbedPane_->findChild<Page*>("settingsPage");
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
             connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
@@ -87,10 +90,10 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             replaceDropDown(settingsPage_, "formatDropDown");
 
             // Tabbed pane
-            connect(tabbedPane, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
+            connect(tabbedPane_, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
                 this, SLOT(onActivePaneChanged(bb::cascades::AbstractPane*)));
 
-            Application::setScene(tabbedPane);
+            Application::setScene(tabbedPane_);
 
             if(pasteModel_->isAuthenticated()) {
                 onUserDetailsUpdated();
@@ -360,6 +363,9 @@ void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteKey) {
     qDebug().nospace() << "onOpenPaste(" << pasteKey << ")";
 
     ViewPastePage *viewPastePage = new ViewPastePage(pasteModel_, pasteKey);
+    connect(viewPastePage, SIGNAL(editPaste(PasteListing, QByteArray)),
+        this, SLOT(onEditPaste(PasteListing, QByteArray)),
+        Qt::QueuedConnection);
     nav->push(viewPastePage->rootNode());
 }
 
@@ -386,4 +392,24 @@ void LogicPasteApp::onActivePaneChanged(bb::cascades::AbstractPane *activePane)
             dropDown->refreshRecentFormats();
         }
     }
+}
+
+void LogicPasteApp::onEditPaste(PasteListing pasteListing, QByteArray rawPaste)
+{
+    ViewPastePage *viewPastePage = qobject_cast<ViewPastePage*>(sender());
+    if(!viewPastePage) { return; }
+
+    NavigationPane *nav = qobject_cast<NavigationPane*>(viewPastePage->rootNode()->parent());
+    if(!nav) { return; }
+
+    pastePage_->findChild<TextField*>("pasteTitleField")->setText(
+        pasteListing.title());
+    pastePage_->findChild<TextArea*>("pasteTextField")->setText(
+        QString::fromUtf8(rawPaste.constData(), rawPaste.size()));
+
+    FormatDropDown *dropDown = pastePage_->findChild<FormatDropDown*>("formatDropDown");
+    dropDown->selectFormat(pasteListing.formatShort());
+
+    nav->popAndDelete();
+    tabbedPane_->setActiveTab(tabbedPane_->at(0));
 }

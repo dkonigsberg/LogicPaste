@@ -55,10 +55,12 @@ Page {
             }
             ExpirationDropDown {
                 id: expirationDropDown
+                objectName: "expirationDropDown"
                 enabled: true
             }
             ExposureDropDown {
                 id: exposureDropDown
+                objectName: "exposureDropDown"
                 enabled: true
             }
         }

@@ -5,6 +5,9 @@
 #include <bb/cascades/TitleBar>
 #include <bb/cascades/WebView>
 #include <bb/cascades/WebSettings>
+#include <bb/system/Clipboard>
+
+#include <bps/navigator.h>
 
 #include "PasteModel.h"
 #include "Pastebin.h"
@@ -37,6 +40,11 @@ ViewPastePage::~ViewPastePage()
 
 void ViewPastePage::findAndConnectControls()
 {
+    connect(root_, SIGNAL(editPaste()), this, SLOT(onEditPaste()));
+    connect(root_, SIGNAL(openInBrowser()), this, SLOT(onOpenInBrowser()));
+    connect(root_, SIGNAL(copyPaste()), this, SLOT(onCopyPaste()));
+    connect(root_, SIGNAL(copyUrl()), this, SLOT(onCopyUrl()));
+
     webView_ = root_->findChild<WebView*>("webView");
 }
 
@@ -82,6 +90,7 @@ void ViewPastePage::onPasteFormatted(const QString& pasteKey, const QString& htm
 
     webView_->settings()->setMinimumFontSize(36);
     webView_->setHtml(html);
+    root_->setProperty("pasteLoaded", true);
 }
 
 void ViewPastePage::onFormatError()
@@ -94,4 +103,30 @@ void ViewPastePage::onFormatError()
     QString errorHtml = QString("<html><body>%1</body></html>").arg(tr("Error formatting paste"));
     webView_->settings()->setMinimumFontSize(36);
     webView_->setHtml(errorHtml);
+}
+
+void ViewPastePage::onEditPaste() {
+    emit editPaste(pasteListing_, rawPaste_);
+}
+
+void ViewPastePage::onOpenInBrowser()
+{
+    navigator_invoke(pasteListing_.url().toLatin1(), 0);
+}
+
+void ViewPastePage::onCopyPaste()
+{
+    if(rawPaste_.isEmpty()) { return; }
+    bb::system::Clipboard clipboard;
+    if(clipboard.clear()) {
+        clipboard.insert("text/plain", rawPaste_);
+    }
+}
+
+void ViewPastePage::onCopyUrl()
+{
+    bb::system::Clipboard clipboard;
+    if(clipboard.clear()) {
+        clipboard.insert("text/plain", pasteListing_.url().toUtf8());
+    }
 }
