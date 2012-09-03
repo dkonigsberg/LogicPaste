@@ -34,10 +34,12 @@ public slots:
     void onSubmitPaste();
     void onOpenHistoryPaste(QString pasteKey);
     void onOpenTrendingPaste(QString pasteKey);
-    void onOpenPasteInBrowser(QString pasteUrl);
+    void onOpenUrlInBrowser(QString urlString);
     void onCopyText(QString text);
 
 private slots:
+    void onAboutActionTriggered();
+    void onSheetPageClosed();
     void onLoginComplete(QString apiKey);
     void onLoginFailed(QString message);
     void onLoginCanceled();

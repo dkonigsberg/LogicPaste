@@ -2,6 +2,29 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="en_GB">
 <context>
+    <name>AboutPage</name>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icons from the Tango Desktop Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste formatting provided by Pygments</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExpirationDropDown</name>
     <message>
         <source>Paste expiration</source>
@@ -107,6 +130,10 @@
         <source>Paste failed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoginPage</name>
@@ -200,19 +227,11 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <source>Pastebin Account</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Log in to Pastebin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Log out of Pastebin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Defaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -229,6 +248,93 @@
     </message>
     <message>
         <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pastebin Account:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste defaults:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Formatter settings:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable paste formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line numbering</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StyleDropDown</name>
+    <message>
+        <source>Formatting style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This style mimics the Monokai color scheme.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A colorful style, inspired by the terminal highlighting style.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimalistic &quot;rrt&quot; theme, based on Zap and Emacs defaults.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style similar to the style used in the perldoc code blocks.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style similar to the style used in the Borland IDEs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A colorful style, inspired by CodeRay.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The default style (inspired by Emacs 22).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Murphy&apos;s style from CodeRay.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port of the default trac highlighter design.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Crunchy default Style inspired from the color palette from the Tango Icon Theme Guidelines.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pygments version of the &quot;native&quot; vim theme.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Styles somewhat like vim 7.0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style similar to the pastie default style.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A modern style based on the VIM pyte theme.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

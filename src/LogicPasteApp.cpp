@@ -8,6 +8,7 @@
 #include <bb/cascades/TextField>
 #include <bb/cascades/TextArea>
 #include <bb/cascades/ActionItem>
+#include <bb/cascades/Menu>
 #include <bb/cascades/ListView>
 #include <bb/cascades/DropDown>
 #include <bb/cascades/Container>
@@ -16,6 +17,7 @@
 #include <bb/cascades/Image>
 #include <bb/system/SystemDialog>
 #include <bb/system/Clipboard>
+#include <bb/ApplicationInfo>
 
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkReply>
@@ -59,7 +61,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             ListView *historyList = historyPage_->findChild<ListView*>("pasteList");
             historyList->setDataModel(pasteModel_->historyModel());
             connect(historyList, SIGNAL(openPaste(QString)), this, SLOT(onOpenHistoryPaste(QString)));
-            connect(historyList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenPasteInBrowser(QString)));
+            connect(historyList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenUrlInBrowser(QString)));
             connect(historyList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
             connect(pasteModel_, SIGNAL(historyUpdating()), historyPage_, SLOT(onRefreshStarted()));
@@ -74,7 +76,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             ListView *trendingList = trendingPage_->findChild<ListView*>("pasteList");
             trendingList->setDataModel(pasteModel_->trendingModel());
             connect(trendingList, SIGNAL(openPaste(QString)), this, SLOT(onOpenTrendingPaste(QString)));
-            connect(trendingList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenPasteInBrowser(QString)));
+            connect(trendingList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenUrlInBrowser(QString)));
             connect(trendingList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
             connect(pasteModel_, SIGNAL(trendingUpdating()), trendingPage_, SLOT(onRefreshStarted()));
@@ -94,6 +96,16 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
                 this, SLOT(onActivePaneChanged(bb::cascades::AbstractPane*)));
 
             Application::setScene(tabbedPane_);
+
+            // Create the pull-down menu
+            ActionItem *aboutItem = ActionItem::create()
+            .title(tr("About"))
+            .image(QUrl("asset:///images/action-about.png"));
+            connect(aboutItem, SIGNAL(triggered()), this, SLOT(onAboutActionTriggered()));
+
+            Menu *menu = Menu::create()
+            .addAction(aboutItem);
+            Application::setMenu(menu);
 
             if(pasteModel_->isAuthenticated()) {
                 onUserDetailsUpdated();
@@ -119,6 +131,35 @@ FormatDropDown* LogicPasteApp::replaceDropDown(Page *page, const QString& object
     container->replace(index, formatDropDown);
 
     return formatDropDown;
+}
+
+void LogicPasteApp::onAboutActionTriggered()
+{
+    QmlDocument *qml = QmlDocument::create(this, "AboutPage.qml");
+    qml->setContextProperty("cs", this);
+
+    if(!qml->hasErrors()) {
+        Page *aboutPage = qml->createRootNode<Page>();
+
+        bb::ApplicationInfo appInfo;
+        aboutPage->setProperty("appName", appInfo.title());
+        aboutPage->setProperty("versionNumber", appInfo.version());
+
+        Sheet *sheet = Sheet::create().content(aboutPage);
+        connect(aboutPage, SIGNAL(close()), this, SLOT(onSheetPageClosed()));
+        connect(aboutPage, SIGNAL(openUrl(QString)), this, SLOT(onOpenUrlInBrowser(QString)));
+        sheet->setVisible(true);
+        Application::setMenuEnabled(false);
+    }
+}
+
+void LogicPasteApp::onSheetPageClosed()
+{
+    Page *page = qobject_cast<Page*>(sender());
+    Sheet *sheet = qobject_cast<Sheet*>(page->parent());
+    sheet->setVisible(false);
+    sheet->deleteLater();
+    Application::setMenuEnabled(true);
 }
 
 void LogicPasteApp::onRequestLogin() {
@@ -369,10 +410,8 @@ void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteKey) {
     nav->push(viewPastePage->rootNode());
 }
 
-void LogicPasteApp::onOpenPasteInBrowser(QString pasteUrl) {
-    qDebug() << "onOpenPasteInBrowser():" << pasteUrl;
-
-    navigator_invoke(pasteUrl.toLatin1(), 0);
+void LogicPasteApp::onOpenUrlInBrowser(QString urlString) {
+    navigator_invoke(urlString.toLatin1(), 0);
 }
 
 void LogicPasteApp::onCopyText(QString text) {
