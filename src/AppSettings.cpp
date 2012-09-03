@@ -131,6 +131,34 @@ void AppSettings::setPasteVisibility(const PasteListing::Visibility pasteVisibil
     settings_.setValue("user_private", static_cast<int>(pasteVisibility));
 }
 
+bool AppSettings::formatterEnabled() const
+{
+    return settings_.value("formatter_enabled", true).toBool();
+}
+void AppSettings::setFormatterEnabled(bool enabled)
+{
+    settings_.setValue("formatter_enabled", enabled);
+}
+
+bool AppSettings::formatterLineNumbering() const
+{
+    return settings_.value("formatter_line_numbering", true).toBool();
+}
+void AppSettings::setFormatterLineNumbering(bool lineNumbering)
+{
+    settings_.setValue("formatter_line_numbering", lineNumbering);
+}
+
+QString AppSettings::formatterStyle() const
+{
+    return settings_.value("formatter_style", "tango").toString();
+}
+void AppSettings::setFormatterStyle(const QString& style)
+{
+    settings_.setValue("formatter_style", style);
+}
+
+
 QByteArray AppSettings::avatarImage() const
 {
     return settings_.value("user_avatar_image").toByteArray();

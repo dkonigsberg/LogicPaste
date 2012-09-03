@@ -47,6 +47,8 @@ private slots:
     void onPasteFailed(QString message);
     void onUserDetailsUpdated();
     void onUserAvatarUpdated();
+    void onPasteSettingsChanged();
+    void onFormatterSettingsChanged();
     void onActivePaneChanged(bb::cascades::AbstractPane *activePane);
     void onEditPaste(PasteListing pasteListing, QByteArray rawPaste);
 

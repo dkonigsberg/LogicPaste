@@ -11,6 +11,7 @@
 #include <bb/cascades/Menu>
 #include <bb/cascades/ListView>
 #include <bb/cascades/DropDown>
+#include <bb/cascades/CheckBox>
 #include <bb/cascades/Container>
 #include <bb/cascades/ImageView>
 #include <bb/cascades/PixelBufferData>
@@ -43,6 +44,8 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
     QmlDocument *qml = QmlDocument::create(this, "main.qml");
     qml->setContextProperty("cs", this);
     qml->setContextProperty("model", pasteModel_);
+
+    AppSettings *appSettings = AppSettings::instance();
 
     if(!qml->hasErrors()) {
         tabbedPane_ = qml->createRootNode<TabbedPane>();
@@ -84,9 +87,25 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
 
             // Settings page
             settingsPage_ = tabbedPane_->findChild<Page*>("settingsPage");
+            CheckBox *formatterEnable = settingsPage_->findChild<CheckBox*>("formatterEnable");
+            formatterEnable->setChecked(appSettings->formatterEnabled());
+
+            CheckBox *formatterLineNumbering = settingsPage_->findChild<CheckBox*>("formatterLineNumbering");
+            formatterLineNumbering->setChecked(appSettings->formatterLineNumbering());
+
+            DropDown *formatterStyle = settingsPage_->findChild<DropDown*>("formatterStyle");
+            for(int i = formatterStyle->optionCount() - 1; i >= 0; --i) {
+                if(formatterStyle->at(i)->value() == appSettings->formatterStyle()) {
+                    formatterStyle->setSelectedIndex(i);
+                    break;
+                }
+            }
+
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
             connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
+            connect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onPasteSettingsChanged()));
+            connect(settingsPage_, SIGNAL(formatterSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
             connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
             connect(pasteModel_, SIGNAL(userAvatarUpdated()), this, SLOT(onUserAvatarUpdated()));
             replaceDropDown(settingsPage_, "formatDropDown");
@@ -264,6 +283,8 @@ void LogicPasteApp::onUserDetailsUpdated() {
         label->setVisible(true);
     }
 
+    disconnect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
+
     FormatDropDown *formatDropDown;
     if(!appSettings->pasteFormatShort().isEmpty()) {
         formatDropDown = settingsPage_->findChild<FormatDropDown*>("formatDropDown");
@@ -290,6 +311,8 @@ void LogicPasteApp::onUserDetailsUpdated() {
     if(dropDown) {
         dropDown->setSelectedIndex(visibilityValue);
     }
+
+    connect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
 
     QMetaObject::invokeMethod(settingsPage_, "userDetailsRefreshed");
 }
@@ -335,6 +358,35 @@ void LogicPasteApp::onRequestLogout() {
 
     emit settingsUpdated();
     historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
+}
+
+void LogicPasteApp::onPasteSettingsChanged()
+{
+    AppSettings *appSettings = AppSettings::instance();
+
+    FormatDropDown *formatDropDown = settingsPage_->findChild<FormatDropDown*>("formatDropDown");
+    appSettings->setPasteFormatShort(formatDropDown->selectedFormat());
+
+    DropDown *expirationDropDown = settingsPage_->findChild<DropDown*>("expirationDropDown");
+    appSettings->setPasteExpiration(expirationDropDown->at(expirationDropDown->selectedIndex())->value().toString());
+
+    DropDown *exposureDropDown = settingsPage_->findChild<DropDown*>("exposureDropDown");
+    int visibilityValue = exposureDropDown->at(exposureDropDown->selectedIndex())->value().toInt();
+    appSettings->setPasteVisibility(static_cast<PasteListing::Visibility>(visibilityValue));
+}
+
+void LogicPasteApp::onFormatterSettingsChanged()
+{
+    AppSettings *appSettings = AppSettings::instance();
+
+    CheckBox *formatterEnable = settingsPage_->findChild<CheckBox*>("formatterEnable");
+    appSettings->setFormatterEnabled(formatterEnable->isChecked());
+
+    CheckBox *formatterLineNumbering = settingsPage_->findChild<CheckBox*>("formatterLineNumbering");
+    appSettings->setFormatterLineNumbering(formatterLineNumbering->isChecked());
+
+    DropDown *formatterStyle = settingsPage_->findChild<DropDown*>("formatterStyle");
+    appSettings->setFormatterStyle(formatterStyle->at(formatterStyle->selectedIndex())->value().toString());
 }
 
 void LogicPasteApp::onSubmitPaste() {

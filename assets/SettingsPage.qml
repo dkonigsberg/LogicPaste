@@ -146,6 +146,8 @@ Page {
                 textStyle.base: SystemDefaults.TextStyles.BodyText
             }
             CheckBox {
+                id: formatterEnable
+                objectName: "formatterEnable"
                 text: qsTr("Enable paste formatting")
                 checked: true
                 onCheckedChanged: {
@@ -153,17 +155,23 @@ Page {
                 }
             }
             CheckBox {
+                id: formatterLineNumbering
+                objectName: "formatterLineNumbering"
                 text: qsTr("Line numbering")
                 checked: true
                 onCheckedChanged: {
                     settings.formatterSettingsChanged()
                 }
+                enabled: formatterEnable.checked
             }
             StyleDropDown {
+                id: formatterStyle
+                objectName: "formatterStyle"
                 title: qsTr("Style")
                 onSelectedIndexChanged: {
                     settings.formatterSettingsChanged()
                 }
+                enabled: formatterEnable.checked
             }
         }
     }

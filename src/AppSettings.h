@@ -45,6 +45,13 @@ public:
     PasteListing::Visibility pasteVisibility() const;
     void setPasteVisibility(const PasteListing::Visibility pasteVisibility);
 
+    bool formatterEnabled() const;
+    void setFormatterEnabled(bool enabled);
+    bool formatterLineNumbering() const;
+    void setFormatterLineNumbering(bool lineNumbering);
+    QString formatterStyle() const;
+    void setFormatterStyle(const QString& style);
+
     QByteArray avatarImage() const;
     void setAvatarImage(const QByteArray& data);
 

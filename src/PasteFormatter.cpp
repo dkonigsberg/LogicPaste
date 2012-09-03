@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <ioctl.h>
 
+#include "AppSettings.h"
+
 PasteFormatter::PasteFormatter(QObject *parent) : QObject(parent)
 {
 }
@@ -59,11 +61,21 @@ void PasteFormatter::formatPaste(const QString& pasteKey, const QString& format,
     inherit.flags |= SPAWN_SETSIGDEF;
     sigaddset(&inherit.sigdefault, SIGPIPE);
 
+    AppSettings *appSettings = AppSettings::instance();
+    QStringList options;
+    options << "encoding=utf-8";
+    options << "full";
+    if(appSettings->formatterLineNumbering()) {
+        options << "linenos";
+    }
+    options << QString("style=%1").arg(appSettings->formatterStyle());
+    qDebug() << options;
+
     QStringList arguments;
     arguments << "/usr/bin/python3.2" << "app/native/lib/pygmentize";
     arguments << "-l" << format;
     arguments << "-f" << "html";
-    arguments << "-O" << "encoding=utf-8,full,linenos,style=murphy";
+    arguments << "-O" << options.join(",");
 
     char **argv = new char *[arguments.count() + 1];
     argv[arguments.count()] = 0;
