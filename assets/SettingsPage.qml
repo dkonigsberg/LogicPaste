@@ -5,6 +5,8 @@ Page {
     signal requestLogin()
     signal requestLogout()
     signal refreshUserDetails()
+    signal pasteSettingsChanged()
+    signal formatterSettingsChanged()
     content: ScrollView {
         scrollViewProperties {
             scrollMode: ScrollMode.Vertical
@@ -18,7 +20,8 @@ Page {
                 bottomPadding: 16
             }
             Label {
-                text: qsTr("Pastebin Account")
+                text: qsTr("Pastebin Account:")
+                textStyle.base: SystemDefaults.TextStyles.BodyText
             }
             Button {
                 id: loginButton
@@ -111,21 +114,56 @@ Page {
             Divider {
             }
             Label {
-                text: qsTr("Defaults")
-                textStyle.color: Color.White
+                text: qsTr("Paste defaults:")
+                textStyle.base: SystemDefaults.TextStyles.BodyText
             }
             FormatDropDown {
                 objectName: "formatDropDown"
                 enabled: true
                 title: qsTr("Default format")
+                onSelectedIndexChanged: {
+                    settings.pasteSettingsChanged()
+                }
             }
             ExpirationDropDown {
                 enabled: true
                 title: qsTr("Default expiration")
+                onSelectedIndexChanged: {
+                    settings.pasteSettingsChanged()
+                }
             }
             ExposureDropDown {
                 enabled: true
                 title: qsTr("Default exposure")
+                onSelectedIndexChanged: {
+                    settings.pasteSettingsChanged()
+                }
+            }
+            Divider {
+            }
+            Label {
+                text: qsTr("Formatter settings:")
+                textStyle.base: SystemDefaults.TextStyles.BodyText
+            }
+            CheckBox {
+                text: qsTr("Enable paste formatting")
+                checked: true
+                onCheckedChanged: {
+                    settings.formatterSettingsChanged()
+                }
+            }
+            CheckBox {
+                text: qsTr("Line numbering")
+                checked: true
+                onCheckedChanged: {
+                    settings.formatterSettingsChanged()
+                }
+            }
+            StyleDropDown {
+                title: qsTr("Style")
+                onSelectedIndexChanged: {
+                    settings.formatterSettingsChanged()
+                }
             }
         }
     }
