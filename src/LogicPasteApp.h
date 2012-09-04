@@ -71,6 +71,7 @@ private:
 
     static FormatDropDown* replaceDropDown(Page *page, const QString& objectName);
     void openPaste(NavigationPane *nav, QString pasteKey);
+    void refreshPastePageDefaults();
 };
 
 #endif // LOGICPASTEAPP_H

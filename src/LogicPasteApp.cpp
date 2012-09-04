@@ -132,6 +132,8 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
                 onUserDetailsUpdated();
                 onUserAvatarUpdated();
             }
+
+            refreshPastePageDefaults();
         }
     }
 }
@@ -317,6 +319,7 @@ void LogicPasteApp::onUserDetailsUpdated() {
     QMetaObject::invokeMethod(settingsPage_, "userDetailsRefreshed");
 
     ignoreSettingsEvent_ = false;
+    refreshPastePageDefaults();
 }
 
 void LogicPasteApp::onUserAvatarUpdated()
@@ -380,6 +383,8 @@ void LogicPasteApp::onPasteSettingsChanged()
     DropDown *exposureDropDown = settingsPage_->findChild<DropDown*>("exposureDropDown");
     int visibilityValue = exposureDropDown->at(exposureDropDown->selectedIndex())->value().toInt();
     appSettings->setPasteVisibility(static_cast<PasteListing::Visibility>(visibilityValue));
+
+    refreshPastePageDefaults();
 }
 
 void LogicPasteApp::onFormatterSettingsChanged()
@@ -394,6 +399,42 @@ void LogicPasteApp::onFormatterSettingsChanged()
 
     DropDown *formatterStyle = settingsPage_->findChild<DropDown*>("formatterStyle");
     appSettings->setFormatterStyle(formatterStyle->at(formatterStyle->selectedIndex())->value().toString());
+}
+
+void LogicPasteApp::refreshPastePageDefaults()
+{
+    QString pasteContent = pastePage_->findChild<TextArea*>("pasteTextField")->text();
+    QString pasteTitle = pastePage_->findChild<TextField*>("pasteTitleField")->text();
+    if(!pasteContent.isEmpty() || !pasteTitle.isEmpty()) { return; }
+
+    AppSettings *appSettings = AppSettings::instance();
+
+    FormatDropDown *formatDropDown;
+    if(!appSettings->pasteFormatShort().isEmpty()) {
+        formatDropDown = pastePage_->findChild<FormatDropDown*>("formatDropDown");
+        if(formatDropDown) {
+            formatDropDown->selectFormat(appSettings->pasteFormatShort());
+        }
+    }
+
+    DropDown *dropDown;
+    if(!appSettings->pasteExpiration().isEmpty()) {
+        dropDown = pastePage_->findChild<DropDown*>("expirationDropDown");
+        if(dropDown) {
+            for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
+                if(dropDown->at(i)->value() == appSettings->pasteExpiration()) {
+                    dropDown->setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    int visibilityValue = static_cast<int>(appSettings->pasteVisibility());
+    dropDown = pastePage_->findChild<DropDown*>("exposureDropDown");
+    if(dropDown) {
+        dropDown->setSelectedIndex(visibilityValue);
+    }
 }
 
 void LogicPasteApp::onSubmitPaste() {
@@ -436,6 +477,7 @@ void LogicPasteApp::onPasteComplete(QString pasteUrl) {
     dialog->show();
 
     QMetaObject::invokeMethod(pastePage_, "pasteSuccess");
+    refreshPastePageDefaults();
 }
 
 void LogicPasteApp::onPasteFailed(QString message) {
