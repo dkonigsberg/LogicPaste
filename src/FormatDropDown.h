@@ -10,6 +10,7 @@ namespace bb { namespace cascades {
 class Container;
 class Sheet;
 class DropDown;
+class Option;
 }}
 
 using namespace bb::cascades;
@@ -28,6 +29,13 @@ public:
 
     void selectFormat(const QString& format);
     QString selectedFormat();
+
+signals:
+    void titleChanged(QString title);
+    void optionAdded(bb::cascades::Option *option);
+    void optionRemoved(bb::cascades::Option *option);
+    void selectedIndexChanged(int selectedIndex);
+    void expandedChanged(bool expanded);
 
 private slots:
     void onMoreSelectedChanged(bool selected);

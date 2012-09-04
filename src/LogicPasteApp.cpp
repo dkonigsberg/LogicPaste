@@ -33,7 +33,7 @@
 
 #include "config.h"
 
-LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
+LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) {
     QCoreApplication::setOrganizationName("LogicProbe");
     QCoreApplication::setApplicationName("LogicPaste");
 
@@ -108,7 +108,9 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL) {
             connect(settingsPage_, SIGNAL(formatterSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
             connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
             connect(pasteModel_, SIGNAL(userAvatarUpdated()), this, SLOT(onUserAvatarUpdated()));
-            replaceDropDown(settingsPage_, "formatDropDown");
+
+            FormatDropDown *formatDropDown = replaceDropDown(settingsPage_, "formatDropDown");
+            connect(formatDropDown, SIGNAL(selectedIndexChanged(int)), this, SLOT(onPasteSettingsChanged()));
 
             // Tabbed pane
             connect(tabbedPane_, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
@@ -283,7 +285,7 @@ void LogicPasteApp::onUserDetailsUpdated() {
         label->setVisible(true);
     }
 
-    disconnect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
+    ignoreSettingsEvent_ = true;
 
     FormatDropDown *formatDropDown;
     if(!appSettings->pasteFormatShort().isEmpty()) {
@@ -312,9 +314,9 @@ void LogicPasteApp::onUserDetailsUpdated() {
         dropDown->setSelectedIndex(visibilityValue);
     }
 
-    connect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
-
     QMetaObject::invokeMethod(settingsPage_, "userDetailsRefreshed");
+
+    ignoreSettingsEvent_ = false;
 }
 
 void LogicPasteApp::onUserAvatarUpdated()
@@ -362,10 +364,15 @@ void LogicPasteApp::onRequestLogout() {
 
 void LogicPasteApp::onPasteSettingsChanged()
 {
+    if(ignoreSettingsEvent_) { return; }
+
     AppSettings *appSettings = AppSettings::instance();
 
     FormatDropDown *formatDropDown = settingsPage_->findChild<FormatDropDown*>("formatDropDown");
-    appSettings->setPasteFormatShort(formatDropDown->selectedFormat());
+    const QString selectedFormat = formatDropDown->selectedFormat();
+    if(!selectedFormat.isNull()) {
+        appSettings->setPasteFormatShort(selectedFormat);
+    }
 
     DropDown *expirationDropDown = settingsPage_->findChild<DropDown*>("expirationDropDown");
     appSettings->setPasteExpiration(expirationDropDown->at(expirationDropDown->selectedIndex())->value().toString());

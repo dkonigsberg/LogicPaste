@@ -41,6 +41,12 @@ FormatDropDown::FormatDropDown(Container *parent)
     refreshRecentFormats();
 
     setRoot(dropDown_);
+
+    connect(dropDown_, SIGNAL(titleChanged(QString)), this, SIGNAL(titleChanged(QString)));
+    connect(dropDown_, SIGNAL(optionAdded(bb::cascades::Option*)), this, SIGNAL(optionAdded(bb::cascades::Option*)));
+    connect(dropDown_, SIGNAL(optionRemoved(bb::cascades::Option*)), this, SIGNAL(optionRemoved(bb::cascades::Option*)));
+    connect(dropDown_, SIGNAL(selectedIndexChanged(int)), this, SIGNAL(selectedIndexChanged(int)));
+    connect(dropDown_, SIGNAL(expandedChanged(bool)), this, SIGNAL(expandedChanged(bool)));
 }
 
 FormatDropDown::~FormatDropDown()
@@ -70,6 +76,7 @@ void FormatDropDown::refreshRecentFormats()
 
     QStringList recentList = AppSettings::instance()->recentFormats();
     foreach(const QString format, recentList) {
+        if(format.isEmpty()) { continue; }
         Option *option = new Option();
         option->setText(formatMap_.value(format));
         option->setValue(format);
@@ -99,6 +106,7 @@ void FormatDropDown::selectFormat(const QString& format)
         int count = dropDown_->optionCount();
         if(count > 6) {
             dropDown_->remove(dropDown_->at(5));
+            count--;
         }
         QStringList recentList;
         for(int i = 1; i < count - 1; i++) {
@@ -110,7 +118,13 @@ void FormatDropDown::selectFormat(const QString& format)
 
 QString FormatDropDown::selectedFormat()
 {
-    return dropDown_->at(dropDown_->selectedIndex())->value().toString();
+    int index = dropDown_->selectedIndex();
+    if(index >= 0) {
+        return dropDown_->at(index)->value().toString();
+    }
+    else {
+        return QString::null;
+    }
 }
 
 void FormatDropDown::onMoreSelectedChanged(bool selected)

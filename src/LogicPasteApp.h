@@ -67,6 +67,7 @@ private:
     Sheet *loginSheet_;
 
     PasteModel *pasteModel_;
+    bool ignoreSettingsEvent_;
 
     static FormatDropDown* replaceDropDown(Page *page, const QString& objectName);
     void openPaste(NavigationPane *nav, QString pasteKey);

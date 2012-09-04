@@ -121,9 +121,6 @@ Page {
                 objectName: "formatDropDown"
                 enabled: true
                 title: qsTr("Default format")
-                onSelectedIndexChanged: {
-                    settings.pasteSettingsChanged()
-                }
             }
             ExpirationDropDown {
                 enabled: true
