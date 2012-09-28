@@ -16,9 +16,9 @@
 ViewPastePage::ViewPastePage(PasteModel *pasteModel, const QString &pasteKey, QObject *parent)
     : QObject(parent), pasteModel_(pasteModel)
 {
-    QmlDocument *qml = QmlDocument::create("ViewPastePage.qml");
+    QmlDocument *qml = QmlDocument::create("asset:///ViewPastePage.qml").parent(this);
     qml->setContextProperty("cs", this);
-    root_ = qml->createRootNode<Page>();
+    root_ = qml->createRootObject<Page>();
     connect(root_, SIGNAL(destroyed()), this, SLOT(deleteLater()));
 
     findAndConnectControls();

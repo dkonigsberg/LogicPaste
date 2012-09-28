@@ -10,16 +10,16 @@ Page {
     }
     content: Container {
         layout: StackLayout {
-            layoutDirection: LayoutDirection.TopToBottom
+            orientation: LayoutOrientation.TopToBottom
         }
         Divider {
         }
         Container {
+            leftPadding: 16
+            rightPadding: 16
+            bottomPadding: 16
             layout: StackLayout {
-                layoutDirection: LayoutDirection.TopToBottom
-                leftPadding: 16
-                rightPadding: 16
-                bottomPadding: 16
+                orientation: LayoutOrientation.TopToBottom
             }
             Label {
                 text: qsTr("Username")
@@ -49,9 +49,7 @@ Page {
                 id: acceptButton
                 text: qsTr("Log in")
                 enabled: false
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 onClicked: {
                     startLoginProcess();
                 }
@@ -59,9 +57,7 @@ Page {
             Button {
                 id: createAccountButton
                 text: qsTr("Create account")
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 onClicked: {
                     login.createAccount();
                 }
@@ -69,9 +65,7 @@ Page {
             Button {
                 id: cancelButton
                 text: qsTr("Cancel")
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 onClicked: {
                     login.cancel();
                 }
@@ -80,24 +74,20 @@ Page {
         Container {
             layout: DockLayout {
             }
-            layoutProperties: StackLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Center
-            }
+            horizontalAlignment: HorizontalAlignment.Center
             ActivityIndicator {
                 id: activityIndicator
                 preferredWidth: 400
                 preferredHeight: 400
-                layoutProperties: DockLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                    verticalAlignment: VerticalAlignment.Top
-                }
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Top
             }
             TextArea {
                 id: errorText
                 visible: false
                 backgroundVisible: false
                 textStyle.color: Color.Red
-                textStyle.alignment: TextAlignment.Center
+                textStyle.textAlign: TextAlign.Center
             }
         }
     }

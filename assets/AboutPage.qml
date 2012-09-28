@@ -22,26 +22,20 @@ Page {
         }
         Container {
             layout: StackLayout {
-                layoutDirection: LayoutDirection.TopToBottom
+                orientation: LayoutOrientation.TopToBottom
             }
-            layoutProperties: DockLayoutProperties {
-                verticalAlignment: VerticalAlignment.Center
-                horizontalAlignment: HorizontalAlignment.Center
-            }
+            verticalAlignment: VerticalAlignment.Center
+            horizontalAlignment: HorizontalAlignment.Center
             ImageView {
                 imageSource: "asset:///images/pastebin-logo.png"
                 scalingMethod: ScalingMethod.AspectFill
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
             }
             Label {
                 text: appName
                 topMargin: 25
                 bottomMargin: 25
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
                     base: SystemDefaults.TextStyles.TitleText
                 }
@@ -50,9 +44,7 @@ Page {
                 text: qsTr("Version %1").arg(versionNumber)
                 topMargin: 25
                 bottomMargin: 25
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
                     base: SystemDefaults.TextStyles.SubtitleText
                 }
@@ -63,12 +55,10 @@ Page {
                 bottomMargin: 25
                 backgroundVisible: false
                 editable: false
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
                     base: SystemDefaults.TextStyles.SmallText
-                    alignment: TextAlignment.Center
+                    textAlign: TextAlign.Center
                 }
             }
             Divider {
@@ -79,9 +69,7 @@ Page {
                 topMargin: 50
                 bottomMargin: 50
                 text: "PASTEBIN | #1 paste tool since 2002"
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
                     base: SystemDefaults.TextStyles.SubtitleText
                     color: Color.DarkBlue
@@ -96,9 +84,7 @@ Page {
                 topMargin: 50
                 bottomMargin: 50
                 text: qsTr("Icons from the Tango Desktop Project")
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
                     base: SystemDefaults.TextStyles.SubtitleText
                     color: Color.DarkBlue
@@ -113,9 +99,7 @@ Page {
                 topMargin: 50
                 bottomMargin: 50
                 text: qsTr("Paste formatting provided by Pygments")
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
                     base: SystemDefaults.TextStyles.SubtitleText
                     color: Color.DarkBlue

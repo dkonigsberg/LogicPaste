@@ -14,7 +14,6 @@
 #include <bb/cascades/CheckBox>
 #include <bb/cascades/Container>
 #include <bb/cascades/ImageView>
-#include <bb/cascades/PixelBufferData>
 #include <bb/cascades/Image>
 #include <bb/system/SystemDialog>
 #include <bb/system/Clipboard>
@@ -41,14 +40,14 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
 
     pasteModel_ = new PasteModel(this);
 
-    QmlDocument *qml = QmlDocument::create(this, "main.qml");
+    QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
     qml->setContextProperty("cs", this);
     qml->setContextProperty("model", pasteModel_);
 
     AppSettings *appSettings = AppSettings::instance();
 
     if(!qml->hasErrors()) {
-        tabbedPane_ = qml->createRootNode<TabbedPane>();
+        tabbedPane_ = qml->createRootObject<TabbedPane>();
         if(tabbedPane_) {
             // Paste page
             pastePage_ = tabbedPane_->findChild<Page*>("pastePage");
@@ -94,7 +93,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
             formatterLineNumbering->setChecked(appSettings->formatterLineNumbering());
 
             DropDown *formatterStyle = settingsPage_->findChild<DropDown*>("formatterStyle");
-            for(int i = formatterStyle->optionCount() - 1; i >= 0; --i) {
+            for(int i = formatterStyle->count() - 1; i >= 0; --i) {
                 if(formatterStyle->at(i)->value() == appSettings->formatterStyle()) {
                     formatterStyle->setSelectedIndex(i);
                     break;
@@ -116,7 +115,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
             connect(tabbedPane_, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
                 this, SLOT(onActivePaneChanged(bb::cascades::AbstractPane*)));
 
-            Application::setScene(tabbedPane_);
+            Application::instance()->setScene(tabbedPane_);
 
             // Create the pull-down menu
             ActionItem *aboutItem = ActionItem::create()
@@ -126,7 +125,7 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
 
             Menu *menu = Menu::create()
             .addAction(aboutItem);
-            Application::setMenu(menu);
+            Application::instance()->setMenu(menu);
 
             if(pasteModel_->isAuthenticated()) {
                 onUserDetailsUpdated();
@@ -158,11 +157,11 @@ FormatDropDown* LogicPasteApp::replaceDropDown(Page *page, const QString& object
 
 void LogicPasteApp::onAboutActionTriggered()
 {
-    QmlDocument *qml = QmlDocument::create(this, "AboutPage.qml");
+    QmlDocument *qml = QmlDocument::create("asset:///AboutPage.qml").parent(this);
     qml->setContextProperty("cs", this);
 
     if(!qml->hasErrors()) {
-        Page *aboutPage = qml->createRootNode<Page>();
+        Page *aboutPage = qml->createRootObject<Page>();
 
         bb::ApplicationInfo appInfo;
         aboutPage->setProperty("appName", appInfo.title());
@@ -171,8 +170,8 @@ void LogicPasteApp::onAboutActionTriggered()
         Sheet *sheet = Sheet::create().content(aboutPage);
         connect(aboutPage, SIGNAL(close()), this, SLOT(onSheetPageClosed()));
         connect(aboutPage, SIGNAL(openUrl(QString)), this, SLOT(onOpenUrlInBrowser(QString)));
-        sheet->setVisible(true);
-        Application::setMenuEnabled(false);
+        sheet->open();
+        Application::instance()->setMenuEnabled(false);
     }
 }
 
@@ -180,9 +179,9 @@ void LogicPasteApp::onSheetPageClosed()
 {
     Page *page = qobject_cast<Page*>(sender());
     Sheet *sheet = qobject_cast<Sheet*>(page->parent());
-    sheet->setVisible(false);
+    sheet->close();
     sheet->deleteLater();
-    Application::setMenuEnabled(true);
+    Application::instance()->setMenuEnabled(true);
 }
 
 void LogicPasteApp::onRequestLogin() {
@@ -193,9 +192,9 @@ void LogicPasteApp::onRequestLogin() {
         loginSheet_ = NULL;
     }
 
-    QmlDocument *qml = QmlDocument::create(this, "LoginPage.qml");
+    QmlDocument *qml = QmlDocument::create("asset:///LoginPage.qml").parent(this);
     if(!qml->hasErrors()) {
-        Page *loginPage = qml->createRootNode<Page>();
+        Page *loginPage = qml->createRootObject<Page>();
         loginPage->setResizeBehavior(PageResizeBehavior::None);
         qml->setContextProperty("cs", this);
 
@@ -206,7 +205,7 @@ void LogicPasteApp::onRequestLogin() {
         loginSheet_ = Sheet::create();
         loginSheet_->setParent(this);
         loginSheet_->setContent(loginPage);
-        loginSheet_->setVisible(true);
+        loginSheet_->open();
     }
 }
 
@@ -229,7 +228,7 @@ void LogicPasteApp::onLoginComplete(QString apiKey) {
     emit settingsUpdated();
     historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
 
-    loginSheet_->setVisible(false);
+    loginSheet_->close();
     loginSheet_->deleteLater();
     loginSheet_ = NULL;
 }
@@ -245,7 +244,7 @@ void LogicPasteApp::onLoginFailed(QString message) {
 void LogicPasteApp::onLoginCanceled() {
     qDebug() << "onLoginCanceled()";
     if(loginSheet_) {
-        loginSheet_->setVisible(false);
+        loginSheet_->close();
         loginSheet_->deleteLater();
         loginSheet_ = NULL;
     }
@@ -301,7 +300,7 @@ void LogicPasteApp::onUserDetailsUpdated() {
     if(!appSettings->pasteExpiration().isEmpty()) {
         dropDown = settingsPage_->findChild<DropDown*>("expirationDropDown");
         if(dropDown) {
-            for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
+            for(int i = dropDown->count() - 1; i >= 0; --i) {
                 if(dropDown->at(i)->value() == appSettings->pasteExpiration()) {
                     dropDown->setSelectedIndex(i);
                     break;
@@ -329,20 +328,9 @@ void LogicPasteApp::onUserAvatarUpdated()
     AppSettings *appSettings = AppSettings::instance();
     const QByteArray data = appSettings->avatarImage();
     if(!data.isEmpty()) {
-        QImage image = QImage::fromData(data);
-        QImage convertedImage = image.rgbSwapped();
-
-        bb::cascades::PixelBufferData pixelData(
-            bb::cascades::PixelBufferData::RGBA_PRE,
-            image.width(),
-            image.height(),
-            image.width(),
-            (void *)convertedImage.bits());
-        Image displayableImage(pixelData);
-
+        Image displayableImage(data);
         imageView->setImage(displayableImage);
-        imageView->setPreferredWidth(image.width() * 4);
-        imageView->setPreferredHeight(image.height() * 4);
+        imageView->setPreferredSize(200.0F, 200.0F);
         imageView->setVisible(true);
     }
     else {
@@ -421,7 +409,7 @@ void LogicPasteApp::refreshPastePageDefaults()
     if(!appSettings->pasteExpiration().isEmpty()) {
         dropDown = pastePage_->findChild<DropDown*>("expirationDropDown");
         if(dropDown) {
-            for(int i = dropDown->optionCount() - 1; i >= 0; --i) {
+            for(int i = dropDown->count() - 1; i >= 0; --i) {
                 if(dropDown->at(i)->value() == appSettings->pasteExpiration()) {
                     dropDown->setSelectedIndex(i);
                     break;
@@ -550,6 +538,7 @@ void LogicPasteApp::onEditPaste(PasteListing pasteListing, QByteArray rawPaste)
     FormatDropDown *dropDown = pastePage_->findChild<FormatDropDown*>("formatDropDown");
     dropDown->selectFormat(pasteListing.formatShort());
 
-    nav->popAndDelete();
+    Page *page = nav->pop();
+    delete page;
     tabbedPane_->setActiveTab(tabbedPane_->at(0));
 }

@@ -17,10 +17,8 @@ NavigationPane {
                     id: activityIndicator
                     preferredWidth: 400
                     preferredHeight: 400
-                    layoutProperties: DockLayoutProperties {
-                        horizontalAlignment: HorizontalAlignment.Center
-                        verticalAlignment: VerticalAlignment.Center
-                    }
+                    horizontalAlignment: HorizontalAlignment.Center
+                    verticalAlignment: VerticalAlignment.Center
                 }
                 ListView {
                     id: pasteList

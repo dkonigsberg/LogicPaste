@@ -19,19 +19,15 @@ Page {
             objectName: "activityIndicator"
             preferredWidth: 400
             preferredHeight: 400
-            layoutProperties: DockLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-            }
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
         }
         ScrollView {
             scrollViewProperties {
                 scrollMode: ScrollMode.Both
             }
-            layoutProperties: DockLayoutProperties {
-                horizontalAlignment: HorizontalAlignment.Fill
-                verticalAlignment: VerticalAlignment.Fill
-            }
+            horizontalAlignment: HorizontalAlignment.Fill
+            verticalAlignment: VerticalAlignment.Fill
             WebView {
                 id: webView
                 objectName: "webView"

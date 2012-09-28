@@ -89,8 +89,6 @@
 
     <asset path="icon.png">icon.png</asset>
     <asset path="assets">assets</asset>
-    <!--  The splash screen that will appear when your application is launching. Should be 1024x600. -->
-    <!-- <splashscreen></splashscreen> -->
     
     <!-- Locale support -->
     <asset path="translations" dest="qm">
@@ -99,20 +97,8 @@
     <asset path="lib">lib</asset>
     
     <!-- Request permission to execute native code.  Required for native applications. -->
-    <action system="true">run_native</action>
-    <action>access_internet</action>
+    <permission system="true">run_native</permission>
+    <permission>access_internet</permission>
     <env var="LD_LIBRARY_PATH" value="app/native/lib:/usr/lib/qt4/lib"/>
     <env var="PYTHONIOENCODING" value="utf_8"/>
-
-    <!--  The permissions requested by your application. -->
-    <!--  <action>access_shared</action> -->
-    <!--  <action>record_audio</action> -->
-    <!--  <action>read_geolocation</action> -->
-    <!--  <action>use_camera</action> -->
-    <!--  <action>access_internet</action> -->
-    <!--  <action>play_audio</action> -->
-    <!--  <action>post_notification</action> -->
-    <!--  <action>set_audio_volume</action> -->
-    <!--  <action>read_device_identifying_information</action> -->
-
 </qnx>

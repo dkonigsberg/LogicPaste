@@ -12,12 +12,12 @@ Page {
             scrollMode: ScrollMode.Vertical
         }
         Container {
+            leftPadding: 16.0
+            rightPadding: 16.0
+            topPadding: 16.0
+            bottomPadding: 16.0
             layout: StackLayout {
-                layoutDirection: LayoutDirection.TopToBottom
-                leftPadding: 16.0
-                rightPadding: 16.0
-                topPadding: 16.0
-                bottomPadding: 16.0
+                orientation: LayoutOrientation.TopToBottom
             }
             Label {
                 text: qsTr("Paste title:")

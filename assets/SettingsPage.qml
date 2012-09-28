@@ -12,12 +12,12 @@ Page {
             scrollMode: ScrollMode.Vertical
         }
         Container {
+            leftPadding: 16
+            rightPadding: 16
+            topPadding: 16
+            bottomPadding: 16
             layout: StackLayout {
-                layoutDirection: LayoutDirection.TopToBottom
-                leftPadding: 16
-                rightPadding: 16
-                topPadding: 16
-                bottomPadding: 16
+                orientation: LayoutOrientation.TopToBottom
             }
             Label {
                 text: qsTr("Pastebin Account:")
@@ -27,9 +27,7 @@ Page {
                 id: loginButton
                 text: qsTr("Log in to Pastebin")
                 enabled: true
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Fill
-                }
+                horizontalAlignment: HorizontalAlignment.Fill
                 onClicked: {
                     settings.requestLogin();
                 }
@@ -38,18 +36,16 @@ Page {
                 id: logoutButton
                 text: qsTr("Log out of Pastebin")
                 enabled: false
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Fill
-                }
+                horizontalAlignment: HorizontalAlignment.Fill
                 onClicked: {
                     settings.requestLogout();
                 }
             }
             Container {
+                leftPadding: 10
+                rightPadding: 10
                 layout: StackLayout {
-                    layoutDirection: LayoutDirection.LeftToRight
-                    leftPadding: 10
-                    rightPadding: 10
+                    orientation: LayoutOrientation.LeftToRight
                 }
                 ImageView {
                     id: avatarImage
@@ -57,16 +53,14 @@ Page {
                     scalingMethod: ScalingMethod.AspectFit
                     visible: false
                     rightMargin: 10
-                    layoutProperties: StackLayoutProperties {
-                        verticalAlignment: VerticalAlignment.Center
-                    }
+                    verticalAlignment: VerticalAlignment.Center
                 }
                 Container {
                     layout: StackLayout {
-                        layoutDirection: LayoutDirection.TopToBottom
+                        orientation: LayoutOrientation.TopToBottom
                     }
+                    verticalAlignment: VerticalAlignment.Center
                     layoutProperties: StackLayoutProperties {
-                        verticalAlignment: VerticalAlignment.Center
                         spaceQuota: 1
                     }
                     Label {
@@ -107,9 +101,7 @@ Page {
                 preferredWidth: 400
                 preferredHeight: 200
                 visible: false
-                layoutProperties: StackLayoutProperties {
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
+                horizontalAlignment: HorizontalAlignment.Center
             }
             Divider {
             }

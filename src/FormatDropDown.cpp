@@ -67,7 +67,7 @@ void FormatDropDown::refreshRecentFormats()
 {
     const QString selected = selectedFormat();
 
-    for(int i = dropDown_->optionCount() - 2; i > 0; --i) {
+    for(int i = dropDown_->count() - 2; i > 0; --i) {
         Option *option = dropDown_->at(i);
         if(dropDown_->remove(option)) {
             option->deleteLater();
@@ -80,7 +80,7 @@ void FormatDropDown::refreshRecentFormats()
         Option *option = new Option();
         option->setText(formatMap_.value(format));
         option->setValue(format);
-        dropDown_->insert(dropDown_->optionCount() - 1, option);
+        dropDown_->insert(dropDown_->count() - 1, option);
     }
 
     selectFormat(selected);
@@ -89,7 +89,7 @@ void FormatDropDown::refreshRecentFormats()
 void FormatDropDown::selectFormat(const QString& format)
 {
     bool selected = false;
-    for(int i = dropDown_->optionCount() - 1; i >= 0; --i) {
+    for(int i = dropDown_->count() - 1; i >= 0; --i) {
         if(dropDown_->at(i)->value() == format) {
             dropDown_->setSelectedIndex(i);
             selected = true;
@@ -103,7 +103,7 @@ void FormatDropDown::selectFormat(const QString& format)
         option->setValue(format);
         dropDown_->insert(1, option);
         dropDown_->setSelectedIndex(1);
-        int count = dropDown_->optionCount();
+        int count = dropDown_->count();
         if(count > 6) {
             dropDown_->remove(dropDown_->at(5));
             count--;
@@ -131,26 +131,26 @@ void FormatDropDown::onMoreSelectedChanged(bool selected)
 {
     if(selected) {
         if(!formatSheet_) {
-            QmlDocument *qml = QmlDocument::create(this, "FormatsListPage.qml");
+            QmlDocument *qml = QmlDocument::create("asset:///FormatsListPage.qml").parent(this);
             if(qml->hasErrors()) { return; }
-            Page *page = qml->createRootNode<Page>();
+            Page *page = qml->createRootObject<Page>();
             if(!page) { return; }
 
             connect(page, SIGNAL(cancel()), this, SLOT(onSheetCancel()));
             connect(page, SIGNAL(selectFormat(QString, QString)), this, SLOT(onSheetSelectFormat(QString, QString)));
             formatSheet_ = Sheet::create().content(page);
         }
-        formatSheet_->setVisible(true);
+        formatSheet_->open();
     }
 }
 
 void FormatDropDown::onSheetCancel()
 {
-    formatSheet_->setVisible(false);
+    formatSheet_->close();
 }
 
 void FormatDropDown::onSheetSelectFormat(QString format, QString description)
 {
-    formatSheet_->setVisible(false);
+    formatSheet_->close();
     selectFormat(format);
 }
