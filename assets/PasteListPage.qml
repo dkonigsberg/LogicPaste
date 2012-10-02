@@ -73,14 +73,12 @@ NavigationPane {
                             }
                         }
                     ]
-                    onSelectionChanged: {
-                        if (selected) {
-                            var chosenItem = dataModel.data(indexPath);
-                            if (chosenItem.isPrivate) {
-                                pasteList.clearSelection();
-                            } else {
-                                pasteList.openPaste(chosenItem.pasteKey)
-                            }
+                    onTriggered: {
+                        var chosenItem = dataModel.data(indexPath);
+                        if (chosenItem.isPrivate) {
+                            pasteList.clearSelection();
+                        } else {
+                            pasteList.openPaste(chosenItem.pasteKey)
                         }
                     }
                 }
@@ -99,9 +97,6 @@ NavigationPane {
                 }
             }
         ]
-        function resetListFocus() {
-            pasteList.clearSelection();
-        }
         function onRefreshStarted() {
             refreshAction.enabled = false;
             pasteList.enabled = false;
@@ -111,15 +106,6 @@ NavigationPane {
             activityIndicator.stop();
             pasteList.enabled = true;
             refreshAction.enabled = true;
-        }
-    }
-    onTopChanged: {
-        if (page != mainTab) {
-            page.resetListFocus();
-        } else if (page == mainTab) {
-            if (mainTab.activeTabPane == pasteListPage) {
-                mainTab.activeTabPane.resetListFocus();
-            }
         }
     }
 }

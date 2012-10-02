@@ -56,6 +56,8 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
 
             // History page
             historyNav_ = tabbedPane_->findChild<NavigationPane*>("historyPage");
+            connect(historyNav_, SIGNAL(popTransitionEnded(bb::cascades::Page*)),
+                this, SLOT(onPopFinished(bb::cascades::Page*)));
             historyPage_ = historyNav_->findChild<Page*>("pasteListPage");
             historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
             connect(historyPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshHistory()));
@@ -71,6 +73,8 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
 
             // Trending page
             trendingNav_ = tabbedPane_->findChild<NavigationPane*>("trendingPage");
+            connect(trendingNav_, SIGNAL(popTransitionEnded(bb::cascades::Page*)),
+                this, SLOT(onPopFinished(bb::cascades::Page*)));
             trendingPage_ = trendingNav_->findChild<Page*>("pasteListPage");
             trendingPage_->findChild<ActionItem*>("refreshAction")->setEnabled(true);
             connect(trendingPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshTrending()));
@@ -153,6 +157,13 @@ FormatDropDown* LogicPasteApp::replaceDropDown(Page *page, const QString& object
     container->replace(index, formatDropDown);
 
     return formatDropDown;
+}
+
+void LogicPasteApp::onPopFinished(bb::cascades::Page *page)
+{
+    if(page) {
+        delete page;
+    }
 }
 
 void LogicPasteApp::onAboutActionTriggered()

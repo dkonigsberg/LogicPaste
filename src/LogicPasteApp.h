@@ -38,6 +38,7 @@ public slots:
     void onCopyText(QString text);
 
 private slots:
+    void onPopFinished(bb::cascades::Page *page);
     void onAboutActionTriggered();
     void onSheetPageClosed();
     void onLoginComplete(QString apiKey);
