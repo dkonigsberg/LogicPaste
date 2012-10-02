@@ -23,43 +23,16 @@ PasteFormatter::~PasteFormatter()
 void PasteFormatter::formatPaste(const QString& pasteKey, const QString& format, const QByteArray& rawPaste)
 {
     qDebug().nospace() << "PasteFormatter::formatPaste(" << pasteKey << ", " << format << ", [" << rawPaste.length() << "])";
-    int fd_in[2];
-    int ret = ::pipe(fd_in);
-    if(ret == -1) {
-        qWarning("Input pipe error (%s)", qPrintable(qt_error_string(errno)));
-        emit formatError();
-        return;
-    }
-    ::fcntl(fd_in[0], F_SETFD, FD_CLOEXEC);
-    ::fcntl(fd_in[1], F_SETFD, FD_CLOEXEC);
 
-    int fd_out[2];
-    ret = ::pipe(fd_out);
-    if(ret == -1) {
-        qWarning("Output pipe error (%s)", qPrintable(qt_error_string(errno)));
-        emit formatError();
-        return;
-    }
-    ::fcntl(fd_out[0], F_SETFD, FD_CLOEXEC);
-    ::fcntl(fd_out[1], F_SETFD, FD_CLOEXEC);
+    QProcess *process = new QProcess(this);
+    connect(process, SIGNAL(started()), this, SLOT(onStarted()));
+    connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(onFinished(int, QProcess::ExitStatus)));
+    connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onError(QProcess::ProcessError)));
+    process->setProperty("pasteKey", pasteKey);
+    process->setProperty("rawPaste", rawPaste);
 
-    QSocketNotifier *outNotifier = new QSocketNotifier(fd_out[0], QSocketNotifier::Read, this);
-    outNotifier->setProperty("pasteKey", pasteKey);
-    connect(outNotifier, SIGNAL(activated(int)), this, SLOT(onOutActivated(int)));
 
-    readBufferMap_[fd_out[0]] = new QByteArray();
-
-    const int fd_count = 3;
-    int fd_map[fd_count];
-    fd_map[0] = fd_in[0];
-    fd_map[1] = fd_out[1];
-    fd_map[2] = STDERR_FILENO;
-
-    struct inheritance inherit;
-    memset(&inherit, 0, sizeof(inherit));
-    inherit.flags |= SPAWN_CHECK_SCRIPT;
-    inherit.flags |= SPAWN_SETSIGDEF;
-    sigaddset(&inherit.sigdefault, SIGPIPE);
+    QString program = "/usr/bin/python3.2";
 
     AppSettings *appSettings = AppSettings::instance();
     QStringList options;
@@ -69,111 +42,49 @@ void PasteFormatter::formatPaste(const QString& pasteKey, const QString& format,
         options << "linenos";
     }
     options << QString("style=%1").arg(appSettings->formatterStyle());
-    qDebug() << options;
 
     QStringList arguments;
-    arguments << "/usr/bin/python3.2" << "app/native/lib/pygmentize";
+    arguments << "app/native/lib/pygmentize";
     arguments << "-l" << format;
     arguments << "-f" << "html";
     arguments << "-O" << options.join(",");
 
-    char **argv = new char *[arguments.count() + 1];
-    argv[arguments.count()] = 0;
-
-    for (int i = 0; i < arguments.count(); ++i) {
-        QString arg = arguments.at(i);
-        argv[i] = ::strdup(arg.toLocal8Bit().constData());
-    }
-
-    qDebug() << "Running formatter:" << arguments;
-
-    pid_t pid = spawn(argv[0], fd_count, fd_map, &inherit, argv, NULL);
-    int lastErrno = errno;
-
-    for (int i = 0; i < arguments.count(); ++i) {
-        free(argv[i]);
-    }
-    delete [] argv;
-
-    if(pid == -1) {
-        qWarning("Spawn error (%s)", qPrintable(qt_error_string(lastErrno)));
-        outNotifier->setEnabled(false);
-        ::close(fd_in[0]); ::close(fd_in[1]);
-        ::close(fd_out[0]); ::close(fd_out[1]);
-        delete outNotifier;
-        emit formatError();
-        return;
-    }
-    else {
-        qDebug() << "Spawned:" << pid;
-    }
-
-    // Close the other ends of the pipes
-    ::close(fd_out[1]);
-    ::close(fd_in[0]);
-
-    int n = ::write(fd_in[1], rawPaste.data(), rawPaste.size());
-    if(n < rawPaste.size()) {
-        if(n == -1) {
-            qWarning("Write error (%s)", qPrintable(qt_error_string(errno)));
-        }
-        else {
-            qWarning() << "Write error:" << n << "<" << rawPaste.size();
-        }
-        outNotifier->setEnabled(false);
-        delete outNotifier;
-        emit formatError();
-    }
-    qDebug() << "Wrote" << n << "bytes";
-
-    ::close(fd_in[1]);
+    process->start(program, arguments);
 }
 
-void PasteFormatter::onOutActivated(int socket)
+void PasteFormatter::onStarted()
 {
-    qDebug().nospace() << "PasteFormatter::onOutActivated(" << socket << ")";
-    QSocketNotifier *notifier = qobject_cast<QSocketNotifier*>(sender());
-    notifier->setEnabled(false);
+    qDebug() << "PasteFormatter::onStarted()";
+    QProcess *process = qobject_cast<QProcess*>(sender());
+    const QByteArray rawPaste = process->property("rawPaste").toByteArray();
+    process->write(rawPaste);
+    process->closeWriteChannel();
+}
 
-    int nbytes = 0;
-    qint64 available = 0;
-    if (::ioctl(socket, FIONREAD, (char *) &nbytes) >= 0) {
-        available = (qint64) nbytes;
-    }
+void PasteFormatter::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug().nospace() << "PasteFormatter::onFinished(" << exitCode << ", " << exitStatus << ")";
+    QProcess *process = qobject_cast<QProcess*>(sender());
 
-    if(available > 0) {
-        QByteArray data;
-        data.reserve(available);
-        char *raw = data.data();
-        int n = ::read(socket, raw, available);
-        if(n > 0) {
-            QString pasteKey = notifier->property("pasteKey").toString();
+    const QString pasteKey = process->property("pasteKey").toString();
+    const QByteArray output = process->readAllStandardOutput();
+    const QString html = QString::fromUtf8(output.constData(), output.size());
 
-            QByteArray *readBuffer = readBufferMap_[socket];
-            if(readBuffer) {
-                readBuffer->append(raw, n);
-            }
-        }
-        notifier->setEnabled(true);
+    if(html.length() > 0) {
+        qDebug() << "Processed HTML:" << html.length();
+        emit pasteFormatted(pasteKey, html);
     }
     else {
-        ::close(socket);
-        QByteArray *readBuffer = readBufferMap_.take(socket);
-        if(readBuffer) {
-            const QString pasteKey = notifier->property("pasteKey").toString();
-            const QString html = QString::fromUtf8(readBuffer->constData(), readBuffer->size());
-            delete readBuffer;
-
-            if(html.length() > 0) {
-                qDebug() << "Processed HTML:" << html.length();
-                emit pasteFormatted(pasteKey, html);
-            }
-            else {
-                emit formatError();
-            }
-        } else {
-            emit formatError();
-        }
-        notifier->deleteLater();
+        emit formatError();
     }
+
+    process->deleteLater();
+}
+
+void PasteFormatter::onError(QProcess::ProcessError error)
+{
+    qDebug().nospace() << "PasteFormatter::onError(" << error << ")";
+    QProcess *process = qobject_cast<QProcess*>(sender());
+    process->deleteLater();
+    emit formatError();
 }

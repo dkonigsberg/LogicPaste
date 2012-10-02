@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
-#include <QtCore/QHash>
+#include <QtCore/QProcess>
 
 class PasteFormatter : public QObject
 {
@@ -21,10 +21,9 @@ signals:
     void formatError();
 
 private slots:
-    void onOutActivated(int socket);
-
-private:
-    QHash<int, QByteArray*> readBufferMap_;
+    void onStarted();
+    void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onError(QProcess::ProcessError error);
 };
 
 #endif // PASTEFORMATTER_H
