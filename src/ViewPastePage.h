@@ -35,6 +35,8 @@ private slots:
     void onFormatError();
 
     // Paste page actions
+    void onSavePaste();
+    void onSharePaste();
     void onEditPaste();
     void onOpenInBrowser();
     void onCopyPaste();

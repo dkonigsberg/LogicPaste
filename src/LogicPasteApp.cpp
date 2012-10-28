@@ -65,7 +65,6 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
             ListView *historyList = historyPage_->findChild<ListView*>("pasteList");
             historyList->setDataModel(pasteModel_->historyModel());
             connect(historyList, SIGNAL(openPaste(QString)), this, SLOT(onOpenHistoryPaste(QString)));
-            connect(historyList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenUrlInBrowser(QString)));
             connect(historyList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
             connect(pasteModel_, SIGNAL(historyUpdating()), historyPage_, SLOT(onRefreshStarted()));
@@ -82,7 +81,6 @@ LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) 
             ListView *trendingList = trendingPage_->findChild<ListView*>("pasteList");
             trendingList->setDataModel(pasteModel_->trendingModel());
             connect(trendingList, SIGNAL(openPaste(QString)), this, SLOT(onOpenTrendingPaste(QString)));
-            connect(trendingList, SIGNAL(openPasteInBrowser(QString)), this, SLOT(onOpenUrlInBrowser(QString)));
             connect(trendingList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
             connect(pasteModel_, SIGNAL(trendingUpdating()), trendingPage_, SLOT(onRefreshStarted()));

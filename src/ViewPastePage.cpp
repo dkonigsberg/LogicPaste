@@ -5,7 +5,16 @@
 #include <bb/cascades/TitleBar>
 #include <bb/cascades/WebView>
 #include <bb/cascades/WebSettings>
+#include <bb/cascades/InvokeActionItem>
+#include <bb/cascades/InvokeHandler>
 #include <bb/system/Clipboard>
+#include <bb/system/InvokeQueryTargetsRequest>
+#include <bb/system/InvokeQueryTargetsReply>
+#include <bb/system/InvokeTarget>
+#include <bb/system/InvokeAction>
+#include <bb/system/InvokeReply>
+
+#include <bb/system/SystemListDialog>
 
 #include <bps/navigator.h>
 
@@ -40,6 +49,8 @@ ViewPastePage::~ViewPastePage()
 
 void ViewPastePage::findAndConnectControls()
 {
+    connect(root_, SIGNAL(savePaste()), this, SLOT(onSavePaste()));
+    connect(root_, SIGNAL(sharePaste()), this, SLOT(onSharePaste()));
     connect(root_, SIGNAL(editPaste()), this, SLOT(onEditPaste()));
     connect(root_, SIGNAL(openInBrowser()), this, SLOT(onOpenInBrowser()));
     connect(root_, SIGNAL(copyPaste()), this, SLOT(onCopyPaste()));
@@ -103,6 +114,23 @@ void ViewPastePage::onFormatError()
     QString errorHtml = QString("<html><body>%1</body></html>").arg(tr("Error formatting paste"));
     webView_->settings()->setMinimumFontSize(36);
     webView_->setHtml(errorHtml);
+}
+
+void ViewPastePage::onSavePaste()
+{
+
+}
+
+void ViewPastePage::onSharePaste()
+{
+    InvokeActionItem *invokeAction = root_->findChild<InvokeActionItem*>("shareAction");
+    if(!invokeAction) {
+        qWarning() << "Could not find share action";
+        return;
+    }
+
+    invokeAction->setInvocationData(rawPaste_);
+    invokeAction->handler()->confirm();
 }
 
 void ViewPastePage::onEditPaste() {

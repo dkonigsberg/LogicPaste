@@ -24,7 +24,6 @@ NavigationPane {
                     id: pasteList
                     objectName: "pasteList"
                     signal openPaste(string pasteKey)
-                    signal openPasteInBrowser(string pasteUrl)
                     signal copyUrl(string pasteUrl)
                     signal deletePaste(string pasteKey)
                     listItemComponents: [
@@ -46,11 +45,14 @@ NavigationPane {
                                                 pasteItem.ListItem.view.openPaste(ListItemData.pasteKey);
                                             }
                                         }
-                                        ActionItem {
+                                        InvokeActionItem {
                                             title: qsTr("Open in browser")
                                             imageSource: "asset:///images/action-open-browser.png"
-                                            onTriggered: {
-                                                pasteItem.ListItem.view.openPasteInBrowser(ListItemData.pasteUrl);
+                                            query {
+                                                mimeType: "text/html"
+                                                uri: ListItemData.pasteUrl
+                                                invokeActionId: "bb.action.OPEN"
+                                                invokeTargetId: "sys.browser"
                                             }
                                         }
                                         ActionItem {
@@ -58,6 +60,15 @@ NavigationPane {
                                             imageSource: "asset:///images/action-copy-url.png"
                                             onTriggered: {
                                                 pasteItem.ListItem.view.copyUrl(ListItemData.pasteUrl);
+                                            }
+                                        }
+                                        InvokeActionItem {
+                                            title: qsTr("Share URL")
+                                            imageSource: "asset:///images/action-share.png"
+                                            query {
+                                                mimeType: "text/url"
+                                                data: ListItemData.pasteUrl
+                                                invokeActionId: "bb.action.SHARE"
                                             }
                                         }
                                         DeleteActionItem {

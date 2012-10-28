@@ -3,6 +3,8 @@ import bb.cascades 1.0
 Page {
     id: viewPastePage
     property bool pasteLoaded: false
+    signal savePaste()
+    signal sharePaste()
     signal editPaste()
     signal openInBrowser()
     signal copyPaste()
@@ -23,23 +25,35 @@ Page {
             verticalAlignment: VerticalAlignment.Center
         }
         ScrollView {
+            id: scrollView
             scrollViewProperties {
                 scrollMode: ScrollMode.Both
+                pinchToZoomEnabled: true
             }
             horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Fill
-            WebView {
-                id: webView
-                objectName: "webView"
-                onNavigationRequested: {
-                    console.debug("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
-                }
-                onLoadingChanged: {
-                    if (loadRequest.status == WebView.LoadSucceededStatus) {
-                        activityIndicator.stop();
+            Container {
+                background: Color.LightGray
+                WebView {
+                    id: webView
+                    objectName: "webView"
+                    onNavigationRequested: {
+                        console.debug("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
                     }
-                    if (loadRequest.status == WebView.LoadFailedStatus) {
-                        activityIndicator.stop();
+                    onLoadingChanged: {
+                        if (loadRequest.status == WebView.LoadSucceededStatus) {
+                            activityIndicator.stop();
+                        }
+                        if (loadRequest.status == WebView.LoadFailedStatus) {
+                            activityIndicator.stop();
+                        }
+                    }
+                    onMinContentScaleChanged: {
+                        scrollView.scrollViewProperties.minContentScale = minContentScale;
+                    }
+                    
+                    onMaxContentScaleChanged: {
+                        scrollView.scrollViewProperties.maxContentScale = maxContentScale;
                     }
                 }
             }
@@ -54,19 +68,27 @@ Page {
             title: qsTr("Save")
             imageSource: "asset:///images/action-save.png"
             onTriggered: {
+                viewPastePage.savePaste();
             }
             enabled: false
             ActionBar.placement: ActionBarPlacement.OnBar
         },
-        ActionItem {
-            objectName: "shareAction"
-            title: qsTr("Share")
-            imageSource: "asset:///images/action-share.png"
-            onTriggered: {
-            }
-            enabled: false
-            ActionBar.placement: ActionBarPlacement.OnBar
-        },
+		InvokeActionItem {
+		    objectName: "shareAction";
+		    title: qsTr("Share")
+		    imageSource: "asset:///images/action-share.png"
+		    query {
+		        mimeType: "text/plain"
+		        invokeActionId: "bb.action.SHARE"
+		    }
+		    handler : InvokeHandler {
+		        onInvoking: {
+		            viewPastePage.sharePaste();
+		        }
+		    }
+		    enabled: pasteLoaded
+		    ActionBar.placement: ActionBarPlacement.OnBar
+		},
         ActionItem {
             objectName: "editAction"
             title: qsTr("Edit Paste")
