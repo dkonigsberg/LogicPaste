@@ -1,5 +1,6 @@
 #include "ViewPastePage.h"
 
+#include <QtGui/QTextDocument>
 #include <bb/cascades/QmlDocument>
 #include <bb/cascades/Page>
 #include <bb/cascades/TitleBar>
@@ -111,9 +112,14 @@ void ViewPastePage::onFormatError()
         this, SLOT(onPasteFormatted(const QString&, const QString&)));
     disconnect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
 
-    QString errorHtml = QString("<html><body>%1</body></html>").arg(tr("Error formatting paste"));
+    qWarning() << "Error formatting paste, falling back to raw output";
+
+    const QString rawPasteString = QString::fromUtf8(rawPaste_.constData(), rawPaste_.size());
+
+    QTextDocument document(rawPasteString);
+    const QString pasteHtml = document.toHtml();
     webView_->settings()->setMinimumFontSize(36);
-    webView_->setHtml(errorHtml);
+    webView_->setHtml(pasteHtml);
 }
 
 void ViewPastePage::onSavePaste()
