@@ -502,8 +502,8 @@ void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteKey) {
     qDebug().nospace() << "onOpenPaste(" << pasteKey << ")";
 
     ViewPastePage *viewPastePage = new ViewPastePage(pasteModel_, pasteKey);
-    connect(viewPastePage, SIGNAL(editPaste(PasteListing, QByteArray)),
-        this, SLOT(onEditPaste(PasteListing, QByteArray)),
+    connect(viewPastePage, SIGNAL(editPaste(PasteListing,QByteArray)),
+        this, SLOT(onEditPaste(PasteListing,QByteArray)),
         Qt::QueuedConnection);
     nav->push(viewPastePage->rootNode());
 }

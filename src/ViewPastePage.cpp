@@ -38,7 +38,7 @@ ViewPastePage::ViewPastePage(PasteModel *pasteModel, const QString &pasteKey, QO
         root_->titleBar()->setTitle(pasteListing_.title());
     }
 
-    connect(pasteModel_, SIGNAL(pasteAvailable(PasteListing, QByteArray)), this, SLOT(onPasteAvailable(PasteListing, QByteArray)));
+    connect(pasteModel_, SIGNAL(pasteAvailable(PasteListing,QByteArray)), this, SLOT(onPasteAvailable(PasteListing,QByteArray)));
     connect(pasteModel_, SIGNAL(pasteError(PasteListing)), this, SLOT(onPasteError(PasteListing)));
 
     pasteModel_->requestPaste(pasteKey);
@@ -68,14 +68,14 @@ Page* ViewPastePage::rootNode() const
 void ViewPastePage::onPasteAvailable(PasteListing pasteListing, QByteArray rawPaste)
 {
     if(pasteListing.key() != pasteListing_.key()) { return; }
-    disconnect(pasteModel_, SIGNAL(pasteAvailable(PasteListing, QByteArray)), this, SLOT(onPasteAvailable(PasteListing, QByteArray)));
+    disconnect(pasteModel_, SIGNAL(pasteAvailable(PasteListing,QByteArray)), this, SLOT(onPasteAvailable(PasteListing,QByteArray)));
     disconnect(pasteModel_, SIGNAL(pasteError(PasteListing)), this, SLOT(onPasteError(PasteListing)));
     pasteListing_ = pasteListing;
     rawPaste_ = rawPaste;
 
     PasteFormatter *formatter = new PasteFormatter(this);
-    connect(formatter, SIGNAL(pasteFormatted(const QString&, const QString&)),
-        this, SLOT(onPasteFormatted(const QString&, const QString&)));
+    connect(formatter, SIGNAL(pasteFormatted(QString,QString)),
+        this, SLOT(onPasteFormatted(QString,QString)));
     connect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
     formatter->formatPaste(pasteListing.key(), pasteListing.formatShort(), rawPaste);
 }
@@ -83,7 +83,7 @@ void ViewPastePage::onPasteAvailable(PasteListing pasteListing, QByteArray rawPa
 void ViewPastePage::onPasteError(PasteListing pasteListing)
 {
     if(pasteListing.key() != pasteListing_.key()) { return; }
-    disconnect(pasteModel_, SIGNAL(pasteAvailable(PasteListing, QByteArray)), this, SLOT(onPasteAvailable(PasteListing, QByteArray)));
+    disconnect(pasteModel_, SIGNAL(pasteAvailable(PasteListing,QByteArray)), this, SLOT(onPasteAvailable(PasteListing,QByteArray)));
     disconnect(pasteModel_, SIGNAL(pasteError(PasteListing)), this, SLOT(onPasteError(PasteListing)));
     pasteListing_ = pasteListing;
 
@@ -96,8 +96,8 @@ void ViewPastePage::onPasteFormatted(const QString& pasteKey, const QString& htm
 {
     PasteFormatter *formatter = qobject_cast<PasteFormatter*>(sender());
     Q_UNUSED(pasteKey);
-    disconnect(formatter, SIGNAL(pasteFormatted(const QString&, const QString&)),
-        this, SLOT(onPasteFormatted(const QString&, const QString&)));
+    disconnect(formatter, SIGNAL(pasteFormatted(QString,QString)),
+        this, SLOT(onPasteFormatted(QString,QString)));
     disconnect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
 
     webView_->settings()->setMinimumFontSize(36);
@@ -108,8 +108,8 @@ void ViewPastePage::onPasteFormatted(const QString& pasteKey, const QString& htm
 void ViewPastePage::onFormatError()
 {
     PasteFormatter *formatter = qobject_cast<PasteFormatter*>(sender());
-    disconnect(formatter, SIGNAL(pasteFormatted(const QString&, const QString&)),
-        this, SLOT(onPasteFormatted(const QString&, const QString&)));
+    disconnect(formatter, SIGNAL(pasteFormatted(QString,QString)),
+        this, SLOT(onPasteFormatted(QString,QString)));
     disconnect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
 
     qWarning() << "Error formatting paste, falling back to raw output";

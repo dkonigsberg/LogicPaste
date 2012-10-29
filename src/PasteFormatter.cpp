@@ -26,7 +26,7 @@ void PasteFormatter::formatPaste(const QString& pasteKey, const QString& format,
 
     QProcess *process = new QProcess(this);
     connect(process, SIGNAL(started()), this, SLOT(onStarted()));
-    connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(onFinished(int, QProcess::ExitStatus)));
+    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onFinished(int,QProcess::ExitStatus)));
     connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onError(QProcess::ProcessError)));
     process->setProperty("pasteKey", pasteKey);
     process->setProperty("rawPaste", rawPaste);

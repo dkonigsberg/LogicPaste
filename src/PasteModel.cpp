@@ -16,9 +16,9 @@ PasteModel::PasteModel(QObject *parent)
     connect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     connect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
     connect(&pastebin_, SIGNAL(userAvatarUpdated()), this, SIGNAL(userAvatarUpdated()));
-    connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
-    connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
-    connect(&pastebin_, SIGNAL(rawPasteAvailable(QString, QByteArray)), this, SLOT(onRawPasteAvailable(QString, QByteArray)));
+    connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing>*)), this, SLOT(onHistoryAvailable(QList<PasteListing>*)));
+    connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing>*)), this, SLOT(onTrendingAvailable(QList<PasteListing>*)));
+    connect(&pastebin_, SIGNAL(rawPasteAvailable(QString,QByteArray)), this, SLOT(onRawPasteAvailable(QString,QByteArray)));
 }
 
 PasteModel::~PasteModel() {
@@ -30,9 +30,9 @@ PasteModel::~PasteModel() {
 
     disconnect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     disconnect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
-    disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing> *)), this, SLOT(onHistoryAvailable(QList<PasteListing> *)));
-    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing> *)), this, SLOT(onTrendingAvailable(QList<PasteListing> *)));
-    disconnect(&pastebin_, SIGNAL(rawPasteAvailable(QString, QByteArray)), this, SLOT(onRawPasteAvailable(QString, QByteArray)));
+    disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing>*)), this, SLOT(onHistoryAvailable(QList<PasteListing>*)));
+    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing>*)), this, SLOT(onTrendingAvailable(QList<PasteListing>*)));
+    disconnect(&pastebin_, SIGNAL(rawPasteAvailable(QString,QByteArray)), this, SLOT(onRawPasteAvailable(QString,QByteArray)));
 
     delete historyModel_;
     delete trendingModel_;

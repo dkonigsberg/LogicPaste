@@ -137,7 +137,7 @@ void FormatDropDown::onMoreSelectedChanged(bool selected)
             if(!page) { return; }
 
             connect(page, SIGNAL(cancel()), this, SLOT(onSheetCancel()));
-            connect(page, SIGNAL(selectFormat(QString, QString)), this, SLOT(onSheetSelectFormat(QString, QString)));
+            connect(page, SIGNAL(selectFormat(QString,QString)), this, SLOT(onSheetSelectFormat(QString,QString)));
             formatSheet_ = Sheet::create().content(page);
         }
         formatSheet_->open();
