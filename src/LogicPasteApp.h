@@ -23,7 +23,8 @@ class LogicPasteApp : public QObject {
     Q_OBJECT
 
 public:
-    LogicPasteApp();
+    LogicPasteApp(Application *app=0);
+    virtual ~LogicPasteApp() {}
 
 public slots:
     void onRequestLogin();

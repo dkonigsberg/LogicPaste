@@ -32,7 +32,8 @@
 
 #include "config.h"
 
-LogicPasteApp::LogicPasteApp() : loginSheet_(NULL), ignoreSettingsEvent_(false) {
+LogicPasteApp::LogicPasteApp(Application *app)
+    : QObject(app), loginSheet_(NULL), ignoreSettingsEvent_(false) {
     QCoreApplication::setOrganizationName("LogicProbe");
     QCoreApplication::setApplicationName("LogicPaste");
 

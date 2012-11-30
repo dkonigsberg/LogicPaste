@@ -151,6 +151,7 @@ void FormatDropDown::onSheetCancel()
 
 void FormatDropDown::onSheetSelectFormat(QString format, QString description)
 {
+    Q_UNUSED(description)
     formatSheet_->close();
     selectFormat(format);
 }
