@@ -20,93 +20,101 @@ Page {
         background: Color.create("#f8f8f8")
         layout: DockLayout {
         }
-        Container {
-            layout: StackLayout {
-                orientation: LayoutOrientation.TopToBottom
+        ScrollView {
+            scrollViewProperties {
+                scrollMode: ScrollMode.Vertical
             }
-            verticalAlignment: VerticalAlignment.Center
-            horizontalAlignment: HorizontalAlignment.Center
-            ImageView {
-                imageSource: "asset:///images/pastebin-logo.png"
-                scalingMethod: ScalingMethod.AspectFill
-                horizontalAlignment: HorizontalAlignment.Center
-            }
-            Label {
-                text: appName
-                topMargin: 25
-                bottomMargin: 25
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle {
-                    base: SystemDefaults.TextStyles.TitleText
+            verticalAlignment: VerticalAlignment.Fill
+            horizontalAlignment: HorizontalAlignment.Fill
+            
+            Container {
+                topPadding: 50
+                bottomPadding: 50
+                layout: StackLayout {
+                    orientation: LayoutOrientation.TopToBottom
                 }
-            }
-            Label {
-                text: qsTr("Version %1").arg(versionNumber)
-                topMargin: 25
-                bottomMargin: 25
                 horizontalAlignment: HorizontalAlignment.Center
-                textStyle {
-                    base: SystemDefaults.TextStyles.SubtitleText
+                ImageView {
+                    imageSource: "asset:///images/pastebin-logo.png"
+                    scalingMethod: ScalingMethod.AspectFill
+                    horizontalAlignment: HorizontalAlignment.Center
                 }
-            }
-            TextArea {
-                text: appCopyright
-                topMargin: 25
-                bottomMargin: 25
-                backgroundVisible: false
-                editable: false
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle {
-                    base: SystemDefaults.TextStyles.SmallText
-                    textAlign: TextAlign.Center
-                }
-            }
-            Divider {
-                topMargin: 50
-                bottomMargin: 50
-            }
-            Label {
-                topMargin: 50
-                bottomMargin: 50
-                text: "PASTEBIN | #1 paste tool since 2002"
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle {
-                    base: SystemDefaults.TextStyles.SubtitleText
-                    color: Color.DarkBlue
-                }
-                onTouch: {
-                    if (event.isUp()) {
-                        about.openUrl("http://pastebin.com");
+                Label {
+                    text: appName
+                    topMargin: 25
+                    bottomMargin: 25
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle {
+                        base: SystemDefaults.TextStyles.TitleText
                     }
                 }
-            }
-            Label {
-                topMargin: 50
-                bottomMargin: 50
-                text: qsTr("Icons from the Tango Desktop Project")
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle {
-                    base: SystemDefaults.TextStyles.SubtitleText
-                    color: Color.DarkBlue
-                }
-                onTouch: {
-                    if (event.isUp()) {
-                        about.openUrl("http://tango.freedesktop.org/");
+                Label {
+                    text: qsTr("Version %1").arg(versionNumber)
+                    topMargin: 25
+                    bottomMargin: 25
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle {
+                        base: SystemDefaults.TextStyles.SubtitleText
                     }
                 }
-            }
-            Label {
-                topMargin: 50
-                bottomMargin: 50
-                text: qsTr("Paste formatting provided by Pygments")
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle {
-                    base: SystemDefaults.TextStyles.SubtitleText
-                    color: Color.DarkBlue
+                Label {
+                    text: appCopyright
+                    topMargin: 25
+                    bottomMargin: 25
+                    multiline: true
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle {
+                        base: SystemDefaults.TextStyles.SmallText
+                        textAlign: TextAlign.Center
+                    }
                 }
-                onTouch: {
-                    if (event.isUp()) {
-                        about.openUrl("http://pygments.org/");
+                Divider {
+                    topMargin: 50
+                    bottomMargin: 50
+                }
+                Label {
+                    topMargin: 50
+                    bottomMargin: 50
+                    text: "PASTEBIN | #1 paste tool since 2002"
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle {
+                        base: SystemDefaults.TextStyles.SubtitleText
+                        color: Color.DarkBlue
+                    }
+                    onTouch: {
+                        if (event.isUp()) {
+                            about.openUrl("http://pastebin.com");
+                        }
+                    }
+                }
+                Label {
+                    topMargin: 50
+                    bottomMargin: 50
+                    text: qsTr("Icons from the Tango Desktop Project")
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle {
+                        base: SystemDefaults.TextStyles.SubtitleText
+                        color: Color.DarkBlue
+                    }
+                    onTouch: {
+                        if (event.isUp()) {
+                            about.openUrl("http://tango.freedesktop.org/");
+                        }
+                    }
+                }
+                Label {
+                    topMargin: 50
+                    bottomMargin: 50
+                    text: qsTr("Paste formatting provided by Pygments")
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle {
+                        base: SystemDefaults.TextStyles.SubtitleText
+                        color: Color.DarkBlue
+                    }
+                    onTouch: {
+                        if (event.isUp()) {
+                            about.openUrl("http://pygments.org/");
+                        }
                     }
                 }
             }

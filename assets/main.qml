@@ -36,6 +36,7 @@ TabbedPane {
         }
     }
     onCreationCompleted: {
+        OrientationSupport.supportedDisplayOrientation = SupportedDisplayOrientation.All;
         cs.settingsUpdated.connect(onSettingsUpdated);
         onSettingsUpdated();
     }

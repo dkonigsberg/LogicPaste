@@ -14,17 +14,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/AboutPage.qml" line="44"/>
+        <location filename="../assets/AboutPage.qml" line="52"/>
         <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/AboutPage.qml" line="86"/>
+        <location filename="../assets/AboutPage.qml" line="93"/>
         <source>Icons from the Tango Desktop Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/AboutPage.qml" line="101"/>
+        <location filename="../assets/AboutPage.qml" line="108"/>
         <source>Paste formatting provided by Pygments</source>
         <translation type="unfinished"></translation>
     </message>
