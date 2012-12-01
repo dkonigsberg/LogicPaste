@@ -88,7 +88,6 @@ void ViewPastePage::onPasteError(PasteListing pasteListing)
     pasteListing_ = pasteListing;
 
     QString errorHtml = QString("<html><body>%1</body></html>").arg(tr("Error retrieving paste"));
-    webView_->settings()->setMinimumFontSize(36);
     webView_->setHtml(errorHtml);
 }
 
@@ -100,7 +99,6 @@ void ViewPastePage::onPasteFormatted(const QString& pasteKey, const QString& htm
         this, SLOT(onPasteFormatted(QString,QString)));
     disconnect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
 
-    webView_->settings()->setMinimumFontSize(36);
     webView_->setHtml(html);
     root_->setProperty("pasteLoaded", true);
 }

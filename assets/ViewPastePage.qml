@@ -16,20 +16,13 @@ Page {
     content: Container {
         layout: DockLayout {
         }
-        ActivityIndicator {
-            id: activityIndicator
-            objectName: "activityIndicator"
-            preferredWidth: 400
-            preferredHeight: 400
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
-        }
         ScrollView {
             id: scrollView
             scrollViewProperties {
                 scrollMode: ScrollMode.Both
                 pinchToZoomEnabled: true
             }
+            layoutProperties: StackLayoutProperties { spaceQuota: 1.0 }
             horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Fill
             Container {
@@ -41,11 +34,9 @@ Page {
                         console.debug("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
                     }
                     onLoadingChanged: {
-                        if (loadRequest.status == WebView.LoadSucceededStatus) {
+                        if (loadRequest.status == WebLoadStatus.Succeeded || loadRequest.status == WebLoadStatus.Failed) {
                             activityIndicator.stop();
-                        }
-                        if (loadRequest.status == WebView.LoadFailedStatus) {
-                            activityIndicator.stop();
+                            activityIndicator.visible = false;
                         }
                     }
                     onMinContentScaleChanged: {
@@ -58,8 +49,17 @@ Page {
                 }
             }
         }
+        ActivityIndicator {
+            id: activityIndicator
+            objectName: "activityIndicator"
+            preferredWidth: 400
+            preferredHeight: 400
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
+        }
     }
     onCreationCompleted: {
+        activityIndicator.visible = true;
         activityIndicator.start();
     }
     actions: [
