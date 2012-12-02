@@ -30,9 +30,7 @@ Page {
                 WebView {
                     id: webView
                     objectName: "webView"
-                    onNavigationRequested: {
-                        console.debug("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
-                    }
+                    settings.zoomToFitEnabled: true
                     onLoadingChanged: {
                         if (loadRequest.status == WebLoadStatus.Succeeded || loadRequest.status == WebLoadStatus.Failed) {
                             activityIndicator.stop();
@@ -70,7 +68,7 @@ Page {
             onTriggered: {
                 viewPastePage.savePaste();
             }
-            enabled: false
+            enabled: pasteLoaded
             ActionBar.placement: ActionBarPlacement.OnBar
         },
 		InvokeActionItem {
@@ -89,6 +87,15 @@ Page {
 		    enabled: pasteLoaded
 		    ActionBar.placement: ActionBarPlacement.OnBar
 		},
+        InvokeActionItem {
+            title: qsTr("Share URL")
+            imageSource: "asset:///images/action-share.png"
+            query {
+                mimeType: "text/plain"
+                data: ListItemData.pasteUrl
+                invokeActionId: "bb.action.SHARE"
+            }
+        },
         ActionItem {
             objectName: "editAction"
             title: qsTr("Edit Paste")

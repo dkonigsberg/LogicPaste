@@ -28,6 +28,8 @@ public:
 
     void requestPaste(const QString& pasteKey);
 
+    QString lexerForFormat(const QString& format) const;
+
 public slots:
     void refreshUserDetails();
     void refreshHistory();
@@ -57,6 +59,7 @@ private:
     void updatePasteTable(QString tableName, QList<PasteListing> *pasteList);
     void loadPasteTable(QString tableName, QMapListDataModel *dataModel);
     static PasteListing createFakePasteListing(const QString& pasteKey);
+    void loadFormatterMappings();
 
     Pastebin pastebin_;
     QSqlDatabase pasteDb_;
@@ -64,6 +67,7 @@ private:
     QMapListDataModel *trendingModel_;
     QHash<QString, PasteListing> pasteListingMap_;
     QHash<QString, QByteArray> rawPasteMap_;
+    QHash<QString, QString> formatLexerMap_;
 };
 
 #endif // PASTEMODEL_H

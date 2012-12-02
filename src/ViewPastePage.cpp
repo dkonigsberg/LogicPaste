@@ -1,5 +1,6 @@
 #include "ViewPastePage.h"
 
+#include <QtCore/QFile>
 #include <QtGui/QTextDocument>
 #include <bb/cascades/QmlDocument>
 #include <bb/cascades/Page>
@@ -8,14 +9,14 @@
 #include <bb/cascades/WebSettings>
 #include <bb/cascades/InvokeActionItem>
 #include <bb/cascades/InvokeHandler>
+#include <bb/cascades/pickers/FilePicker>
 #include <bb/system/Clipboard>
 #include <bb/system/InvokeQueryTargetsRequest>
 #include <bb/system/InvokeQueryTargetsReply>
 #include <bb/system/InvokeTarget>
 #include <bb/system/InvokeAction>
 #include <bb/system/InvokeReply>
-
-#include <bb/system/SystemListDialog>
+#include <bb/system/SystemToast>
 
 #include <bps/navigator.h>
 
@@ -77,7 +78,7 @@ void ViewPastePage::onPasteAvailable(PasteListing pasteListing, QByteArray rawPa
     connect(formatter, SIGNAL(pasteFormatted(QString,QString)),
         this, SLOT(onPasteFormatted(QString,QString)));
     connect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
-    formatter->formatPaste(pasteListing.key(), pasteListing.formatShort(), rawPaste);
+    formatter->formatPaste(pasteListing.key(), pasteModel_->lexerForFormat(pasteListing.formatShort()), rawPaste);
 }
 
 void ViewPastePage::onPasteError(PasteListing pasteListing)
@@ -122,7 +123,62 @@ void ViewPastePage::onFormatError()
 
 void ViewPastePage::onSavePaste()
 {
+    pickers::FilePicker* filePicker = new pickers::FilePicker();
+    filePicker->setType(pickers::FileType::Document);
+    filePicker->setMode(pickers::FilePickerMode::Saver);
 
+    QString baseName = pasteListing_.title().trimmed();
+    if(baseName.isEmpty()) {
+        baseName = pasteListing_.key();
+    }
+    const QString saveName = baseName.append(".txt");
+    filePicker->setDefaultSaveFileNames(QStringList() << saveName);
+
+    connect(filePicker, SIGNAL(fileSelected(QStringList)), this, SLOT(onPickerFileSelected(QStringList)), Qt::QueuedConnection);
+    connect(filePicker, SIGNAL(canceled()), this, SLOT(onPickerCanceled()));
+    filePicker->open();
+}
+
+void ViewPastePage::onPickerFileSelected(const QStringList& selectedFiles)
+{
+    pickers::FilePicker *picker = qobject_cast<pickers::FilePicker*>(sender());
+    picker->deleteLater();
+    if(selectedFiles.length() < 1 || selectedFiles[0].isEmpty()) { return; }
+    const QString filename = selectedFiles[0];
+
+    qDebug() << "Saving paste" << pasteListing_.key() << "to file:" << filename;
+    QFile pasteFile(filename);
+
+    bool success = true;
+    if(pasteFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        if(pasteFile.write(rawPaste_) < 0) {
+            qWarning() << "Unable to write paste to file:" << pasteFile.errorString();
+            success = false;
+        }
+    }
+    else {
+        qWarning() << "Unable to write paste to file:" << pasteFile.errorString();
+        success = false;
+    }
+    pasteFile.close();
+
+    if(success) {
+        qDebug() << "Paste saved successfully";
+        bb::system::SystemToast toast;
+        toast.setBody(tr("Paste saved to file %1").arg(pasteFile.fileName()));
+        toast.exec();
+    }
+    else {
+        bb::system::SystemToast toast;
+        toast.setBody(tr("'%1' error saving paste to file %2").arg(pasteFile.errorString()).arg(pasteFile.fileName()));
+        toast.exec();
+    }
+}
+
+void ViewPastePage::onPickerCanceled()
+{
+    pickers::FilePicker *picker = qobject_cast<pickers::FilePicker*>(sender());
+    picker->deleteLater();
 }
 
 void ViewPastePage::onSharePaste()

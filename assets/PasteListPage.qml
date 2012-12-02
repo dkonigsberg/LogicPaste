@@ -66,7 +66,7 @@ NavigationPane {
                                             title: qsTr("Share URL")
                                             imageSource: "asset:///images/action-share.png"
                                             query {
-                                                mimeType: "text/url"
+                                                mimeType: "text/plain"
                                                 data: ListItemData.pasteUrl
                                                 invokeActionId: "bb.action.SHARE"
                                             }

@@ -1,4 +1,5 @@
 #include <bb/cascades/QListDataModel>
+#include <bb/cascades/XmlDataModel>
 #include "PasteModel.h"
 #include "AppSettings.h"
 
@@ -12,6 +13,8 @@ PasteModel::PasteModel(QObject *parent)
 
     loadPasteTable("user_pastes", historyModel_);
     loadPasteTable("trending_pastes", trendingModel_);
+
+    loadFormatterMappings();
 
     connect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     connect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
@@ -76,6 +79,10 @@ PasteListing PasteModel::pasteListing(const QString& pasteKey) const {
     else {
         return pasteListing;
     }
+}
+
+QString PasteModel::lexerForFormat(const QString& format) const {
+    return formatLexerMap_.value(format);
 }
 
 void PasteModel::onLoginComplete(QString apiKey) {
@@ -276,4 +283,20 @@ PasteListing PasteModel::createFakePasteListing(const QString& pasteKey) {
     pasteListing.setFormatLong("None");
     pasteListing.setFormatShort("text");
     return pasteListing;
+}
+
+void PasteModel::loadFormatterMappings()
+{
+    XmlDataModel dataModel;
+    dataModel.setSource(QUrl("models/paste_formats.xml"));
+    int count = dataModel.childCount(QVariantList());
+
+    for(int i = 0; i < count; i++) {
+        QVariantMap map = dataModel.data(QVariantList() << i).toMap();
+        QString name = map["name"].toString();
+        QString lexer = map["lexer"].toString();
+        if(!name.isNull() && !lexer.isNull()) {
+            formatLexerMap_[name] = lexer;
+        }
+    }
 }

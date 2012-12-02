@@ -33,7 +33,7 @@ Page {
             TextArea {
                 id: pasteTextField
                 objectName: "pasteTextField"
-                preferredHeight: 300
+                minHeight: 300
                 hintText: qsTr("Text to paste")
                 onTextChanging: {
                     if (text.length > 0) {

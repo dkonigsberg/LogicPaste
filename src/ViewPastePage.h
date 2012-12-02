@@ -42,6 +42,9 @@ private slots:
     void onCopyPaste();
     void onCopyUrl();
 
+    void onPickerFileSelected(const QStringList& selectedFiles);
+    void onPickerCanceled();
+
 private:
     Page *root_;
     PasteModel *pasteModel_;

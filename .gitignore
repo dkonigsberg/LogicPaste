@@ -4,8 +4,8 @@
 *.so.*
 *.a
 *.qm
-arm/*
-x86/*
+arm
+x86
 *.moc
 moc_*.cpp
 
