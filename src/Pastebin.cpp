@@ -173,7 +173,7 @@ void Pastebin::onSubmitPasteFinished() {
         qDebug() << "Response:" << response;
 
         if(response.startsWith("Bad API request")) {
-            qDebug() << "Error with paste";
+            qWarning() << "Error with paste";
             emit pasteFailed(response);
         }
         else {
@@ -182,7 +182,7 @@ void Pastebin::onSubmitPasteFinished() {
         }
     }
     else {
-        qDebug() << "Error with paste";
+        qWarning() << "Error with paste";
         emit pasteFailed("Error");
     }
 }
@@ -223,7 +223,7 @@ void Pastebin::onUserDetailsFinished() {
         qDebug() << "Parsed user details";
 
         if(!success || reader.hasError()) {
-            qDebug() << "Parse error:" << reader.errorString();
+            qWarning() << "Parse error:" << reader.errorString();
         } else {
             AppSettings *appSettings = AppSettings::instance();
             appSettings->setUsername(pasteUser.username);
@@ -242,7 +242,7 @@ void Pastebin::onUserDetailsFinished() {
         }
     }
     else {
-        qDebug() << "Error in user details response";
+        qWarning() << "Error in user details response";
     }
 }
 
@@ -353,7 +353,7 @@ bool Pastebin::processPasteListResponse(QNetworkReply *networkReply, QList<Paste
         result = parsePasteList(reader, pasteList);
     }
     else {
-        qDebug() << "Error in paste list response";
+        qWarning() << "Error in paste list response";
         result = false;
     }
     return result;
@@ -380,7 +380,7 @@ bool Pastebin::parsePasteList(QXmlStreamReader& reader, QList<PasteListing> *pas
     qDebug() << "Parsed" << pasteList->size() << "paste elements";
 
     if(reader.hasError()) {
-        qDebug() << "Parse error:" << reader.errorString();
+        qWarning() << "Parse error:" << reader.errorString();
         return false;
     }
     else {
@@ -465,6 +465,52 @@ void Pastebin::onRequestRawPasteFinished() {
         }
     } else {
         emit rawPasteError(pasteKey);
+    }
+}
+
+void Pastebin::requestDeletePaste(const QString& pasteKey)
+{
+    qDebug().nospace() << "requestDeletePaste(" << pasteKey << ")";
+
+    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
+    request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1), pasteKey);
+
+    QUrl params;
+    params.addQueryItem("api_dev_key", PASTEBIN_DEV_KEY);
+    params.addQueryItem("api_user_key", apiKey());
+    params.addQueryItem("api_paste_key", pasteKey);
+    params.addQueryItem("api_option", "delete");
+
+    QNetworkReply *reply = accessManager_.post(request, params.encodedQuery());
+    connect(reply, SIGNAL(finished()), this, SLOT(onDeletePasteFinished()));
+}
+
+void Pastebin::onDeletePasteFinished()
+{
+    QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
+    QNetworkRequest networkRequest = networkReply->request();
+    QVariant statusCode = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    const QString pasteKey = networkRequest.attribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1)).toString();
+    qDebug() << "Delete paste complete:" << statusCode.toInt();
+
+    if(networkReply->error() == QNetworkReply::NoError) {
+        QString response = networkReply->readAll();
+
+        qDebug() << "Response:" << response;
+
+        if(response.startsWith("Bad API request")) {
+            qWarning() << "Error with delete paste";
+            emit deletePasteError(pasteKey, response);
+        }
+        else {
+            qDebug() << "Delete paste successful";
+            emit deletePasteComplete(pasteKey);
+        }
+    }
+    else {
+        qWarning() << "Error with delete paste";
+        emit deletePasteError(pasteKey, "Error");
     }
 }
 

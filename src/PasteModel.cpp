@@ -22,6 +22,8 @@ PasteModel::PasteModel(QObject *parent)
     connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing>*)), this, SLOT(onHistoryAvailable(QList<PasteListing>*)));
     connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing>*)), this, SLOT(onTrendingAvailable(QList<PasteListing>*)));
     connect(&pastebin_, SIGNAL(rawPasteAvailable(QString,QByteArray)), this, SLOT(onRawPasteAvailable(QString,QByteArray)));
+    connect(&pastebin_, SIGNAL(deletePasteComplete(QString)), this, SLOT(onDeletePasteComplete(QString)));
+    connect(&pastebin_, SIGNAL(deletePasteError(QString,QString)), this, SLOT(onDeletePasteError(QString,QString)));
 }
 
 PasteModel::~PasteModel() {
@@ -36,6 +38,8 @@ PasteModel::~PasteModel() {
     disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing>*)), this, SLOT(onHistoryAvailable(QList<PasteListing>*)));
     disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing>*)), this, SLOT(onTrendingAvailable(QList<PasteListing>*)));
     disconnect(&pastebin_, SIGNAL(rawPasteAvailable(QString,QByteArray)), this, SLOT(onRawPasteAvailable(QString,QByteArray)));
+    disconnect(&pastebin_, SIGNAL(deletePasteComplete(QString)), this, SLOT(onDeletePasteComplete(QString)));
+    disconnect(&pastebin_, SIGNAL(deletePasteError(QString,QString)), this, SLOT(onDeletePasteError(QString,QString)));
 
     delete historyModel_;
     delete trendingModel_;
@@ -299,4 +303,31 @@ void PasteModel::loadFormatterMappings()
             formatLexerMap_[name] = lexer;
         }
     }
+}
+
+void PasteModel::deletePaste(const QString& pasteKey)
+{
+    emit historyUpdating();
+
+    pastebin_.requestDeletePaste(pasteKey);
+}
+
+void PasteModel::onDeletePasteComplete(QString pasteKey)
+{
+    for(int i = historyModel_->size(); i >= 0; --i) {
+        const QString elementKey = historyModel_->value(i).value("pasteKey").toString();
+        if(elementKey == pasteKey) {
+            historyModel_->removeAt(i);
+        }
+    }
+
+    emit historyUpdated();
+}
+
+void PasteModel::onDeletePasteError(QString pasteKey, QString message)
+{
+    Q_UNUSED(pasteKey)
+    Q_UNUSED(message)
+    //TODO: Notify UI of error
+    emit historyUpdated();
 }

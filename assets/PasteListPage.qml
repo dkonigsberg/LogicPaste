@@ -2,6 +2,7 @@ import bb.cascades 1.0
 
 NavigationPane {
     id: pasteListNav
+    property bool deleteEnabled: false
     Page {
         id: pasteListPage
         objectName: "pasteListPage"
@@ -23,6 +24,7 @@ NavigationPane {
                 ListView {
                     id: pasteList
                     objectName: "pasteList"
+                    property bool deleteEnabled: pasteListNav.deleteEnabled
                     signal openPaste(string pasteKey)
                     signal copyUrl(string pasteUrl)
                     signal deletePaste(string pasteKey)
@@ -74,7 +76,7 @@ NavigationPane {
                                         DeleteActionItem {
                                             title: qsTr("Delete")
                                             imageSource: "asset:///images/action-delete.png"
-                                            enabled: false
+                                            enabled: pasteItem.ListItem.view.deleteEnabled
                                             onTriggered: {
                                                 pasteItem.ListItem.view.deletePaste(ListItemData.pasteKey);
                                             }

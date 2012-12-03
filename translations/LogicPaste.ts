@@ -144,37 +144,37 @@
 <context>
     <name>PasteListPage</name>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="39"/>
+        <location filename="../assets/PasteListPage.qml" line="41"/>
         <source>Paste actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="41"/>
+        <location filename="../assets/PasteListPage.qml" line="43"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="49"/>
+        <location filename="../assets/PasteListPage.qml" line="51"/>
         <source>Open in browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="59"/>
+        <location filename="../assets/PasteListPage.qml" line="61"/>
         <source>Copy URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="66"/>
+        <location filename="../assets/PasteListPage.qml" line="68"/>
         <source>Share URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="75"/>
+        <location filename="../assets/PasteListPage.qml" line="77"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="102"/>
+        <location filename="../assets/PasteListPage.qml" line="104"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -413,12 +413,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/main.qml" line="23"/>
+        <location filename="../assets/main.qml" line="24"/>
         <source>Trending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/main.qml" line="31"/>
+        <location filename="../assets/main.qml" line="32"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>

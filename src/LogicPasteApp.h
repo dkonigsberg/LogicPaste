@@ -35,6 +35,7 @@ public slots:
     void onSubmitPaste();
     void onOpenHistoryPaste(QString pasteKey);
     void onOpenTrendingPaste(QString pasteKey);
+    void onDeleteHistoryPaste(QString pasteKey);
     void onOpenUrlInBrowser(QString urlString);
     void onCopyText(QString text);
 

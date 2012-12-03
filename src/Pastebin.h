@@ -26,6 +26,7 @@ public:
     void requestHistory();
     void requestTrending();
     void requestRawPaste(const QString& pasteKey);
+    void requestDeletePaste(const QString& pasteKey);
 
     void setApiKey(const QString& apiKey);
     QString apiKey() const;
@@ -41,6 +42,8 @@ signals:
     void trendingAvailable(QList<PasteListing> *pasteList);
     void rawPasteAvailable(QString pasteKey, QByteArray rawPaste);
     void rawPasteError(QString pasteKey);
+    void deletePasteComplete(QString pasteKey);
+    void deletePasteError(QString pasteKey, QString message);
 
 private slots:
     void onLoginFinished();
@@ -50,6 +53,7 @@ private slots:
     void onHistoryFinished();
     void onTrendingFinished();
     void onRequestRawPasteFinished();
+    void onDeletePasteFinished();
 
 private:
     void loadRootCert(const QString& fileName);

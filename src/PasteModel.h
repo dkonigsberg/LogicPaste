@@ -27,6 +27,7 @@ public:
     PasteListing pasteListing(const QString& pasteKey) const;
 
     void requestPaste(const QString& pasteKey);
+    void deletePaste(const QString& pasteKey);
 
     QString lexerForFormat(const QString& format) const;
 
@@ -52,6 +53,8 @@ private slots:
     void onTrendingAvailable(QList<PasteListing> *pasteList);
     void onRawPasteAvailable(QString pasteKey, QByteArray rawPaste);
     void onRawPasteError(QString pasteKey);
+    void onDeletePasteComplete(QString pasteKey);
+    void onDeletePasteError(QString pasteKey, QString message);
 
 private:
     void loadPasteDatabase();

@@ -17,6 +17,7 @@ TabbedPane {
         PasteListPage {
             id: historyPage
             objectName: "historyPage"
+            deleteEnabled: true
         }
     }
     Tab {

@@ -67,6 +67,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
             historyList->setDataModel(pasteModel_->historyModel());
             connect(historyList, SIGNAL(openPaste(QString)), this, SLOT(onOpenHistoryPaste(QString)));
             connect(historyList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
+            connect(historyList, SIGNAL(deletePaste(QString)), this, SLOT(onDeleteHistoryPaste(QString)));
 
             connect(pasteModel_, SIGNAL(historyUpdating()), historyPage_, SLOT(onRefreshStarted()));
             connect(pasteModel_, SIGNAL(historyUpdated()), historyPage_, SLOT(onRefreshComplete()));
@@ -507,6 +508,27 @@ void LogicPasteApp::openPaste(NavigationPane *nav, QString pasteKey) {
         this, SLOT(onEditPaste(PasteListing,QByteArray)),
         Qt::QueuedConnection);
     nav->push(viewPastePage->rootNode());
+}
+
+void LogicPasteApp::onDeleteHistoryPaste(QString pasteKey) {
+    qDebug().nospace() << "onDeleteHistoryPaste(" << pasteKey << ")";
+
+    const PasteListing listing = pasteModel_->pasteListing(pasteKey);
+
+    bb::system::SystemDialog *dialog = new bb::system::SystemDialog(tr("Okay"));
+    dialog->setTitle(tr("Delete Paste?"));
+    if(!listing.title().isEmpty()) {
+        dialog->setBody(tr("Are you sure you want to delete \"%1\"?").arg(listing.title()));
+    }
+    else {
+        dialog->setBody(tr("Are you sure you want to delete this paste?"));
+    }
+    dialog->confirmButton()->setLabel(tr("Delete"));
+    dialog->cancelButton()->setLabel(tr("Cancel"));
+
+    if(dialog->exec() == bb::system::SystemUiResult::ConfirmButtonSelection) {
+        pasteModel_->deletePaste(pasteKey);
+    }
 }
 
 void LogicPasteApp::onOpenUrlInBrowser(QString urlString) {
