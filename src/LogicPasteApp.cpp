@@ -34,6 +34,7 @@
 
 LogicPasteApp::LogicPasteApp(Application *app)
     : QObject(app), loginSheet_(NULL), ignoreSettingsEvent_(false) {
+    qDebug() << "LogicPasteApp::LogicPasteApp()";
     QCoreApplication::setOrganizationName("LogicProbe");
     QCoreApplication::setApplicationName("LogicPaste");
 
@@ -119,7 +120,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
             connect(tabbedPane_, SIGNAL(activePaneChanged(bb::cascades::AbstractPane*)),
                 this, SLOT(onActivePaneChanged(bb::cascades::AbstractPane*)));
 
-            Application::instance()->setScene(tabbedPane_);
+            app->setScene(tabbedPane_);
 
             // Create the pull-down menu
             ActionItem *aboutItem = ActionItem::create()
@@ -129,7 +130,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
 
             Menu *menu = Menu::create()
             .addAction(aboutItem);
-            Application::instance()->setMenu(menu);
+            app->setMenu(menu);
 
             if(pasteModel_->isAuthenticated()) {
                 onUserDetailsUpdated();
@@ -139,6 +140,11 @@ LogicPasteApp::LogicPasteApp(Application *app)
             refreshPastePageDefaults();
         }
     }
+}
+
+LogicPasteApp::~LogicPasteApp()
+{
+    qDebug() << "LogicPasteApp::~LogicPasteApp()";
 }
 
 FormatDropDown* LogicPasteApp::replaceDropDown(Page *page, const QString& objectName)

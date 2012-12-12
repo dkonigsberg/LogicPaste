@@ -53,7 +53,7 @@ Q_DECL_EXPORT int main(int argc, char **argv)
         app.installTranslator(&translator);
     }
 
-    LogicPasteApp mainApp;
+    new LogicPasteApp(&app);
     
     return Application::exec();
 }

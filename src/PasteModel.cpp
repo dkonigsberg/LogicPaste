@@ -6,7 +6,9 @@
 PasteModel::PasteModel(QObject *parent)
     : QObject(parent) {
     historyModel_ = new QMapListDataModel();
+    historyModel_->setParent(this);
     trendingModel_ = new QMapListDataModel();
+    trendingModel_->setParent(this);
 
     pastebin_.setApiKey(AppSettings::instance()->apiKey());
     loadPasteDatabase();
@@ -32,17 +34,6 @@ PasteModel::~PasteModel() {
         pasteDb_.removeDatabase("QSQLITE");
         qDebug() << "Database closed";
     }
-
-    disconnect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
-    disconnect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
-    disconnect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing>*)), this, SLOT(onHistoryAvailable(QList<PasteListing>*)));
-    disconnect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing>*)), this, SLOT(onTrendingAvailable(QList<PasteListing>*)));
-    disconnect(&pastebin_, SIGNAL(rawPasteAvailable(QString,QByteArray)), this, SLOT(onRawPasteAvailable(QString,QByteArray)));
-    disconnect(&pastebin_, SIGNAL(deletePasteComplete(QString)), this, SLOT(onDeletePasteComplete(QString)));
-    disconnect(&pastebin_, SIGNAL(deletePasteError(QString,QString)), this, SLOT(onDeletePasteError(QString,QString)));
-
-    delete historyModel_;
-    delete trendingModel_;
 }
 
 void PasteModel::refreshUserDetails() {
