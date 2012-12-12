@@ -5,6 +5,7 @@ Page {
     property bool pasteLoaded: false
     signal savePaste()
     signal sharePaste()
+    signal shareUrl()
     signal editPaste()
     signal openInBrowser()
     signal copyPaste()
@@ -30,7 +31,6 @@ Page {
                 WebView {
                     id: webView
                     objectName: "webView"
-                    settings.zoomToFitEnabled: true
                     onLoadingChanged: {
                         if (loadRequest.status == WebLoadStatus.Succeeded || loadRequest.status == WebLoadStatus.Failed) {
                             activityIndicator.stop();
@@ -88,13 +88,18 @@ Page {
 		    ActionBar.placement: ActionBarPlacement.OnBar
 		},
         InvokeActionItem {
+            objectName: "shareUrlAction";
             title: qsTr("Share URL")
             imageSource: "asset:///images/action-share.png"
             query {
                 mimeType: "text/plain"
-                data: ListItemData.pasteUrl
                 invokeActionId: "bb.action.SHARE"
             }
+		    handler : InvokeHandler {
+		        onInvoking: {
+		            viewPastePage.shareUrl();
+		        }
+		    }
         },
         ActionItem {
             objectName: "editAction"

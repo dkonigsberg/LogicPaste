@@ -4,6 +4,8 @@
 
 #include <bb/cascades/Application>
 
+#include <Qt/qdeclarativedebug.h>
+
 #include "LogicPasteApp.h"
 
 using namespace bb::cascades;
@@ -48,7 +50,7 @@ Q_DECL_EXPORT int main(int argc, char **argv)
     QString locale_string = QLocale().name(); 
     QString filename = QString("LogicPaste_%1").arg(locale_string);
     if (translator.load(filename, "app/native/qm")) {
-        app.installTranslator( &translator );
+        app.installTranslator(&translator);
     }
 
     LogicPasteApp mainApp;

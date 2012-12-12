@@ -37,6 +37,7 @@ private slots:
     // Paste page actions
     void onSavePaste();
     void onSharePaste();
+    void onShareUrl();
     void onEditPaste();
     void onOpenInBrowser();
     void onCopyPaste();

@@ -35,6 +35,7 @@ ViewPastePage::ViewPastePage(PasteModel *pasteModel, const QString &pasteKey, QO
     findAndConnectControls();
 
     pasteListing_ = pasteModel_->pasteListing(pasteKey);
+    root_->setProperty("pasteUrl", pasteListing_.url());
     if(!pasteListing_.title().isEmpty()) {
         root_->titleBar()->setTitle(pasteListing_.title());
     }
@@ -53,6 +54,7 @@ void ViewPastePage::findAndConnectControls()
 {
     connect(root_, SIGNAL(savePaste()), this, SLOT(onSavePaste()));
     connect(root_, SIGNAL(sharePaste()), this, SLOT(onSharePaste()));
+    connect(root_, SIGNAL(shareUrl()), this, SLOT(onShareUrl()));
     connect(root_, SIGNAL(editPaste()), this, SLOT(onEditPaste()));
     connect(root_, SIGNAL(openInBrowser()), this, SLOT(onOpenInBrowser()));
     connect(root_, SIGNAL(copyPaste()), this, SLOT(onCopyPaste()));
@@ -193,13 +195,25 @@ void ViewPastePage::onSharePaste()
     invokeAction->handler()->confirm();
 }
 
+void ViewPastePage::onShareUrl()
+{
+    InvokeActionItem *invokeAction = root_->findChild<InvokeActionItem*>("shareUrlAction");
+    if(!invokeAction) {
+        qWarning() << "Could not find share URL action";
+        return;
+    }
+
+    invokeAction->setInvocationData(pasteListing_.url().toUtf8());
+    invokeAction->handler()->confirm();
+}
+
 void ViewPastePage::onEditPaste() {
     emit editPaste(pasteListing_, rawPaste_);
 }
 
 void ViewPastePage::onOpenInBrowser()
 {
-    navigator_invoke(pasteListing_.url().toLatin1(), 0);
+    navigator_invoke(pasteListing_.url().toUtf8(), 0);
 }
 
 void ViewPastePage::onCopyPaste()
