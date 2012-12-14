@@ -5,6 +5,7 @@
 *.a
 *.qm
 arm
+arm-p
 x86
 *.moc
 moc_*.cpp
