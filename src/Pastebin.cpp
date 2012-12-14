@@ -11,6 +11,7 @@
 #include <QtNetwork/QSsl>
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslSocket>
+#include <QtNetwork/QNetworkDiskCache>
 
 #include "Pastebin.h"
 #include "PasteListing.h"
@@ -39,6 +40,10 @@ Pastebin::Pastebin(QObject *parent)
 
     loadRootCert("app/native/assets/models/PositiveSSL.ca-1");
     loadRootCert("app/native/assets/models/PositiveSSL.ca-2");
+
+    QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
+    diskCache->setCacheDirectory("data/cache");
+    accessManager_.setCache(diskCache);
 }
 
 Pastebin::~Pastebin() {
@@ -442,6 +447,7 @@ void Pastebin::requestRawPaste(const QString& pasteKey) {
     url.addQueryItem("i", pasteKey);
 
     QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1), pasteKey);
     QNetworkReply *reply = accessManager_.get(request);
     connect(reply, SIGNAL(finished()), this, SLOT(onRequestRawPasteFinished()));
