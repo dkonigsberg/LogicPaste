@@ -54,6 +54,7 @@ private:
     WebView *webView_;
 
     void findAndConnectControls();
+    void showUnformattedRawPaste();
 };
 
 #endif // VIEWPASTEPAGE_H

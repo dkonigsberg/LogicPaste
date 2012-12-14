@@ -20,6 +20,7 @@
 
 #include <bps/navigator.h>
 
+#include "AppSettings.h"
 #include "PasteModel.h"
 #include "Pastebin.h"
 #include "PasteFormatter.h"
@@ -76,11 +77,16 @@ void ViewPastePage::onPasteAvailable(PasteListing pasteListing, QByteArray rawPa
     pasteListing_ = pasteListing;
     rawPaste_ = rawPaste;
 
-    PasteFormatter *formatter = new PasteFormatter(this);
-    connect(formatter, SIGNAL(pasteFormatted(QString,QString)),
-        this, SLOT(onPasteFormatted(QString,QString)));
-    connect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
-    formatter->formatPaste(pasteListing.key(), pasteModel_->lexerForFormat(pasteListing.formatShort()), rawPaste);
+    if(AppSettings::instance()->formatterEnabled()) {
+        PasteFormatter *formatter = new PasteFormatter(this);
+        connect(formatter, SIGNAL(pasteFormatted(QString,QString)),
+            this, SLOT(onPasteFormatted(QString,QString)));
+        connect(formatter, SIGNAL(formatError()), this, SLOT(onFormatError()));
+        formatter->formatPaste(pasteListing.key(), pasteModel_->lexerForFormat(pasteListing.formatShort()), rawPaste);
+    }
+    else {
+        showUnformattedRawPaste();
+    }
 }
 
 void ViewPastePage::onPasteError(PasteListing pasteListing)
@@ -115,6 +121,12 @@ void ViewPastePage::onFormatError()
 
     qWarning() << "Error formatting paste, falling back to raw output";
 
+    const QString rawPasteString = QString::fromUtf8(rawPaste_.constData(), rawPaste_.size());
+
+    showUnformattedRawPaste();
+}
+
+void ViewPastePage::showUnformattedRawPaste() {
     const QString rawPasteString = QString::fromUtf8(rawPaste_.constData(), rawPaste_.size());
 
     QTextDocument document(rawPasteString);
