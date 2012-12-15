@@ -46,7 +46,7 @@
 
     <!-- Description, displayed in the BlackBerry Tablet OS application installer.
          May have multiple values for each language. See samples or xsd schema file. Optional. -->
-    <description>The LogicPaste application</description>
+    <description>Interact with the Pastebin.com service from the convenience of your mobile device.</description>
 
     <!-- Copyright information. Optional. -->
     <!-- <copyright></copyright> -->
@@ -66,7 +66,7 @@
     <!--  The category where the application appears. Either core.games or core.media. -->
     <configuration name="Device-Debug">
        <platformArchitecture>armle-v7</platformArchitecture>
-       <asset path="arm/o.le-v7-g/LogicPaste" entry="true" type="Qnx/Elf">LogicPaste</asset>
+       <asset path="arm/o.le-v7/LogicPaste.so" entry="true" type="Qnx/Elf">LogicPaste.so</asset>
     </configuration>
     <configuration name="Device-Release">
        <entryPointType>Qnx/Cascades</entryPointType>
