@@ -99,7 +99,7 @@ void Pastebin::onLoginFinished() {
         }
     }
     else {
-        emit loginFailed("Error");
+        emit loginFailed(QString::null);
     }
 }
 
@@ -173,7 +173,7 @@ void Pastebin::onSubmitPasteFinished() {
     qDebug() << "Paste complete:" << statusCode.toInt();
 
     if(networkReply->error() == QNetworkReply::NoError) {
-        QString response = networkReply->readAll();
+        const QString response = networkReply->readAll();
 
         qDebug() << "Response:" << response;
 
@@ -188,7 +188,7 @@ void Pastebin::onSubmitPasteFinished() {
     }
     else {
         qWarning() << "Error with paste";
-        emit pasteFailed("Error");
+        emit pasteFailed(QString::null);
     }
 }
 
@@ -198,56 +198,66 @@ void Pastebin::onUserDetailsFinished() {
     qDebug() << "User details request complete:" << statusCode.toInt();
 
     if(networkReply->error() == QNetworkReply::NoError) {
-        QXmlStreamReader reader;
-        reader.addData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n");
-        reader.addData("<response>");
-        reader.addData(networkReply->readAll());
-        reader.addData("</response>");
+        const QString response = networkReply->readAll();
 
-        bool success = false;
+        if(response.startsWith("Bad API request")) {
+            qWarning() << "Error fetching user details:" << response;
+            emit userDetailsError(response);
+        }
+        else {
+            QXmlStreamReader reader;
+            reader.addData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n");
+            reader.addData("<response>");
+            reader.addData(response);
+            reader.addData("</response>");
 
-        PasteUserData pasteUser;
-        while(!reader.atEnd()) {
-            QXmlStreamReader::TokenType token = reader.readNext();
-            if(token == QXmlStreamReader::StartDocument) {
-                qDebug() << "StartDocument";
-                continue;
-            }
-            else if(token == QXmlStreamReader::StartElement) {
-                if(reader.name() == "user") {
-                    parseUserDetails(reader, &pasteUser);
-                    success = true;
+            bool success = false;
+
+            PasteUserData pasteUser;
+            while(!reader.atEnd()) {
+                QXmlStreamReader::TokenType token = reader.readNext();
+                if(token == QXmlStreamReader::StartDocument) {
+                    qDebug() << "StartDocument";
+                    continue;
+                }
+                else if(token == QXmlStreamReader::StartElement) {
+                    if(reader.name() == "user") {
+                        parseUserDetails(reader, &pasteUser);
+                        success = true;
+                    }
+                }
+                else if(token == QXmlStreamReader::EndDocument) {
+                    qDebug() << "EndDocument";
+                    continue;
                 }
             }
-            else if(token == QXmlStreamReader::EndDocument) {
-                qDebug() << "EndDocument";
-                continue;
+
+            qDebug() << "Parsed user details";
+
+            if(!success || reader.hasError()) {
+                qWarning() << "Parse error:" << reader.errorString();
+                emit userDetailsError(QString::null);
+            } else {
+                AppSettings *appSettings = AppSettings::instance();
+                appSettings->setUsername(pasteUser.username);
+                appSettings->setAvatarUrl(pasteUser.avatarUrl);
+                appSettings->setWebsite(pasteUser.website);
+                appSettings->setEmail(pasteUser.email);
+                appSettings->setLocation(pasteUser.location);
+                appSettings->setAccountType(pasteUser.accountType);
+                appSettings->setPasteFormatShort(pasteUser.pasteFormatShort);
+                appSettings->setPasteExpiration(pasteUser.pasteExpiration);
+                appSettings->setPasteVisibility(pasteUser.pasteVisibility);
+                appSettings->setApiKey(apiKey());
+                emit userDetailsUpdated();
+
+                requestUserAvatar();
             }
-        }
-
-        qDebug() << "Parsed user details";
-
-        if(!success || reader.hasError()) {
-            qWarning() << "Parse error:" << reader.errorString();
-        } else {
-            AppSettings *appSettings = AppSettings::instance();
-            appSettings->setUsername(pasteUser.username);
-            appSettings->setAvatarUrl(pasteUser.avatarUrl);
-            appSettings->setWebsite(pasteUser.website);
-            appSettings->setEmail(pasteUser.email);
-            appSettings->setLocation(pasteUser.location);
-            appSettings->setAccountType(pasteUser.accountType);
-            appSettings->setPasteFormatShort(pasteUser.pasteFormatShort);
-            appSettings->setPasteExpiration(pasteUser.pasteExpiration);
-            appSettings->setPasteVisibility(pasteUser.pasteVisibility);
-            appSettings->setApiKey(apiKey());
-            emit userDetailsUpdated();
-
-            requestUserAvatar();
         }
     }
     else {
         qWarning() << "Error in user details response";
+        emit userDetailsError(QString::null);
     }
 }
 
@@ -329,15 +339,25 @@ void Pastebin::onUserAvatarFinished()
 void Pastebin::onHistoryFinished() {
     QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
     QList<PasteListing> *pasteList = new QList<PasteListing>();
-    processPasteListResponse(networkReply, pasteList);
-    emit historyAvailable(pasteList);
+    if(processPasteListResponse(networkReply, pasteList)) {
+        emit historyAvailable(pasteList);
+    }
+    else {
+        delete pasteList;
+        emit historyError();
+    }
 }
 
 void Pastebin::onTrendingFinished() {
     QNetworkReply *networkReply = qobject_cast<QNetworkReply *>(sender());
     QList<PasteListing> *pasteList = new QList<PasteListing>();
-    processPasteListResponse(networkReply, pasteList);
-    emit trendingAvailable(pasteList);
+    if(processPasteListResponse(networkReply, pasteList)) {
+        emit trendingAvailable(pasteList);
+    }
+    else {
+        delete pasteList;
+        emit trendingError();
+    }
 }
 
 bool Pastebin::processPasteListResponse(QNetworkReply *networkReply, QList<PasteListing> *pasteList) {
@@ -358,7 +378,7 @@ bool Pastebin::processPasteListResponse(QNetworkReply *networkReply, QList<Paste
         result = parsePasteList(reader, pasteList);
     }
     else {
-        qWarning() << "Error in paste list response";
+        qWarning() << "Error in paste list response:" << networkReply->error();
         result = false;
     }
     return result;
@@ -516,7 +536,7 @@ void Pastebin::onDeletePasteFinished()
     }
     else {
         qWarning() << "Error with delete paste";
-        emit deletePasteError(pasteKey, "Error");
+        emit deletePasteError(pasteKey, QString::null);
     }
 }
 

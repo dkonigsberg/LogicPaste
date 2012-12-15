@@ -46,14 +46,18 @@ private slots:
     void onLoginComplete(QString apiKey);
     void onLoginFailed(QString message);
     void onLoginCanceled();
+    void onHistoryRefreshComplete(bool success);
+    void onTrendingRefreshComplete(bool success);
     void onPasteComplete(QString pasteUrl);
     void onPasteFailed(QString message);
     void onUserDetailsUpdated();
+    void onUserDetailsError(QString message);
     void onUserAvatarUpdated();
     void onPasteSettingsChanged();
     void onFormatterSettingsChanged();
     void onActivePaneChanged(bb::cascades::AbstractPane *activePane);
     void onEditPaste(PasteListing pasteListing, QByteArray rawPaste);
+    void onDeletePasteError(PasteListing pasteListing, QString message);
 
 signals:
     void loginFailed(QString message);

@@ -37,9 +37,12 @@ signals:
     void pasteComplete(QString pasteUrl);
     void pasteFailed(QString message);
     void userDetailsUpdated();
+    void userDetailsError(QString message);
     void userAvatarUpdated();
     void historyAvailable(QList<PasteListing> *pasteList);
+    void historyError();
     void trendingAvailable(QList<PasteListing> *pasteList);
+    void trendingError();
     void rawPasteAvailable(QString pasteKey, QByteArray rawPaste);
     void rawPasteError(QString pasteKey);
     void deletePasteComplete(QString pasteKey);

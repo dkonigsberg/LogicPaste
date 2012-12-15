@@ -20,9 +20,12 @@ PasteModel::PasteModel(QObject *parent)
 
     connect(&pastebin_, SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     connect(&pastebin_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
+    connect(&pastebin_, SIGNAL(userDetailsError(QString)), this, SLOT(onUserDetailsError(QString)));
     connect(&pastebin_, SIGNAL(userAvatarUpdated()), this, SIGNAL(userAvatarUpdated()));
     connect(&pastebin_, SIGNAL(historyAvailable(QList<PasteListing>*)), this, SLOT(onHistoryAvailable(QList<PasteListing>*)));
+    connect(&pastebin_, SIGNAL(historyError()), this, SLOT(onHistoryError()));
     connect(&pastebin_, SIGNAL(trendingAvailable(QList<PasteListing>*)), this, SLOT(onTrendingAvailable(QList<PasteListing>*)));
+    connect(&pastebin_, SIGNAL(trendingError()), this, SLOT(onTrendingError()));
     connect(&pastebin_, SIGNAL(rawPasteAvailable(QString,QByteArray)), this, SLOT(onRawPasteAvailable(QString,QByteArray)));
     connect(&pastebin_, SIGNAL(deletePasteComplete(QString)), this, SLOT(onDeletePasteComplete(QString)));
     connect(&pastebin_, SIGNAL(deletePasteError(QString,QString)), this, SLOT(onDeletePasteError(QString,QString)));
@@ -94,12 +97,21 @@ void PasteModel::onUserDetailsUpdated() {
     emit userDetailsUpdated();
 }
 
+void PasteModel::onUserDetailsError(QString message) {
+    emit userDetailsError(message);
+}
+
 void PasteModel::onHistoryAvailable(QList<PasteListing> *pasteList) {
     qDebug() << "PasteModel::onHistoryAvailable()";
     refreshPasteListing(historyModel_, pasteList);
     updatePasteTable("user_pastes", pasteList);
     delete pasteList;
-    emit historyUpdated();
+    emit historyUpdated(true);
+}
+
+void PasteModel::onHistoryError() {
+    qDebug() << "PasteModel::onHistoryError()";
+    emit historyUpdated(false);
 }
 
 void PasteModel::onTrendingAvailable(QList<PasteListing> *pasteList) {
@@ -107,7 +119,12 @@ void PasteModel::onTrendingAvailable(QList<PasteListing> *pasteList) {
     refreshPasteListing(trendingModel_, pasteList);
     updatePasteTable("trending_pastes", pasteList);
     delete pasteList;
-    emit trendingUpdated();
+    emit trendingUpdated(true);
+}
+
+void PasteModel::onTrendingError() {
+    qDebug() << "PasteModel::onTrendingError()";
+    emit trendingUpdated(false);
 }
 
 void PasteModel::logout() {
@@ -312,13 +329,12 @@ void PasteModel::onDeletePasteComplete(QString pasteKey)
         }
     }
 
-    emit historyUpdated();
+    emit historyUpdated(true);
 }
 
 void PasteModel::onDeletePasteError(QString pasteKey, QString message)
 {
-    Q_UNUSED(pasteKey)
-    Q_UNUSED(message)
-    //TODO: Notify UI of error
-    emit historyUpdated();
+    emit historyUpdated(true);
+    const PasteListing listing = pasteListing(pasteKey);
+    emit deletePasteError(listing, message);
 }

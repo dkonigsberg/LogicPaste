@@ -16,6 +16,7 @@
 #include <bb/cascades/ImageView>
 #include <bb/cascades/Image>
 #include <bb/system/SystemDialog>
+#include <bb/system/SystemToast>
 #include <bb/system/Clipboard>
 #include <bb/ApplicationInfo>
 
@@ -70,7 +71,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
             connect(historyList, SIGNAL(deletePaste(QString)), this, SLOT(onDeleteHistoryPaste(QString)));
 
             connect(pasteModel_, SIGNAL(historyUpdating()), historyPage_, SLOT(onRefreshStarted()));
-            connect(pasteModel_, SIGNAL(historyUpdated()), historyPage_, SLOT(onRefreshComplete()));
+            connect(pasteModel_, SIGNAL(historyUpdated(bool)), this, SLOT(onHistoryRefreshComplete(bool)));
 
             // Trending page
             trendingNav_ = tabbedPane_->findChild<NavigationPane*>("trendingPage");
@@ -86,7 +87,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
             connect(trendingList, SIGNAL(copyUrl(QString)), this, SLOT(onCopyText(QString)));
 
             connect(pasteModel_, SIGNAL(trendingUpdating()), trendingPage_, SLOT(onRefreshStarted()));
-            connect(pasteModel_, SIGNAL(trendingUpdated()), trendingPage_, SLOT(onRefreshComplete()));
+            connect(pasteModel_, SIGNAL(trendingUpdated(bool)), this, SLOT(onTrendingRefreshComplete(bool)));
 
             // Settings page
             settingsPage_ = tabbedPane_->findChild<Page*>("settingsPage");
@@ -110,7 +111,9 @@ LogicPasteApp::LogicPasteApp(Application *app)
             connect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onPasteSettingsChanged()));
             connect(settingsPage_, SIGNAL(formatterSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
             connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
+            connect(pasteModel_, SIGNAL(userDetailsError(QString)), this, SLOT(onUserDetailsError(QString)));
             connect(pasteModel_, SIGNAL(userAvatarUpdated()), this, SLOT(onUserAvatarUpdated()));
+            connect(pasteModel_, SIGNAL(deletePasteError(PasteListing,QString)), this, SLOT(onDeletePasteError(PasteListing,QString)));
 
             FormatDropDown *formatDropDown = replaceDropDown(settingsPage_, "formatDropDown");
             connect(formatDropDown, SIGNAL(selectedIndexChanged(int)), this, SLOT(onPasteSettingsChanged()));
@@ -255,7 +258,15 @@ void LogicPasteApp::onLoginFailed(QString message) {
     disconnect(pasteModel_->pastebin(), SIGNAL(loginComplete(QString)), this, SLOT(onLoginComplete(QString)));
     disconnect(pasteModel_->pastebin(), SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 
-    emit loginFailed(message);
+    if(message == "Bad API request, invalid login") {
+        emit loginFailed(tr("Unable to login. Please check your username and password."));
+    }
+    else if(message == "Bad API request, account not active") {
+        emit loginFailed(tr("Unable to login. Your Pastebin account is not active."));
+    }
+    else {
+        emit loginFailed(message);
+    }
 }
 
 void LogicPasteApp::onLoginCanceled() {
@@ -353,6 +364,23 @@ void LogicPasteApp::onUserAvatarUpdated()
     else {
         imageView->setVisible(false);
     }
+}
+
+void LogicPasteApp::onUserDetailsError(QString message)
+{
+    qDebug().nospace() << "onUserDetailsError(" << message << ")";
+
+    bb::system::SystemToast toast;
+    if(!message.isEmpty()) {
+        toast.setBody(message);
+    }
+    else {
+        toast.setBody(tr("Unable to refresh user details"));
+    }
+    toast.exec();
+
+    // Refresh from settings to show the old details
+    onUserDetailsUpdated();
 }
 
 void LogicPasteApp::onCreateAccount() {
@@ -492,25 +520,51 @@ void LogicPasteApp::onPasteComplete(QString pasteUrl) {
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
 
-    bb::system::SystemDialog *dialog = new bb::system::SystemDialog(tr("Okay"));
-    dialog->setBody(tr("Paste successful"));
-    dialog->show();
+    bb::system::SystemDialog dialog(tr("Okay"));
+    dialog.setTitle(tr("Submit Paste"));
+    dialog.setBody(tr("Paste successfully submitted"));
+    dialog.exec();
 
     QMetaObject::invokeMethod(pastePage_, "pasteSuccess");
     refreshPastePageDefaults();
 }
 
 void LogicPasteApp::onPasteFailed(QString message) {
-    Q_UNUSED(message)
     qDebug() << "onPasteFailed()";
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteComplete(QString)), this, SLOT(onPasteComplete(QString)));
     disconnect(pasteModel_->pastebin(), SIGNAL(pasteFailed(QString)), this, SLOT(onPasteFailed(QString)));
 
-    bb::system::SystemDialog *dialog = new bb::system::SystemDialog(tr("Okay"));
-    dialog->setBody(tr("Paste failed"));
-    dialog->show();
+    bb::system::SystemDialog dialog(tr("Okay"));
+    dialog.setTitle(tr("Submit Paste"));
+    if(message.isEmpty()) {
+        dialog.setBody(tr("Unable to submit paste"));
+    }
+    else {
+        dialog.setBody(message);
+    }
+    dialog.exec();
 
     QMetaObject::invokeMethod(pastePage_, "pasteFailed");
+}
+
+void LogicPasteApp::onHistoryRefreshComplete(bool success)
+{
+    QMetaObject::invokeMethod(historyPage_, "onRefreshComplete");
+    if(!success) {
+        bb::system::SystemToast toast;
+        toast.setBody(tr("Unable to refresh your paste listing"));
+        toast.exec();
+    }
+}
+
+void LogicPasteApp::onTrendingRefreshComplete(bool success)
+{
+    QMetaObject::invokeMethod(trendingPage_, "onRefreshComplete");
+    if(!success) {
+        bb::system::SystemToast toast;
+        toast.setBody(tr("Unable to refresh trending pastes"));
+        toast.exec();
+    }
 }
 
 void LogicPasteApp::onOpenHistoryPaste(QString pasteKey) {
@@ -536,18 +590,18 @@ void LogicPasteApp::onDeleteHistoryPaste(QString pasteKey) {
 
     const PasteListing listing = pasteModel_->pasteListing(pasteKey);
 
-    bb::system::SystemDialog *dialog = new bb::system::SystemDialog(tr("Okay"));
-    dialog->setTitle(tr("Delete Paste?"));
+    bb::system::SystemDialog dialog(tr("Okay"));
+    dialog.setTitle(tr("Delete Paste?"));
     if(!listing.title().isEmpty()) {
-        dialog->setBody(tr("Are you sure you want to delete \"%1\"?").arg(listing.title()));
+        dialog.setBody(tr("Are you sure you want to delete \"%1\"?").arg(listing.title()));
     }
     else {
-        dialog->setBody(tr("Are you sure you want to delete this paste?"));
+        dialog.setBody(tr("Are you sure you want to delete this paste?"));
     }
-    dialog->confirmButton()->setLabel(tr("Delete"));
-    dialog->cancelButton()->setLabel(tr("Cancel"));
+    dialog.confirmButton()->setLabel(tr("Delete"));
+    dialog.cancelButton()->setLabel(tr("Cancel"));
 
-    if(dialog->exec() == bb::system::SystemUiResult::ConfirmButtonSelection) {
+    if(dialog.exec() == bb::system::SystemUiResult::ConfirmButtonSelection) {
         pasteModel_->deletePaste(pasteKey);
     }
 }
@@ -594,4 +648,15 @@ void LogicPasteApp::onEditPaste(PasteListing pasteListing, QByteArray rawPaste)
     Page *page = nav->pop();
     delete page;
     tabbedPane_->setActiveTab(tabbedPane_->at(0));
+}
+
+void LogicPasteApp::onDeletePasteError(PasteListing pasteListing, QString message)
+{
+    bb::system::SystemToast toast;
+    QString displayTitle = pasteListing.title();
+    if(displayTitle.isEmpty()) {
+        displayTitle = pasteListing.key();
+    }
+    toast.setBody(tr("Unable to delete paste \"%1\"\n%2").arg(displayTitle).arg(message));
+    toast.exec();
 }

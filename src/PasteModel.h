@@ -38,19 +38,24 @@ public slots:
 
 signals:
     void userDetailsUpdated();
+    void userDetailsError(QString message);
     void userAvatarUpdated();
     void historyUpdating();
-    void historyUpdated();
+    void historyUpdated(bool success);
     void trendingUpdating();
-    void trendingUpdated();
+    void trendingUpdated(bool success);
     void pasteAvailable(PasteListing pasteListing, QByteArray rawPaste);
     void pasteError(PasteListing pasteListing);
+    void deletePasteError(PasteListing pasteListing, QString message);
 
 private slots:
     void onLoginComplete(QString apiKey);
     void onUserDetailsUpdated();
+    void onUserDetailsError(QString message);
     void onHistoryAvailable(QList<PasteListing> *pasteList);
+    void onHistoryError();
     void onTrendingAvailable(QList<PasteListing> *pasteList);
+    void onTrendingError();
     void onRawPasteAvailable(QString pasteKey, QByteArray rawPaste);
     void onRawPasteError(QString pasteKey);
     void onDeletePasteComplete(QString pasteKey);

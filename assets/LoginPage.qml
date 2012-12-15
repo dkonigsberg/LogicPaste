@@ -86,10 +86,10 @@ Page {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Top
             }
-            TextArea {
+            Label {
                 id: errorText
                 visible: false
-                backgroundVisible: false
+                multiline: true
                 textStyle.color: Color.Red
                 textStyle.textAlign: TextAlign.Center
             }

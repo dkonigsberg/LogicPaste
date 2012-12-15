@@ -144,37 +144,37 @@
 <context>
     <name>PasteListPage</name>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="57"/>
+        <location filename="../assets/PasteListPage.qml" line="58"/>
         <source>Paste actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="59"/>
+        <location filename="../assets/PasteListPage.qml" line="60"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="67"/>
+        <location filename="../assets/PasteListPage.qml" line="68"/>
         <source>Open in browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="77"/>
+        <location filename="../assets/PasteListPage.qml" line="78"/>
         <source>Copy URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="84"/>
+        <location filename="../assets/PasteListPage.qml" line="85"/>
         <source>Share URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="93"/>
+        <location filename="../assets/PasteListPage.qml" line="94"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="124"/>
+        <location filename="../assets/PasteListPage.qml" line="125"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
