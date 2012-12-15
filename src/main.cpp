@@ -10,7 +10,7 @@
 
 using namespace bb::cascades;
 
-#ifndef QT_NO_DEBUG_OUTPUT
+#if !defined(QT_NO_DEBUG_OUTPUT) && !defined(QT_NO_DEBUG)
 void logMessageHandler(QtMsgType type, const char *msg)
 {
     QString debugdate = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
@@ -40,7 +40,7 @@ void logMessageHandler(QtMsgType type, const char *msg)
 
 Q_DECL_EXPORT int main(int argc, char **argv)
 {
-#ifndef QT_NO_DEBUG_OUTPUT
+#if !defined(QT_NO_DEBUG_OUTPUT) && !defined(QT_NO_DEBUG)
     qInstallMsgHandler(logMessageHandler);
 #endif
 
