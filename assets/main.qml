@@ -3,6 +3,8 @@ import bb.cascades 1.0
 TabbedPane {
     id: mainTab
     showTabsOnActionBar: true
+    property alias historyPlaceholderText: historyPage.placeholderText
+    property alias historyPlaceholderImageSource: historyPage.placeholderImageSource
     Tab {
         title: qsTr("Paste")
         imageSource: "asset:///images/icon-paste-tab.png"
@@ -26,6 +28,8 @@ TabbedPane {
         PasteListPage {
             id: trendingPage
             objectName: "trendingPage"
+            placeholderImageSource: "asset:///images/placeholder-refresh.png"
+            placeholderText: qsTr("Tap on the refresh action to load trending pastes")
         }
     }
     Tab {

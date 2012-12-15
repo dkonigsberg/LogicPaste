@@ -144,37 +144,37 @@
 <context>
     <name>PasteListPage</name>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="41"/>
+        <location filename="../assets/PasteListPage.qml" line="57"/>
         <source>Paste actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="43"/>
+        <location filename="../assets/PasteListPage.qml" line="59"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="51"/>
+        <location filename="../assets/PasteListPage.qml" line="67"/>
         <source>Open in browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="61"/>
+        <location filename="../assets/PasteListPage.qml" line="77"/>
         <source>Copy URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="68"/>
+        <location filename="../assets/PasteListPage.qml" line="84"/>
         <source>Share URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="77"/>
+        <location filename="../assets/PasteListPage.qml" line="93"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/PasteListPage.qml" line="104"/>
+        <location filename="../assets/PasteListPage.qml" line="124"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -403,22 +403,27 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../assets/main.qml" line="7"/>
+        <location filename="../assets/main.qml" line="9"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/main.qml" line="15"/>
+        <location filename="../assets/main.qml" line="17"/>
         <source>My Pastes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/main.qml" line="24"/>
+        <location filename="../assets/main.qml" line="26"/>
         <source>Trending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../assets/main.qml" line="32"/>
+        <source>Tap on the refresh action to load trending pastes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../assets/main.qml" line="36"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>

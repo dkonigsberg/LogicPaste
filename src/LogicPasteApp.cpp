@@ -61,7 +61,6 @@ LogicPasteApp::LogicPasteApp(Application *app)
             connect(historyNav_, SIGNAL(popTransitionEnded(bb::cascades::Page*)),
                 this, SLOT(onPopFinished(bb::cascades::Page*)));
             historyPage_ = historyNav_->findChild<Page*>("pasteListPage");
-            historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
             connect(historyPage_, SIGNAL(refreshPage()), pasteModel_, SLOT(refreshHistory()));
 
             ListView *historyList = historyPage_->findChild<ListView*>("pasteList");
@@ -138,6 +137,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
             }
 
             refreshPastePageDefaults();
+            refreshMainActions();
         }
     }
 }
@@ -243,7 +243,7 @@ void LogicPasteApp::onLoginComplete(QString apiKey) {
     label->setVisible(true);
 
     emit settingsUpdated();
-    historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
+    refreshMainActions();
 
     loginSheet_->close();
     loginSheet_->deleteLater();
@@ -367,7 +367,7 @@ void LogicPasteApp::onRequestLogout() {
     pasteModel_->logout();
 
     emit settingsUpdated();
-    historyPage_->findChild<ActionItem*>("refreshAction")->setEnabled(pasteModel_->isAuthenticated());
+    refreshMainActions();
 }
 
 void LogicPasteApp::onPasteSettingsChanged()
@@ -404,6 +404,21 @@ void LogicPasteApp::onFormatterSettingsChanged()
 
     DropDown *formatterStyle = settingsPage_->findChild<DropDown*>("formatterStyle");
     appSettings->setFormatterStyle(formatterStyle->at(formatterStyle->selectedIndex())->value().toString());
+}
+
+void LogicPasteApp::refreshMainActions()
+{
+    ActionItem *refreshAction = historyPage_->findChild<ActionItem*>("refreshAction");
+    if(pasteModel_->isAuthenticated()) {
+        refreshAction->setEnabled(true);
+        tabbedPane_->setProperty("historyPlaceholderText", tr("Tap on the refresh action to load your paste listing"));
+        tabbedPane_->setProperty("historyPlaceholderImageSource", "asset:///images/placeholder-refresh.png");
+    }
+    else {
+        refreshAction->setEnabled(false);
+        tabbedPane_->setProperty("historyPlaceholderText", tr("You must login to Pastebin before you can load your paste listing"));
+        tabbedPane_->setProperty("historyPlaceholderImageSource", "asset:///images/placeholder-settings.png");
+    }
 }
 
 void LogicPasteApp::refreshPastePageDefaults()
