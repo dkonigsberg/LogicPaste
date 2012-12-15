@@ -116,27 +116,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="37"/>
+        <location filename="../assets/LoginPage.qml" line="41"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="42"/>
+        <location filename="../assets/LoginPage.qml" line="46"/>
         <source>Pastebin password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="50"/>
+        <location filename="../assets/LoginPage.qml" line="54"/>
         <source>Log in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="59"/>
+        <location filename="../assets/LoginPage.qml" line="63"/>
         <source>Create account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="67"/>
+        <location filename="../assets/LoginPage.qml" line="71"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>

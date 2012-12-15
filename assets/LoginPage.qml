@@ -29,6 +29,10 @@ Page {
                 clearButtonVisible: false
                 hintText: qsTr("Pastebin username")
                 inputMode: TextFieldInputMode.Text
+                input.flags: TextInputFlag.AutoCapitalizationOff
+	                | TextInputFlag.AutoCorrectionOff
+	                | TextInputFlag.AutoPeriodOff
+	                | TextInputFlag.WordSubstitutionOff
                 onTextChanging: {
                     updateButtons();
                 }
