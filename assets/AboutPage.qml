@@ -117,6 +117,27 @@ Page {
                         }
                     }
                 }
+                ImageView {
+                    topMargin: 50
+                    bottomMargin: 50
+                    imageSource: "asset:///images/osbbx-logo.png"
+                    horizontalAlignment: HorizontalAlignment.Center
+                    onTouch: {
+                        if (event.isUp()) {
+                            about.openUrl("http://www.opensourcebb.com/osbbx/");
+                        }
+                    }
+                }
+            }
+        }
+        ImageView {
+            imageSource: "asset:///images/github-forkme.png"
+            verticalAlignment: VerticalAlignment.Top
+            horizontalAlignment: HorizontalAlignment.Right
+            onTouch: {
+                if (event.isUp()) {
+                    about.openUrl("https://github.com/dkonigsberg/LogicPaste");
+                }
             }
         }
     }
