@@ -91,6 +91,9 @@ LogicPasteApp::LogicPasteApp(Application *app)
 
             // Settings page
             settingsPage_ = tabbedPane_->findChild<Page*>("settingsPage");
+            CheckBox *sslCheckBox = settingsPage_->findChild<CheckBox *>("sslCheckBox");
+            sslCheckBox->setChecked(appSettings->useSsl());
+
             CheckBox *formatterEnable = settingsPage_->findChild<CheckBox*>("formatterEnable");
             formatterEnable->setChecked(appSettings->formatterEnabled());
 
@@ -108,6 +111,7 @@ LogicPasteApp::LogicPasteApp(Application *app)
             connect(settingsPage_, SIGNAL(requestLogin()), this, SLOT(onRequestLogin()));
             connect(settingsPage_, SIGNAL(requestLogout()), this, SLOT(onRequestLogout()));
             connect(settingsPage_, SIGNAL(refreshUserDetails()), pasteModel_, SLOT(refreshUserDetails()));
+            connect(settingsPage_, SIGNAL(connectionSettingsChanged()), this, SLOT(onConnectionSettingsChanged()));
             connect(settingsPage_, SIGNAL(pasteSettingsChanged()), this, SLOT(onPasteSettingsChanged()));
             connect(settingsPage_, SIGNAL(formatterSettingsChanged()), this, SLOT(onFormatterSettingsChanged()));
             connect(pasteModel_, SIGNAL(userDetailsUpdated()), this, SLOT(onUserDetailsUpdated()));
@@ -286,33 +290,49 @@ void LogicPasteApp::onUserDetailsUpdated() {
 
     if(!appSettings->username().isEmpty()) {
         label = settingsPage_->findChild<Label*>("userLabel");
-        label->setText(QString(tr("Username: %1")).arg(appSettings->username()));
+        label->setText(tr("Username: %1").arg(appSettings->username()));
         label->setVisible(true);
     }
 
     if(pasteModel_->isAuthenticated()) {
         label = settingsPage_->findChild<Label*>("keyLabel");
-        label->setText(QString(tr("API Key: %1")).arg(appSettings->apiKey()));
+        label->setText(tr("API Key: %1").arg(appSettings->apiKey()));
         label->setVisible(true);
     }
 
     if(!appSettings->website().isEmpty()) {
         label = settingsPage_->findChild<Label*>("websiteLabel");
-        label->setText(QString(tr("Website: %1")).arg(appSettings->website()));
+        label->setText(tr("Website: %1").arg(appSettings->website()));
         label->setVisible(true);
     }
 
     if(!appSettings->email().isEmpty()) {
         label = settingsPage_->findChild<Label*>("emailLabel");
-        label->setText(QString(tr("Email: %1")).arg(appSettings->email()));
+        label->setText(tr("Email: %1").arg(appSettings->email()));
         label->setVisible(true);
     }
 
     if(!appSettings->location().isEmpty()) {
         label = settingsPage_->findChild<Label*>("locationLabel");
-        label->setText(QString(tr("Location: %1")).arg(appSettings->location()));
+        label->setText(tr("Location: %1").arg(appSettings->location()));
         label->setVisible(true);
     }
+
+    label = settingsPage_->findChild<Label*>("accountTypeLabel");
+    QString accountTypeText;
+    switch(appSettings->accountType()) {
+    case AppSettings::Normal:
+        accountTypeText = tr("Normal");
+        break;
+    case AppSettings::Pro:
+        accountTypeText = tr("Pro");
+        break;
+    default:
+        accountTypeText = tr("Unknown");
+        break;
+    }
+    label->setText(tr("Account type: %1").arg(accountTypeText));
+    label->setVisible(true);
 
     ignoreSettingsEvent_ = true;
 
@@ -396,6 +416,14 @@ void LogicPasteApp::onRequestLogout() {
 
     emit settingsUpdated();
     refreshMainActions();
+}
+
+void LogicPasteApp::onConnectionSettingsChanged()
+{
+    AppSettings *appSettings = AppSettings::instance();
+
+    CheckBox *sslCheckBox = settingsPage_->findChild<CheckBox *>("sslCheckBox");
+    appSettings->setUseSsl(sslCheckBox->isChecked());
 }
 
 void LogicPasteApp::onPasteSettingsChanged()

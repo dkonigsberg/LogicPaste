@@ -12,14 +12,19 @@
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslSocket>
 #include <QtNetwork/QNetworkDiskCache>
+#include <bb/system/SystemDialog>
+#include <bb/system/SystemUiResult>
 
 #include "Pastebin.h"
 #include "PasteListing.h"
 #include "AppSettings.h"
 #include "config.h"
 
+namespace {
 const char* const PASTEBIN_DEV_KEY = PASTEBIN_API_KEY;
 const char* const URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded";
+const QString HTTPS_SCHEME("https");
+}
 
 class PasteUserData {
 public:
@@ -44,6 +49,9 @@ Pastebin::Pastebin(QObject *parent)
     QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
     diskCache->setCacheDirectory("data/cache");
     accessManager_.setCache(diskCache);
+
+    connect(&accessManager_, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)),
+        this, SLOT(onSslErrors(QNetworkReply*,QList<QSslError>)));
 }
 
 Pastebin::~Pastebin() {
@@ -66,8 +74,75 @@ void Pastebin::loadRootCert(const QString& fileName)
     }
 }
 
+void Pastebin::onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
+{
+    QStringList ignoreCerts = AppSettings::instance()->ignoreErrorCerts();
+
+    QList<QSslError> ignoreErrors;
+    QList<QSslError> promptErrors;
+    QSslCertificate cert;
+    QStringList errorStrings;
+    foreach(const QSslError &error, errors) {
+        if(ignoreCerts.contains(QString(error.certificate().serialNumber()))) {
+            ignoreErrors.append(error);
+        }
+        else {
+            promptErrors.append(error);
+            if(cert.isNull()) {
+                cert = error.certificate();
+            }
+            errorStrings << error.errorString();
+        }
+    }
+
+    if(!ignoreErrors.isEmpty()) {
+        reply->ignoreSslErrors(ignoreErrors);
+    }
+
+    if(!promptErrors.isEmpty()) {
+        QString bodyText = tr(
+            "Issued to: %1\n"
+            "Serial number: %2\n"
+            "Issued by: %3\n"
+            "Effective: %4\n"
+            "Expires: %5\n"
+            "\n%6\n\n"
+            "Ignore this error?")
+            .arg(cert.subjectInfo(QSslCertificate::CommonName))
+            .arg(QString(cert.serialNumber()))
+            .arg(cert.issuerInfo(QSslCertificate::CommonName))
+            .arg(cert.effectiveDate().toLocalTime().toString(Qt::SystemLocaleShortDate))
+            .arg(cert.expiryDate().toLocalTime().toString(Qt::SystemLocaleShortDate))
+            .arg(errorStrings.join("\n"));
+
+        bb::system::SystemDialog dialog(tr("Yes"), tr("Always"), tr("No"));
+        dialog.setTitle(tr("SSL Error"));
+        dialog.setBody(bodyText);
+        bb::system::SystemUiResult::Type result = dialog.exec();
+
+        if(result == bb::system::SystemUiResult::ConfirmButtonSelection
+            || result == bb::system::SystemUiResult::CustomButtonSelection) {
+            reply->ignoreSslErrors(promptErrors);
+
+            if(result == bb::system::SystemUiResult::CustomButtonSelection) {
+                ignoreCerts << QString(cert.serialNumber());
+                AppSettings::instance()->setIgnoreErrorCerts(ignoreCerts);
+            }
+        }
+    }
+}
+
+QUrl Pastebin::buildUrl(const QString &baseUrl)
+{
+    QUrl url(baseUrl);
+    if(AppSettings::instance()->useSsl()) {
+        url.setScheme(HTTPS_SCHEME);
+    }
+    return url;
+}
+
 void Pastebin::login(const QString& username, const QString& password) {
-    QNetworkRequest request(QUrl("https://pastebin.com/api/api_login.php"));
+    QNetworkRequest request(buildUrl("http://pastebin.com/api/api_login.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -99,6 +174,7 @@ void Pastebin::onLoginFinished() {
         }
     }
     else {
+        qWarning() << "Error:" << networkReply->errorString();
         emit loginFailed(QString::null);
     }
 }
@@ -106,7 +182,7 @@ void Pastebin::onLoginFinished() {
 void Pastebin::submitPaste(const QString& pasteContent, const QString& pasteTitle, const QString& format, const QString& expiration, const PasteListing::Visibility visibility) {
     qDebug() << "submitPaste()";
 
-    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(buildUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -130,7 +206,7 @@ void Pastebin::submitPaste(const QString& pasteContent, const QString& pasteTitl
 }
 
 void Pastebin::requestUserDetails() {
-    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(buildUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -143,7 +219,7 @@ void Pastebin::requestUserDetails() {
 }
 
 void Pastebin::requestHistory() {
-    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(buildUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -156,7 +232,7 @@ void Pastebin::requestHistory() {
 }
 
 void Pastebin::requestTrending() {
-    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(buildUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
 
     QUrl params;
@@ -187,7 +263,7 @@ void Pastebin::onSubmitPasteFinished() {
         }
     }
     else {
-        qWarning() << "Error with paste";
+        qWarning() << "Error with paste:" << networkReply->errorString();
         emit pasteFailed(QString::null);
     }
 }
@@ -256,7 +332,7 @@ void Pastebin::onUserDetailsFinished() {
         }
     }
     else {
-        qWarning() << "Error in user details response";
+        qWarning() << "Error in user details response:" << networkReply->errorString();
         emit userDetailsError(QString::null);
     }
 }
@@ -334,6 +410,9 @@ void Pastebin::onUserAvatarFinished()
             emit userAvatarUpdated();
         }
     }
+    else {
+        qWarning() << "Error fetching avatar:" << networkReply->errorString();
+    }
 }
 
 void Pastebin::onHistoryFinished() {
@@ -378,7 +457,7 @@ bool Pastebin::processPasteListResponse(QNetworkReply *networkReply, QList<Paste
         result = parsePasteList(reader, pasteList);
     }
     else {
-        qWarning() << "Error in paste list response:" << networkReply->error();
+        qWarning() << "Error in paste list response:" << networkReply->errorString();
         result = false;
     }
     return result;
@@ -490,6 +569,7 @@ void Pastebin::onRequestRawPasteFinished() {
             emit rawPasteError(pasteKey);
         }
     } else {
+        qWarning() << "Error requesting raw paste:" << networkReply->errorString();
         emit rawPasteError(pasteKey);
     }
 }
@@ -498,7 +578,7 @@ void Pastebin::requestDeletePaste(const QString& pasteKey)
 {
     qDebug().nospace() << "requestDeletePaste(" << pasteKey << ")";
 
-    QNetworkRequest request(QUrl("https://pastebin.com/api/api_post.php"));
+    QNetworkRequest request(buildUrl("http://pastebin.com/api/api_post.php"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, URLENCODED_CONTENT_TYPE);
     request.setAttribute(QNetworkRequest::Attribute(QNetworkRequest::User + 1), pasteKey);
 
@@ -535,7 +615,7 @@ void Pastebin::onDeletePasteFinished()
         }
     }
     else {
-        qWarning() << "Error with delete paste";
+        qWarning() << "Error with delete paste" << networkReply->errorString();
         emit deletePasteError(pasteKey, QString::null);
     }
 }

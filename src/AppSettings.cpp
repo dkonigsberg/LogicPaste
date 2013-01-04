@@ -28,6 +28,7 @@ void AppSettings::sync()
 
 void AppSettings::removeUserData()
 {
+    settings_.remove("ignore_error_certs");
     settings_.remove("api_user_name");
     settings_.remove("api_user_key");
     settings_.remove("user_avatar_url");
@@ -39,6 +40,24 @@ void AppSettings::removeUserData()
     settings_.remove("user_expiration");
     settings_.remove("user_private");
     settings_.remove("user_avatar_image");
+}
+
+bool AppSettings::useSsl() const
+{
+    return settings_.value("use_ssl", true).toBool();
+}
+void AppSettings::setUseSsl(bool value)
+{
+    settings_.setValue("use_ssl", value);
+}
+
+QStringList AppSettings::ignoreErrorCerts() const
+{
+    return settings_.value("ignore_error_certs").toStringList();
+}
+void AppSettings::setIgnoreErrorCerts(const QStringList& serials)
+{
+    settings_.setValue("ignore_error_certs", serials);
 }
 
 QString AppSettings::username() const

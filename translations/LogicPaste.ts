@@ -216,62 +216,67 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="23"/>
+        <location filename="../assets/SettingsPage.qml" line="24"/>
         <source>Pastebin Account:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="28"/>
+        <location filename="../assets/SettingsPage.qml" line="29"/>
         <source>Log in to Pastebin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="37"/>
+        <location filename="../assets/SettingsPage.qml" line="38"/>
         <source>Log out of Pastebin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="109"/>
+        <location filename="../assets/SettingsPage.qml" line="48"/>
+        <source>Enable SSL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../assets/SettingsPage.qml" line="118"/>
         <source>Paste defaults:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="115"/>
+        <location filename="../assets/SettingsPage.qml" line="124"/>
         <source>Default format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="119"/>
+        <location filename="../assets/SettingsPage.qml" line="128"/>
         <source>Default expiration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="126"/>
+        <location filename="../assets/SettingsPage.qml" line="135"/>
         <source>Default exposure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="134"/>
+        <location filename="../assets/SettingsPage.qml" line="143"/>
         <source>Formatter settings:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="140"/>
+        <location filename="../assets/SettingsPage.qml" line="149"/>
         <source>Enable paste formatting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="149"/>
+        <location filename="../assets/SettingsPage.qml" line="158"/>
         <source>Line numbering</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="159"/>
+        <location filename="../assets/SettingsPage.qml" line="168"/>
         <source>Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/SettingsPage.qml" line="170"/>
+        <location filename="../assets/SettingsPage.qml" line="179"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>

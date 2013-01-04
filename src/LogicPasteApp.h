@@ -53,6 +53,7 @@ private slots:
     void onUserDetailsUpdated();
     void onUserDetailsError(QString message);
     void onUserAvatarUpdated();
+    void onConnectionSettingsChanged();
     void onPasteSettingsChanged();
     void onFormatterSettingsChanged();
     void onActivePaneChanged(bb::cascades::AbstractPane *activePane);

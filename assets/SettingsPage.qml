@@ -5,6 +5,7 @@ Page {
     signal requestLogin()
     signal requestLogout()
     signal refreshUserDetails()
+    signal connectionSettingsChanged()
     signal pasteSettingsChanged()
     signal formatterSettingsChanged()
     content: ScrollView {
@@ -39,6 +40,14 @@ Page {
                 horizontalAlignment: HorizontalAlignment.Fill
                 onClicked: {
                     settings.requestLogout();
+                }
+            }
+            CheckBox {
+                id: sslCheckBox
+                objectName: "sslCheckBox"
+                text: qsTr("Enable SSL")
+                onCheckedChanged: {
+                    settings.connectionSettingsChanged()
                 }
             }
             Container {

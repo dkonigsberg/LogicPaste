@@ -3,6 +3,9 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QProcess>
+#include <QtCore/QList>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QSslError>
 #include <QtNetwork/QNetworkAccessManager>
 
 #include "PasteListing.h"
@@ -49,6 +52,7 @@ signals:
     void deletePasteError(QString pasteKey, QString message);
 
 private slots:
+    void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
     void onLoginFinished();
     void onSubmitPasteFinished();
     void onUserDetailsFinished();
@@ -60,6 +64,7 @@ private slots:
 
 private:
     void loadRootCert(const QString& fileName);
+    QUrl buildUrl(const QString &baseUrl);
     void parseUserDetails(QXmlStreamReader& reader, PasteUserData *pasteUser);
     bool processPasteListResponse(QNetworkReply *networkReply, QList<PasteListing> *pasteList);
     bool parsePasteList(QXmlStreamReader& reader, QList<PasteListing> *pasteList);

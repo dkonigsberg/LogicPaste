@@ -24,6 +24,10 @@ public:
     void sync();
     void removeUserData();
 
+    bool useSsl() const;
+    void setUseSsl(bool value);
+    QStringList ignoreErrorCerts() const;
+    void setIgnoreErrorCerts(const QStringList& serials);
     QString username() const;
     void setUsername(const QString& username);
     QString apiKey() const;
