@@ -370,37 +370,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="66"/>
+        <location filename="../assets/ViewPastePage.qml" line="67"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="76"/>
+        <location filename="../assets/ViewPastePage.qml" line="77"/>
         <source>Share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="92"/>
+        <location filename="../assets/ViewPastePage.qml" line="93"/>
         <source>Share URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="106"/>
+        <location filename="../assets/ViewPastePage.qml" line="107"/>
         <source>Edit Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="115"/>
+        <location filename="../assets/ViewPastePage.qml" line="116"/>
         <source>Open in browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="124"/>
+        <location filename="../assets/ViewPastePage.qml" line="125"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/ViewPastePage.qml" line="133"/>
+        <location filename="../assets/ViewPastePage.qml" line="134"/>
         <source>Copy URL</source>
         <translation type="unfinished"></translation>
     </message>

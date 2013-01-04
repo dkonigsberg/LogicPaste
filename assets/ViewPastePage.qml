@@ -31,6 +31,7 @@ Page {
                 WebView {
                     id: webView
                     objectName: "webView"
+                    settings.zoomToFitEnabled: false
                     onLoadingChanged: {
                         if (loadRequest.status == WebLoadStatus.Succeeded || loadRequest.status == WebLoadStatus.Failed) {
                             activityIndicator.stop();
