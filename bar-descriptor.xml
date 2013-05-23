@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--
   
-   Copyright (c) 2011, 2012 Research In Motion Limited.
+   Copyright (c) 2011, 2012, 2013 Research In Motion Limited.
   
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@
     <!--  The category where the application appears. Either core.games or core.media. -->
     <configuration name="Device-Debug">
        <platformArchitecture>armle-v7</platformArchitecture>
-       <asset path="arm/o.le-v7/LogicPaste.so" entry="true" type="Qnx/Elf">LogicPaste.so</asset>
+       <asset path="arm/o.le-v7-g/LogicPaste" entry="true" type="Qnx/Elf">LogicPaste</asset>
     </configuration>
     <configuration name="Device-Release">
        <entryPointType>Qnx/Cascades</entryPointType>
@@ -82,7 +82,7 @@
        <asset path="x86/o-g/LogicPaste" entry="true" type="Qnx/Elf">LogicPaste</asset>
     </configuration>
     
-    <!--  The icon for the application, which should be 86x86. -->
+    <!--  The icon for the application -->
     <icon>
         <image>icon.png</image>
     </icon>
@@ -102,4 +102,5 @@
     <permission>access_internet</permission>
     <env var="LD_LIBRARY_PATH" value="app/native/lib:/usr/lib/qt4/lib"/>
     <env var="PYTHONIOENCODING" value="utf_8"/>
+    <env var="PYTHON_IMPORT_DEFAULT_ORDER" value="1"/>
 </qnx>

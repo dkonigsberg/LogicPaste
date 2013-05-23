@@ -4,12 +4,12 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <location filename="../assets/AboutPage.qml" line="11"/>
+        <location filename="../assets/AboutPage.qml" line="12"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/AboutPage.qml" line="13"/>
+        <location filename="../assets/AboutPage.qml" line="14"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -86,6 +86,24 @@
     </message>
 </context>
 <context>
+    <name>FormatDropDown</name>
+    <message>
+        <location filename="../src/FormatDropDown.cpp" line="17"/>
+        <source>Paste format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FormatDropDown.cpp" line="20"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FormatDropDown.cpp" line="26"/>
+        <source>Show more choices...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FormatsListPage</name>
     <message>
         <location filename="../assets/FormatsListPage.qml" line="8"/>
@@ -95,6 +113,148 @@
     <message>
         <location filename="../assets/FormatsListPage.qml" line="11"/>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LogicPasteApp</name>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="133"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="266"/>
+        <source>Unable to login. Please check your username and password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="269"/>
+        <source>Unable to login. Your Pastebin account is not active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="293"/>
+        <source>Username: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="299"/>
+        <source>API Key: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="305"/>
+        <source>Website: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="311"/>
+        <source>Email: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="317"/>
+        <source>Location: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="325"/>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="328"/>
+        <source>Pro</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="331"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="334"/>
+        <source>Account type: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="398"/>
+        <source>Unable to refresh user details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="470"/>
+        <source>Tap on the refresh action to load your paste listing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="475"/>
+        <source>You must login to Pastebin before you can load your paste listing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="551"/>
+        <location filename="../src/LogicPasteApp.cpp" line="565"/>
+        <location filename="../src/LogicPasteApp.cpp" line="621"/>
+        <source>Okay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="552"/>
+        <location filename="../src/LogicPasteApp.cpp" line="566"/>
+        <source>Submit Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="553"/>
+        <source>Paste successfully submitted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="568"/>
+        <source>Unable to submit paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="583"/>
+        <source>Unable to refresh your paste listing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="593"/>
+        <source>Unable to refresh trending pastes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="622"/>
+        <source>Delete Paste?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="624"/>
+        <source>Are you sure you want to delete &quot;%1&quot;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="627"/>
+        <source>Are you sure you want to delete this paste?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="629"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="630"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/LogicPasteApp.cpp" line="688"/>
+        <source>Unable to delete paste &quot;%1&quot;
+%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -210,6 +370,42 @@
     <message>
         <location filename="../assets/PastePage.qml" line="71"/>
         <source>Submit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Pastebin</name>
+    <message>
+        <location filename="../src/Pastebin.cpp" line="103"/>
+        <source>Issued to: %1
+Serial number: %2
+Issued by: %3
+Effective: %4
+Expires: %5
+
+%6
+
+Ignore this error?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Pastebin.cpp" line="118"/>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Pastebin.cpp" line="118"/>
+        <source>Always</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Pastebin.cpp" line="118"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Pastebin.cpp" line="119"/>
+        <source>SSL Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -402,6 +598,21 @@
     <message>
         <location filename="../assets/ViewPastePage.qml" line="134"/>
         <source>Copy URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ViewPastePage.cpp" line="99"/>
+        <source>Error retrieving paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ViewPastePage.cpp" line="182"/>
+        <source>Paste saved to file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ViewPastePage.cpp" line="187"/>
+        <source>&apos;%1&apos; error saving paste to file %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

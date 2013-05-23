@@ -49,40 +49,57 @@ Page {
                     updateButtons();
                 }
             }
-            Button {
-                id: acceptButton
-                text: qsTr("Log in")
-                enabled: false
+            Container {
+                topMargin: 20
+                bottomMargin: 20
                 horizontalAlignment: HorizontalAlignment.Center
-                onClicked: {
-                    startLoginProcess();
+                Button {
+                    id: acceptButton
+                    visible: !activityIndicator.running
+                    topMargin: 10
+                    bottomMargin: 10
+                    text: qsTr("Log in")
+                    enabled: false
+                    horizontalAlignment: HorizontalAlignment.Fill
+                    onClicked: {
+                        startLoginProcess();
+                    }
                 }
-            }
-            Button {
-                id: createAccountButton
-                text: qsTr("Create account")
-                horizontalAlignment: HorizontalAlignment.Center
-                onClicked: {
-                    login.createAccount();
+                Button {
+                    id: createAccountButton
+                    visible: !activityIndicator.running
+                    topMargin: 10
+                    bottomMargin: 10
+                    text: qsTr("Create account")
+                    horizontalAlignment: HorizontalAlignment.Fill
+                    onClicked: {
+                        login.createAccount();
+                    }
                 }
-            }
-            Button {
-                id: cancelButton
-                text: qsTr("Cancel")
-                horizontalAlignment: HorizontalAlignment.Center
-                onClicked: {
-                    login.cancel();
+                Button {
+                    id: cancelButton
+                    topMargin: 10
+                    bottomMargin: 10
+                    text: qsTr("Cancel")
+                    horizontalAlignment: HorizontalAlignment.Fill
+                    onClicked: {
+                        login.cancel();
+                    }
                 }
             }
         }
         Container {
             layout: DockLayout {
             }
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
             horizontalAlignment: HorizontalAlignment.Center
             ActivityIndicator {
                 id: activityIndicator
-                preferredWidth: 400
-                preferredHeight: 400
+                running: true
+                preferredWidth: 200
+                preferredHeight: 200
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Top
             }

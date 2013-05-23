@@ -75,6 +75,7 @@ void PasteFormatter::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
         emit pasteFormatted(pasteKey, html);
     }
     else {
+        qDebug() << QString::fromUtf8(process->readAllStandardError());
         emit formatError();
     }
 

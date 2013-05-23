@@ -7,6 +7,7 @@ Page {
     property string appName: "LogicPaste"
     property string versionNumber: "X.Y.Z"
     property string appCopyright: "Copyright \u00A9 2012, Derek Konigsberg\nAll Rights Reserved"
+    property bool darkTheme: (Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark)
     titleBar: TitleBar {
         title: qsTr("About")
         dismissAction: ActionItem {
@@ -17,7 +18,6 @@ Page {
         }
     }
     content: Container {
-        background: Color.create("#f8f8f8")
         layout: DockLayout {
         }
         ScrollView {
@@ -79,7 +79,7 @@ Page {
                     horizontalAlignment: HorizontalAlignment.Center
                     textStyle {
                         base: SystemDefaults.TextStyles.SubtitleText
-                        color: Color.DarkBlue
+                        color: darkTheme ? Color.Blue : Color.DarkBlue
                     }
                     onTouch: {
                         if (event.isUp()) {
@@ -94,7 +94,7 @@ Page {
                     horizontalAlignment: HorizontalAlignment.Center
                     textStyle {
                         base: SystemDefaults.TextStyles.SubtitleText
-                        color: Color.DarkBlue
+                        color: darkTheme ? Color.Blue : Color.DarkBlue
                     }
                     onTouch: {
                         if (event.isUp()) {
@@ -109,7 +109,7 @@ Page {
                     horizontalAlignment: HorizontalAlignment.Center
                     textStyle {
                         base: SystemDefaults.TextStyles.SubtitleText
-                        color: Color.DarkBlue
+                        color: darkTheme ? Color.Blue : Color.DarkBlue
                     }
                     onTouch: {
                         if (event.isUp()) {
