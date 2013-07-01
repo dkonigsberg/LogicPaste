@@ -97,7 +97,6 @@ Page {
             horizontalAlignment: HorizontalAlignment.Center
             ActivityIndicator {
                 id: activityIndicator
-                running: true
                 preferredWidth: 200
                 preferredHeight: 200
                 horizontalAlignment: HorizontalAlignment.Center

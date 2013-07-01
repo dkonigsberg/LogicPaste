@@ -286,17 +286,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="54"/>
+        <location filename="../assets/LoginPage.qml" line="61"/>
         <source>Log in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="63"/>
+        <location filename="../assets/LoginPage.qml" line="73"/>
         <source>Create account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../assets/LoginPage.qml" line="71"/>
+        <location filename="../assets/LoginPage.qml" line="83"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
